@@ -1,0 +1,24 @@
+project:
+    type: book
+
+book:
+    title: "FLA 2026 Lecture Notes"
+    author: "Brendan Griffiths"
+    date: "2026/02/13"
+    chapters:
+        - index.qmd
+        - lectures/lecture_1.qmd
+        - lectures/lecture_2.qmd
+        # - intro.qmd
+        # - summary.qmd
+        # - references.qmd
+
+bibliography: references.bib
+
+format:
+    html:
+        theme:
+            - cosmo
+            - brand
+    pdf:
+        documentclass: scrreprt
