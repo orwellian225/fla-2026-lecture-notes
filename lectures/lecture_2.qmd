@@ -162,7 +162,7 @@ $$
 ### Booleans
 
 $$
-    \left< b \right>_\mathbb{B,k} = \begin{cases}
+    \left< b \right>_{\mathbb{B},k} = \begin{cases}
         1 & \text{if } b = \text{True} \\
         0 & \text{if } b = \text{False}
     \end{cases}
@@ -196,7 +196,14 @@ We can replace the vector separator $\#$ with either a new symbol $;$ or an addi
 $$\left<\begin{pmatrix} \frac{a}{b} \\ \frac{c}{d} \end{pmatrix}\right> = \left<a\right>\#\left<b\right>;\left<c\right>\#\left<d\right>$$
 
 To get back to Binary alphabet we can use the following encoding:
-$$e(s) = \begin{cases} 00 \; s = 0 \\ 01 \; s = 1 \\ 10 \; s = \# \\ 11 \; s = \; ; \end{cases}$$
+$$
+e(s) = \begin{cases}
+    00 \; s = 0 \\
+    01 \; s = 1 \\
+    10 \; s = \# \\
+    11 \; s = \; ;
+\end{cases}
+$$
 :::
 
 :::{.callout-warning}
@@ -218,7 +225,11 @@ $$s \in \Sigma \implies e(s) \in L \subseteq \Gamma^\ast$$
 :::{.callout-note}
 ## Notation
 We can also "encode" strings
-$$  \begin{align*} \text{Let } &w = s_1 s_2 ... s_n \in \Sigma^\ast \text{ and } e: \Sigma \mapsto L \subseteq \Gamma^\ast \\\\ & e(w) = \left< w\right>_e = e(s_1) e(s_2) ... e(s_n) \in \Gamma^\ast \end{align*} $$
+
+\begin{align*}
+    \text{Let } &w = s_1 s_2 ... s_n \in \Sigma^\ast \text{ and } e: \Sigma \mapsto L \subseteq \Gamma^\ast \\\\
+     & e(w) = \left< w\right>_e = e(s_1) e(s_2) ... e(s_n) \in \Gamma^\ast
+\end{align*}
 :::
 
 There are two types of encodings:
@@ -319,12 +330,10 @@ In fact, we can restructure any computational problem into a decision problem.
 As an example:
 Lets take the computation problem of dividing a natural number
 
-$$
-	\begin{align*}
+\begin{align*}
 	\text{Let } n,m \in \mathbb{N}, \text{ and } \frac{n}{m} \in \mathbb{Q} \\
 	\text{COMPUTE\_NATURAL\_DIV}(n,m) &= \frac{n}{m}
-	\end{align*}
-$$
+\end{align*}
 
 Let assume an algorithm for $\text{COMPUTE\_NATURAL\_DIV}$ exists, say $A$.
 
