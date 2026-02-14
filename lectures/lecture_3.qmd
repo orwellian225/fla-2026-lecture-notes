@@ -1,0 +1,74 @@
+# Turing Machines I
+
+Previously, we used a rough idea of an algorithm to prove that computational and decision problems are equivalent.
+Now we want to turn that vague idea into something we can do math over.
+
+## The rules of an algorithm
+
+We are going to build a mathematical model for our algorithm
+
+ONE) The model should be as simple as possible.
+
+Complex models allow us to skip over ideas and work, but they make it more difficult to analyse.
+
+- What is the behaviour of a for loop in the CPU?
+- What is a while loop?
+
+These tools are convenient for writing an algorithm, but they make it harder to see what is happening underneath.
+
+To this end - we are going to remove the idea of data types
+
+- Our algorithms input will always be a string
+- Our algorithms output will always be a string
+
+TWO) The model should be capable of representing _anything_ an algorithm can.
+
+If you can imagine it is something a computer can do, then our algorithm needs to be able to do it.
+
+## Intuition
+
+There are a few 'physical' components necessary for a simple machine
+
+1. A place to read and write - memory
+2. A location to mark what we are reading next - position
+3. A place to control what is written - instructions
+
+A tape of cells holding a single symbol
+
+- Every cell must have some symbol, even if that symbol is 'Nothing': $\sqcup$
+- If it is not empty, then it must have a symbol $a \in \Sigma$
+
+There are an infinite number of cells, going both to the left, and to the right.
+
+A scanner or tapehead that can read and write a symbol
+
+A control unit with a collection of positions (states) that decide what to do
+
+The _only_ instruction of our simple machine is the following:
+
+In position $q_i$, if reading symbol $s_n$, go to position $q_j$, write symbol $s_m$, move the scanner to the left or right
+$$ q_i, s_n \rightarrow q_j, s_m, \{ L, R \} $$
+
+:::{.callout-warning}
+Try imagine what a collection of instructions allows us to do?
+
+1. How might we _infinitely_ move left?
+2. How might we _infinitely_ move right?
+3. Is there a way to stay in the same cell infinitely?
+:::
+
+Importantly, we hard wire these instructions into our machine.
+The execution of an instruction is performed by a physical process.
+
+:::{.callout-info}
+## Creating our machine in the real world
+
+Imagine if our tape was a long length of paper
+
+1. A $0$ is a _single_ hole in the paper
+2. A $1$ is _two_ holes in the paper
+3. A $\sqcup$ is no hole on the paper
+
+Our scanner would be a needle to punch our holes, and sewing kit to fix the holes.
+
+:::

@@ -9,6 +9,7 @@ book:
         - index.qmd
         - lectures/lecture_1.qmd
         - lectures/lecture_2.qmd
+        - lectures/lecture_3.qmd
         # - intro.qmd
         # - summary.qmd
         # - references.qmd
