@@ -1,74 +1,316 @@
 # Turing Machines I
 
-Previously, we used a rough idea of an algorithm to prove that computational and decision problems are equivalent.
-Now we want to turn that vague idea into something we can do math over.
+## A machine that computes
 
-## The rules of an algorithm
+Your intuition might be that a computer is a small box that sits on a desk, in a server rack, and even in your pocket.
+Making use of electronics, digital circuits, and millions of bits and bytes to perform what is sufficiently indistinguishable from magic [^1].
 
-We are going to build a mathematical model for our algorithm
+[^1]: [Arthur C. Clarke's third law](https://en.wikipedia.org/wiki/Clarke%27s_three_laws)
 
-ONE) The model should be as simple as possible.
+In 1936, they had a very different picture.
+The closest equivalent were mechanical devices that used levers, linkages, and gears to produce work - similar to the combustion engine.
+Instead of work being motion, it would be the evaluation a series of steps, generally finding a solution to some form of arithmetic.
+Mechanical calculators were probably the most well known instances of a "computer".
 
-Complex models allow us to skip over ideas and work, but they make it more difficult to analyse.
+{{< video https://www.youtube.com/embed/s_hbvRTGcUI >}}
 
-- What is the behaviour of a for loop in the CPU?
-- What is a while loop?
+:::{.callout-note}
+The first general purpose computer was actually proposed about 100 years before Turing in 1837.
+Charles Babbage designed a machine he called the ["Analytical Engine"](https://en.wikipedia.org/wiki/Analytical_engine).
 
-These tools are convenient for writing an algorithm, but they make it harder to see what is happening underneath.
+This machine was a digital-mechanical hybrid that made use of components that would not be out of place in a contemporary digital computer.
+Had it been finished, it would have been the first known instance of device that is Turing Complete [^2].
 
-To this end - we are going to remove the idea of data types
+Ada Lovelace is often called the first programmer because she wrote the first _published_ progam for this device. [^3]
+This program, called Note G, calculated a sequence of Bernoulli Numbers.
+:::
+[^2]: citation needed
+[^3]: One day I will find citations for this...
 
-- Our algorithms input will always be a string
-- Our algorithms output will always be a string
+When we build our mathematical model of a computer and algorithm, I want you to keep in mind the 'mechanical' nature of it.
 
-TWO) The model should be capable of representing _anything_ an algorithm can.
+For our model to be correct, there are important ideas that need to be captured:
 
-If you can imagine it is something a computer can do, then our algorithm needs to be able to do it.
+1. It should be as simple as possible
+    - What is the smallest amount of 'work' we can get away with for each step in our device?
+    - We will use a string as the only data structure
+2. It should be able to do everything an algorithm can do - For loops, if statements, variables etc. should all be implementable on the device
 
-## Intuition
+## Turing Machines
 
-There are a few 'physical' components necessary for a simple machine
+### Some intuition
 
-1. A place to read and write - memory
-2. A location to mark what we are reading next - position
-3. A place to control what is written - instructions
+Imagine a physical device that has three components:
 
-A tape of cells holding a single symbol
+1. A space to read and write symbols - a tape of sequential cells
+2. A mechanism to perform the read and write - a head that can read or write on a given cell on our tape
+3. A control unit to tell the the head what symbol it should be writing - a box that keeps track of our algorithm steps and where along that algorithm where are
 
-- Every cell must have some symbol, even if that symbol is 'Nothing': $\sqcup$
-- If it is not empty, then it must have a symbol $a \in \Sigma$
+- On our tape, we have a set of symbols on every cell - even if that symbol is a "blank" ($\sqcup$) symbol to represent nothing ($\sqcup, 0, 1, 2, ...$).
+- Our head mechanism, can move between the different cells going either left or right along it.
+- The control unit is composed of various 'device states' ($q_1, q_2, q_3, ...$) that holds the information about whats happened so far (Gears in different positions, or electronic signals in specific patterns).
 
-There are an infinite number of cells, going both to the left, and to the right.
+This device has only one instruction: A conditional statement based off the current device state $q_i$, and the symbol currently on the tape $s_n$
+that tells us what state to go to next $q_j$, what symbol should be written on the tape $s_m$, and whether we should go left or right $D \in \{ L, R \}$.
 
-A scanner or tapehead that can read and write a symbol
+$$ q_i, s_n \rightarrow q_j, s_m, D $$
 
-A control unit with a collection of positions (states) that decide what to do
+:::{.callout-note}
+If we tried to build this device in the real world, these instructions are just the series of levers and gears that interact to create our desired effect.
 
-The _only_ instruction of our simple machine is the following:
+- Write this symbol - rotate a ball with all the symbols on it
+- Change to the 5th state - rotate this gear by 5 teeth from this notch
+- Go left - rotate this other gear counter-clockwise
 
-In position $q_i$, if reading symbol $s_n$, go to position $q_j$, write symbol $s_m$, move the scanner to the left or right
-$$ q_i, s_n \rightarrow q_j, s_m, \{ L, R \} $$
+{{< video https://www.youtube.com/embed/yKpIwi1UUIk?si=_2KDfjjzrn8RyoPD&amp;start=115 >}}
+:::
+
+We will add the stipulation that if our machine enters specific states, the computation will stop:
+For a Yes / No (Accept / Reject) machine we will have the special states $q_\text{accept}, q_\text{reject}$ indicating the corresponding answer,
+and for a device that finds an answer we will have $q_\text{halt}$ that tells us the device has stopped.
+
+Additionally, we need to start somewhere, so we designate $q_0$ as the 'start state'.
+If we need to run this device, we must first reset it so that we are in $q_0$.
+
+Our programming language for this device will be all the possible permutations of these instructions that direct the device:
+
+- In $q_0$,
+    - reading $\sqcup$, go to $\{ q_0, q_1, q_\text{halt} \}$, writing symbol $\{ \sqcup, 0, 1 \}$ and moving $\{ L, R \}$.
+    - reading $0$, go to $\{ q_0, q_1, q_\text{halt} \}$, writing symbol $\{ \sqcup, 0, 1 \}$ and moving $\{ L, R \}$.
+    - reading $1$, go to $\{ q_0, q_1, q_\text{halt} \}$, writing symbol $\{ \sqcup, 0, 1 \}$ and moving $\{ L, R \}$.
+- In $q_1$,
+    - reading $\sqcup$, go to $\{ q_0, q_1, q_\text{halt} \}$, writing symbol $\{ \sqcup, 0, 1 \}$ and moving $\{ L, R \}$.
+    - reading $0$, go to $\{ q_0, q_1, q_\text{halt} \}$, writing symbol $\{ \sqcup, 0, 1 \}$ and moving $\{ L, R \}$.
+    - reading $1$, go to $\{ q_0, q_1, q_\text{halt} \}$, writing symbol $\{ \sqcup, 0, 1 \}$ and moving $\{ L, R \}$.
+
+Our program $\delta$ is the subset of of these permutations that describe the particular behaviour we want.
+
+- In $q_0$
+    - reading $\sqcup$, go to $q_0$, writing $\sqcup$ and moving $R$
+    - reading $0$, go to $q_1$, writing $0$ and moving $R$
+    - reading $1$, go to $q_1$, writing $0$ and moving $R$
+- In $q_1$
+    - reading $\sqcup$, go to $q_\text{halt}$, writing $\sqcup$ and moving $R$
+    - reading $0$, go to $q_1$, writing $0$ and moving $R$
+    - reading $1$, go to $q_1$, writing $1$ and moving $R$
 
 :::{.callout-warning}
-Try imagine what a collection of instructions allows us to do?
+# Question
+What do these instructions actually do?
+Try describe the above algorithm in english.
 
-1. How might we _infinitely_ move left?
-2. How might we _infinitely_ move right?
-3. Is there a way to stay in the same cell infinitely?
+If we use the binary repesentation of integer's, $\left< z \right>_\mathbb{Z}$, what is happening to the number $z \in \mathbb{Z}$?
 :::
 
-Importantly, we hard wire these instructions into our machine.
-The execution of an instruction is performed by a physical process.
+And a computation is the series of changes that has occured in our device and tape.
 
-:::{.callout-info}
-## Creating our machine in the real world
+1. Set the tape to be the input string $0111$,
+2. Set the device to be in $q_0$ and the head to be at the first symbol
+3. Follow each instruction until $q_\text{halt}$
+    - In $q_0$, head is at cell $0$, reading symbol $0$, go to $q_1$, write $1$, move right to cell $1$
+    - In $q_1$, head is at cell $1$, reading symbol $1$, go to $q_1$, write $1$, move right to cell $2$
+    - In $q_1$, head is at cell $2$, reading $1$, to $q_1$, write $1$, move right to cell $3$
+    - In $q_1$, head is at cell $3$, reading $1$, to $q_1$, write $1$, move right to cell $4$
+        - Now we have moved off the end of string, so we assume that there will always be another cell with a blank symbol (i.e. a tape of infinite length)
+    - In $q_1$, head is at cell $4$, reading $\sqcup$, to $q_\text{halt}$, write $\sqcup$, move right to cell $5$
+        - We are in $q_\text{halt}$ so our device stops
+4. Read the resulting string $1111$ off of our tape
 
-Imagine if our tape was a long length of paper
+Congratulations, we have just built a physical device that evaluates some algorithm.
+If we use $\left< z \right>_\mathbb{Z}$, then this algorithm is computing the absolute value of $z$, and our device is now a very simple mechanical calculator.
 
-1. A $0$ is a _single_ hole in the paper
-2. A $1$ is _two_ holes in the paper
-3. A $\sqcup$ is no hole on the paper
+:::{.callout-warning}
+## Question
 
-Our scanner would be a needle to punch our holes, and sewing kit to fix the holes.
-
+- There is an even simpler version of this algorithm using only two states: $q_0, q_\text{halt}$.
+Try to describe this new device in the same way we just did.
+- This device computes the absolute value of an integer $$\text{ABSOLUTE\_INT}(\left<z\right>) = \left< | z | \right> $$.
+    1. Write the equivalent decision problem.
+    2. Try describe the decision problem's device.
+- What changes need to be applied to this device for it to work over the rationals as well?
 :::
+
+### Formal Definition
+
+The previous device is essentially an implementation of a Turing Machine as a mechanical machine.
+
+Mathematically, our Turing Machine that evaluates computation problems, $P: \Gamma^\ast |-> \Gamma^\ast$, is
+
+A **Computational Turing Machine** $M$ is the tuple $(Q, \Gamma, \Delta, \delta, q_\text{init}, q_\text{halt})$ where
+
+- $Q$ is a finite non-empty set of *states*
+- $\Gamma$ is an **input alphabet** such that $\sqcup \notin \Gamma$
+- $\Delta$ is a **tape alphabet**, satisfying the following conditions:
+    1. $\Gamma \subseteq \Delta$ - Our input alphabet can be written on the tape
+    2. $\sqcup \in \Delta$ - Our tape has a blank symbol
+    3. $\Delta \cap \Gamma = \emptyset$ - The symbols and states are different
+- $q_\text{init}, q_\text{halt} \in Q$
+- $\delta$ (called the **transition function** or **program**) is a finite set of instructions in the form $q_i, s_n \rightarrow q_j, s_m, D$
+    1. $q_i, q_j \in Q$
+    2. $s_n, s_m \in \Gamma$
+    3. $D \in \{ L, R \}$
+    4. and for all $q \in Q \backslash \{q_\text{halt}\}$ and all $s \in \Delta$ there exists only one instruction in $\delta$ that has the form $q, s \rightarrow q^\prime, s^\prime, D$
+
+Decision problems, $P: \Gamma^\ast \mapsto \{0, 1\}$ have their own variant of Turing Machine.
+
+A **Decision Turing Machine** $M$ is the tuple $(Q, \Gamma, \Delta, \delta, q_\text{init}, q_\text{accept}, q_\text{reject})$ where
+
+- $Q$ is a finite non-empty set of *states*
+- $\Gamma$ is an **input alphabet** such that $\sqcup \notin \Gamma$
+- $\Delta$ is a **tape alphabet**, satisfying the following conditions:
+    1. $\Gamma \subseteq \Delta$
+    2. $\sqcup \in \Delta$
+    3. $\Delta \cap \Gamma = \emptyset$
+- $q_\text{init}, q_\text{accept}, q_\text{reject} \in Q$
+- $\delta$ (called the **transition function** or **program**) is a finite set of instructions in the form $q_i, s_n \rightarrow q_j, s_m, D$
+    1. $q_i, q_j \in Q$
+    2. $s_n, s_m \in \Gamma$
+    3. $D \in \{ L, R \}$
+    4. and for all $q \in Q \backslash \{q_\text{accept}, q_\text{reject}\}$ and all $s \in \Delta$ there exists only one instruction in $\delta$ that has the form $q, s \rightarrow q^\prime, s^\prime, D$
+
+:::{.callout-warning}
+## Question
+
+We have seen previously that Decision Problems and Computational Problems are equivalent if an algorithm exists for one, then an algorithm must exist for the other.
+Try to rewrite this proof but using the relevant Turing Machine instead of a generic algorithm.
+:::
+
+:::{.callout-tip}
+## Notation
+
+Decision and Computation equivalence means that we can simplify our discussion.
+Instead of distinguishing between a Decision and Computational Turing Machine, if I refer to just a Turing Machine, then it is a Decision Turing Machine.
+
+A **Turing Machine** $M$ is a Decision Turing Machine $(Q, \Gamma, \Delta, \delta, q_\text{init}, q_\text{accept}, q_\text{reject})$ unless otherwise stated.
+:::
+
+### Computing
+
+A **configuration** is the current state of our Turing Machine, where the head is positioned, and what symbols are on the tape.
+
+Let $M$ be a Turing Machine,
+
+- A **configuration** of $M$ and tape is a word $w$ in the alphabet $Q \cup \Delta$ satisfying the following:
+    1. $w$ contains exactly one symbol from $Q$
+    2. $w$ does not begin with $\sqcup$
+    3. If the last symbol of $w$ is a $\sqcup$, the it is preceded by a symbol from $Q$
+- A **configuration** is _halting_ if it contains $q_\text{accept}$, $q_\text{reject}$, or $q_\text{halt}$
+- A **configuration** is _accepting_ if it contains $q_\text{accept}$
+- A **configuration** is _rejecting_ if it contains $q_\text{reject}$
+
+Our machine starts in $q_\text{init}$ and has the input string written on its tape
+
+Let $M$ be a Turing Machine, and $x \in \Gamma^\ast$,
+
+The **initial configuration** of $M$ on $x$ ($M(x)$) is $$ q_\text{init}x $$
+
+Computation is the process of moving between different configurations of our machine and tape.
+In fact, a computation is the sequence of configurations start from the initial configuration until it is in a halting configuration.
+
+Let $M$ be a Turing Machine, and $w$ and $v$ are configurations of $M$,
+
+We say that $w$ yields to $v$ ($w \vdash v$) if one of the following conditions hold:
+
+1. $q, s \rightarrow, q^\prime, s^\prime L \in \delta$ and
+    - either $w = xtqsy$ and $v = xq^\prime t s^\prime y$ for $t \in \Delta$ and $x, y \in \Delta^\ast$
+    - or $w = qsx$ and $v = q^\prime\sqcup s^\prime x$ for $x \in \Delta*$
+
+1. $q, s \rightarrow, q^\prime, s^\prime R \in \delta$ and
+    - either $w = xqsy$ and $v = x s^\prime q^\prime y$ for $x, y \in \Delta^\ast$
+    - or $w = xqs$ and $v = x s^\prime q^\prime \sqcup$ for $x \in \Delta*$
+
+:::{.callout-note}
+Our example in 3.2.1 produces the sequence of configurations
+    $$ q_0 0111 \vdash 0 q_1 111 \vdash 01 q_1 11 \vdash 011 q_1 1 \vdash 0111 q_1 \sqcup \vdash 0111\sqcup q_\text{halt} \sqcup $$
+:::
+
+Let $M$ be a Turing Machine and $x \in \Gamma^\ast$,
+
+The **computation** of $M$ on $x$ is the sequence of configurations $c_0, c_1, c_2, ...$ such that
+
+1. $c_0$ is the initial configuration of $M$ on $x$
+2. $c_i \vdash c_{i + 1}$ for all $i \geq 0$
+3. The sequence has at most one halting configuration.
+4. If the sequence has a halting configuration $c_n$, then $c_n$ is the last configuration in the sequence.
+
+We want to identify the **status** of our computation
+
+Let $M$ be a Turing Machine $M$ and $x \in \Gamma^\ast$
+
+- $M$ **halts** on $x$ if the sequence $c_0, c_1, c_2, ...$ contains a halting configuration
+- $M$ **loops** on $x$ if the sequence $c_0, c_1, c_2, ...$ does not contain a halting configuration
+- $M$ **accepts** on $x$ if the sequence $c_0, c_1, c_2, ...$ contains an accepting configuration
+- $M$ **rejects** on $x$ if the sequence $c_0, c_1, c_2, ...$ contains a rejecting configuration
+
+:::{.callout-tip}
+## Notation
+$$
+    M(x) = \begin{cases}
+        1 & \text{if $M$ accepts $x$} \\
+        0 & \text{if $M$ rejects $x$} \\
+        \infty & \text{otherwise}
+    \end{cases}
+$$
+:::
+
+Lastly, we want a way to classify TM's based on whether they accept, reject or loop on all inputs.
+
+Let $M$ be a Turing Machine
+
+- $M$ is a **decider** if it accepts or rejects $x$ for all $x \in \Gamma^\ast$
+- $M$ **decides** / **solves** a decision problem $P: \Gamma^\ast \mapsto \{ 0, 1 \}$ if $\forall x \in \Gamma^\ast, M(x) = P(x)$
+
+:::{.callout-warning}
+Let $M$ be a Turing Machine
+
+1. If $M$ is a decider, does it solve some decision problem?
+2. If $M$ solves a decision problem, is it a decider?
+:::
+
+:::{.callout-tip}
+## Notation
+
+We say that a Turing Machine $M$ **decides** a language $L \subseteq \Gamma^\ast$ if
+$$ M(x) = 1 \iff x \in L $$
+:::
+
+:::{.callout-note}
+We can define a similar concept for Computational Turing Machines.
+
+Let $M$ be a Computation Turing Machine
+
+- $M$ computes the computational problem $P: \Gamma^\ast \mapsto \Gamma^\ast$ if $\forall x \in \Gamma^\ast, M(x) = P(x)$
+
+More importantly, this gives us a definition of when something is computable.
+
+Some function $f: \Sigma^\ast \mapsto \Sigma^\ast$ over an alphabet $\Sigma$ is **computable** if there exists a Computation Turing Machine that computes $f$
+:::
+
+Two Turing Machines $M$ and $N$ on the same input alphabet $\Gamma$ are equivalent if they have the same input and output behaviour
+$$ \forall x \in \Gamma^\ast, M(x) = N(x)$$
+
+:::{.callout-warning}
+## Question
+
+How many equivalent Turing Machines are there?
+
+**Proof Sketch**:
+If I take some Turing Machine $M$, we can add a new state $q$ and make the new machine $M^\prime$.
+We can make $q$ fall between any state $q_i$ that has some transition to $q_\text{accept}$.
+
+1. If $q_i$ has a transition to $q_\text{accept}$, make it instead transition to $q$ (leaving the rest of the transition unmodified)
+2. $q$ transitions to $q_\text{accept}$ on every symbol, leaving the symbol unmodified.
+
+$M^\prime$ has not changed anything about any computation besides add a new configuration $c_{n + 1}$ to the sequence.
+It has not changed the outcome, nor has it changed the tape in anyway.
+Thus $M^\prime$ is equivalent to $M$.
+
+We can then create $M^{\prime\prime}$ in the exact same fashion from $M^\prime$.
+Repeat this ad-infinitum, and we have an infinite number of equivalent Turing Machines.
+:::
+
+## The Church-Turing Thesis
+
+### Machines are algorithms - 10 minutes
+
+### Algorithm Resources - 10 minutes
