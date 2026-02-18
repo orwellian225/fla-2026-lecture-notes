@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>3&nbsp; Turing Machines I – FLA 2026 Lecture Notes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../lectures/lecture_4.html" rel="next">
+<link href="../lectures/lecture_2.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-70a47bd5681a7291082a5b9f83d58762.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../lectures/lecture_3.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Turing Machines I</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">FLA 2026 Lecture Notes</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lectures/lecture_1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">An Introduction to Theoretical Computer Science</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lectures/lecture_2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Data, Representations, and Problems</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lectures/lecture_3.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Turing Machines I</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lectures/lecture_4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Turing Machines II</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lectures/lecture_5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Turing Equivalency</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#a-machine-that-computes" id="toc-a-machine-that-computes" class="nav-link active" data-scroll-target="#a-machine-that-computes"><span class="header-section-number">3.1</span> A machine that computes</a></li>
+  <li><a href="#turing-machines" id="toc-turing-machines" class="nav-link" data-scroll-target="#turing-machines"><span class="header-section-number">3.2</span> Turing Machines</a>
+  <ul class="collapse">
+  <li><a href="#some-intuition" id="toc-some-intuition" class="nav-link" data-scroll-target="#some-intuition"><span class="header-section-number">3.2.1</span> Some intuition</a></li>
+  <li><a href="#formal-definition" id="toc-formal-definition" class="nav-link" data-scroll-target="#formal-definition"><span class="header-section-number">3.2.2</span> Formal Definition</a></li>
+  <li><a href="#computing" id="toc-computing" class="nav-link" data-scroll-target="#computing"><span class="header-section-number">3.2.3</span> Computing</a></li>
+  <li><a href="#computational-problems" id="toc-computational-problems" class="nav-link" data-scroll-target="#computational-problems"><span class="header-section-number">3.2.4</span> Computational Problems</a></li>
+  </ul></li>
+  <li><a href="#turing-machines-as-algorithms" id="toc-turing-machines-as-algorithms" class="nav-link" data-scroll-target="#turing-machines-as-algorithms"><span class="header-section-number">3.3</span> Turing Machines as Algorithms</a>
+  <ul class="collapse">
+  <li><a href="#analysis-of-turing-machines" id="toc-analysis-of-turing-machines" class="nav-link" data-scroll-target="#analysis-of-turing-machines"><span class="header-section-number">3.3.1</span> Analysis of Turing Machines</a></li>
+  <li><a href="#the-church-turing-thesis" id="toc-the-church-turing-thesis" class="nav-link" data-scroll-target="#the-church-turing-thesis"><span class="header-section-number">3.3.2</span> The Church-Turing Thesis</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Turing Machines I</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="a-machine-that-computes" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="a-machine-that-computes"><span class="header-section-number">3.1</span> A machine that computes</h2>
+<p>Your intuition might be that a computer is a small box that sits on a desk, in a server rack, and even in your pocket. Making use of electronics, digital circuits, and millions of bits and bytes to perform what is sufficiently indistinguishable from magic <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>.</p>
+<p>In 1936, they had a very different picture. The closest equivalent were mechanical devices that used levers, linkages, and gears to produce work - similar to the combustion engine. Instead of work being motion, it would be the evaluation a series of steps, generally finding a solution to some form of arithmetic. Mechanical calculators were probably the most well known instances of a “computer”.</p>
+<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/s_hbvRTGcUI" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The first general purpose computer was actually proposed about 100 years before Turing in 1837. Charles Babbage designed a machine he called the <a href="https://en.wikipedia.org/wiki/Analytical_engine">“Analytical Engine”</a>.</p>
+<p>This machine was a digital-mechanical hybrid that made use of components that would not be out of place in a contemporary digital computer. Had it been finished, it would have been the first known instance of device that is Turing Complete <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>.</p>
+<p>Ada Lovelace is often called the first programmer because she wrote the first <em>published</em> progam for this device. <a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> This program, called Note G, calculated a sequence of Bernoulli Numbers.</p>
+</div>
+</div>
+<p>When we build our mathematical model of a computer and algorithm, I want you to keep in mind the ‘mechanical’ nature of it.</p>
+<p>For our model to be correct, there are important ideas that need to be captured:</p>
+<ol type="1">
+<li>It should be as simple as possible
+<ul>
+<li>What is the smallest amount of ‘work’ we can get away with for each step in our device?</li>
+<li>We will use a string as the only data structure</li>
+</ul></li>
+<li>It should be able to do everything an algorithm can do - For loops, if statements, variables etc. should all be implementable on the device</li>
+</ol>
+</section>
+<section id="turing-machines" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="turing-machines"><span class="header-section-number">3.2</span> Turing Machines</h2>
+<section id="some-intuition" class="level3" data-number="3.2.1">
+<h3 data-number="3.2.1" class="anchored" data-anchor-id="some-intuition"><span class="header-section-number">3.2.1</span> Some intuition</h3>
+<p>Imagine a physical device that has three components:</p>
+<ol type="1">
+<li>A space to read and write symbols - a tape of sequential cells</li>
+<li>A mechanism to perform the read and write - a head that can read or write on a given cell on our tape</li>
+<li>A control unit to tell the the head what symbol it should be writing - a box that keeps track of our algorithm steps and where along that algorithm where are</li>
+</ol>
+<ul>
+<li>On our tape, we have a set of symbols on every cell - even if that symbol is a “blank” (<span class="math inline">\(\sqcup\)</span>) symbol to represent nothing (<span class="math inline">\(\sqcup, 0, 1, 2, ...\)</span>).</li>
+<li>We will also assume that our tape has as much space as it needs - i.e.&nbsp;an infinite tape.</li>
+<li>Our head mechanism, can move between the different cells going either left or right along it.</li>
+<li>The control unit is composed of various ‘device states’ (<span class="math inline">\(q_1, q_2, q_3, ...\)</span>) that holds the information about whats happened so far (Gears in different positions, or electronic signals in specific patterns).</li>
+</ul>
+<p>This device has only one instruction: A conditional statement based off the current device state <span class="math inline">\(q_i\)</span>, and the symbol currently on the tape <span class="math inline">\(s_n\)</span> that tells us what state to go to next <span class="math inline">\(q_j\)</span>, what symbol should be written on the tape <span class="math inline">\(s_m\)</span>, and whether we should go left or right <span class="math inline">\(D \in \{ L, R \}\)</span>.</p>
+<p><span class="math display">\[ q_i, s_n \rightarrow q_j, s_m, D \]</span></p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If we tried to build this device in the real world, these instructions are just the series of levers and gears that interact to create our desired effect.</p>
+<ul>
+<li>Write this symbol - rotate a ball with all the symbols on it</li>
+<li>Change to the 5th state - rotate this gear by 5 teeth from this notch</li>
+<li>Go left - rotate this other gear counter-clockwise</li>
+</ul>
+<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/yKpIwi1UUIk?si=_2KDfjjzrn8RyoPD&amp;start=115" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+</div>
+</div>
+<p>We will add the stipulation that if our machine enters specific states, the computation will stop: For a Yes / No (Accept / Reject) machine we will have the special states <span class="math inline">\(q_\text{accept}, q_\text{reject}\)</span> indicating the corresponding answer.</p>
+<p>Additionally, we need to start somewhere, so we designate <span class="math inline">\(q_0\)</span> as the ‘start state’. If we need to run this device, we must first reset it so that we are in <span class="math inline">\(q_0\)</span>.</p>
+<p>Our programming language for this device will be all the possible permutations of these instructions that direct the device:</p>
+<ul>
+<li>In <span class="math inline">\(q_0\)</span>,
+<ul>
+<li>reading <span class="math inline">\(\sqcup\)</span>, go to <span class="math inline">\(\{ q_0, q_1, q_\text{halt} \}\)</span>, writing symbol <span class="math inline">\(\{ \sqcup, 0, 1 \}\)</span> and moving <span class="math inline">\(\{ L, R \}\)</span>.</li>
+<li>reading <span class="math inline">\(0\)</span>, go to <span class="math inline">\(\{ q_0, q_1, q_\text{halt} \}\)</span>, writing symbol <span class="math inline">\(\{ \sqcup, 0, 1 \}\)</span> and moving <span class="math inline">\(\{ L, R \}\)</span>.</li>
+<li>reading <span class="math inline">\(1\)</span>, go to <span class="math inline">\(\{ q_0, q_1, q_\text{halt} \}\)</span>, writing symbol <span class="math inline">\(\{ \sqcup, 0, 1 \}\)</span> and moving <span class="math inline">\(\{ L, R \}\)</span>.</li>
+</ul></li>
+<li>In <span class="math inline">\(q_1\)</span>,
+<ul>
+<li>reading <span class="math inline">\(\sqcup\)</span>, go to <span class="math inline">\(\{ q_0, q_1, q_\text{halt} \}\)</span>, writing symbol <span class="math inline">\(\{ \sqcup, 0, 1 \}\)</span> and moving <span class="math inline">\(\{ L, R \}\)</span>.</li>
+<li>reading <span class="math inline">\(0\)</span>, go to <span class="math inline">\(\{ q_0, q_1, q_\text{halt} \}\)</span>, writing symbol <span class="math inline">\(\{ \sqcup, 0, 1 \}\)</span> and moving <span class="math inline">\(\{ L, R \}\)</span>.</li>
+<li>reading <span class="math inline">\(1\)</span>, go to <span class="math inline">\(\{ q_0, q_1, q_\text{halt} \}\)</span>, writing symbol <span class="math inline">\(\{ \sqcup, 0, 1 \}\)</span> and moving <span class="math inline">\(\{ L, R \}\)</span>.</li>
+</ul></li>
+</ul>
+<p>Our program <span class="math inline">\(\delta\)</span> is the subset of of these permutations that describe the particular behaviour we want.</p>
+<ul>
+<li>In <span class="math inline">\(q_0\)</span>
+<ul>
+<li>reading <span class="math inline">\(\sqcup\)</span>, go to <span class="math inline">\(q_1\)</span>, writing <span class="math inline">\(\sqcup\)</span> and moving <span class="math inline">\(L\)</span></li>
+<li>reading <span class="math inline">\(0\)</span>, go to <span class="math inline">\(q_0\)</span>, writing <span class="math inline">\(0\)</span> and moving <span class="math inline">\(R\)</span></li>
+<li>reading <span class="math inline">\(1\)</span>, go to <span class="math inline">\(q_0\)</span>, writing <span class="math inline">\(1\)</span> and moving <span class="math inline">\(R\)</span></li>
+</ul></li>
+<li>In <span class="math inline">\(q_1\)</span>
+<ul>
+<li>reading <span class="math inline">\(\sqcup\)</span>, go to <span class="math inline">\(q_\text{reject}\)</span>, writing <span class="math inline">\(\sqcup\)</span> and moving <span class="math inline">\(R\)</span></li>
+<li>reading <span class="math inline">\(0\)</span>, go to <span class="math inline">\(q_\text{reject}\)</span>, writing <span class="math inline">\(0\)</span> and moving <span class="math inline">\(R\)</span></li>
+<li>reading <span class="math inline">\(1\)</span>, go to <span class="math inline">\(q_\text{accept}\)</span>, writing <span class="math inline">\(1\)</span> and moving <span class="math inline">\(R\)</span></li>
+</ul></li>
+</ul>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>What do these instructions actually do? Try describe the above algorithm in english.</p>
+<p>If we use the binary repesentation of integer’s, <span class="math inline">\(\left&lt; z \right&gt;_{\mathbb{Z}}\)</span>, what is happening to the number <span class="math inline">\(z \in \mathbb{Z}\)</span>?</p>
+</div>
+</div>
+<p>And a computation is the series of changes that has occured in our device and tape.</p>
+<ol type="1">
+<li>Set the tape to be the input string <span class="math inline">\(0111\)</span>,</li>
+<li>Set the device to be in <span class="math inline">\(q_0\)</span> and the head to be at the first symbol
+<ul>
+<li>We always start at the first symbol of our input</li>
+</ul></li>
+<li>Follow each instruction until <span class="math inline">\(q_\text{accept}\)</span> or <span class="math inline">\(q_\text{reject}\)</span>
+<ul>
+<li>Step <span class="math inline">\(0\)</span>: In <span class="math inline">\(q_0\)</span>, scanning cell <span class="math inline">\(0\)</span>, reading symbol <span class="math inline">\(0\)</span>, go to <span class="math inline">\(q_0\)</span>, write <span class="math inline">\(0\)</span>, move right to cell <span class="math inline">\(1\)</span>
+<ul>
+<li><span class="math inline">\(q_0 0111\)</span></li>
+</ul></li>
+<li>Step <span class="math inline">\(1\)</span>: In <span class="math inline">\(q_0\)</span>, scanning cell <span class="math inline">\(1\)</span>, reading symbol <span class="math inline">\(1\)</span>, go to <span class="math inline">\(q_0\)</span>, write <span class="math inline">\(1\)</span>, move right to cell <span class="math inline">\(2\)</span>
+<ul>
+<li><span class="math inline">\(0 q_0 111\)</span></li>
+</ul></li>
+<li>Step <span class="math inline">\(2\)</span>: In <span class="math inline">\(q_0\)</span>, scanning cell <span class="math inline">\(2\)</span>, reading symbol <span class="math inline">\(1\)</span>, go to <span class="math inline">\(q_0\)</span>, write <span class="math inline">\(1\)</span>, move right to cell <span class="math inline">\(3\)</span>
+<ul>
+<li><span class="math inline">\(01 q_0 11\)</span></li>
+</ul></li>
+<li>Step <span class="math inline">\(3\)</span>: In <span class="math inline">\(q_0\)</span>, scanning cell <span class="math inline">\(3\)</span>, reading symbol <span class="math inline">\(1\)</span>, go to <span class="math inline">\(q_0\)</span>, write <span class="math inline">\(1\)</span>, move right to cell <span class="math inline">\(4\)</span>
+<ul>
+<li><span class="math inline">\(011 q_0 1\)</span></li>
+</ul></li>
+<li>Step <span class="math inline">\(4\)</span>: In <span class="math inline">\(q_0\)</span>, scanning cell <span class="math inline">\(4\)</span>, reading symbol <span class="math inline">\(\sqcup\)</span>, go to <span class="math inline">\(q_1\)</span>, write <span class="math inline">\(\sqcup\)</span>, move left to cell <span class="math inline">\(3\)</span>
+<ul>
+<li>We have moved off the end of our string into a “blank” cell</li>
+<li><span class="math inline">\(0111 q_0 \sqcup\)</span></li>
+</ul></li>
+<li>Step <span class="math inline">\(5\)</span>: In <span class="math inline">\(q_1\)</span>, scanning cell <span class="math inline">\(3\)</span>, reading symbol <span class="math inline">\(1\)</span>, go to <span class="math inline">\(q_\text{accept}\)</span>, write <span class="math inline">\(1\)</span>, move right to cell <span class="math inline">\(4\)</span>
+<ul>
+<li><span class="math inline">\(011 q_1 1\)</span></li>
+</ul></li>
+<li>Step <span class="math inline">\(6\)</span>: In <span class="math inline">\(q_\text{accept}\)</span> scanning cell <span class="math inline">\(4\)</span> <span class="math inline">\(\rightarrow\)</span> halt
+<ul>
+<li><span class="math inline">\(0111 q_\text{accept} \sqcup\)</span></li>
+</ul></li>
+</ul></li>
+<li>Read the result as <span class="math inline">\(1\)</span> as we are in <span class="math inline">\(q_\text{accept}\)</span></li>
+</ol>
+<p>Congratulations, we have just built a physical device that evaluates some algorithm. If we use <span class="math inline">\(\left&lt; z \right&gt;_{\mathbb{Z}}\)</span>, then this algorithm determines if the given integer is even or odd.</p>
+</section>
+<section id="formal-definition" class="level3" data-number="3.2.2">
+<h3 data-number="3.2.2" class="anchored" data-anchor-id="formal-definition"><span class="header-section-number">3.2.2</span> Formal Definition</h3>
+<p>The previous device is essentially an implementation of a Turing Machine as a mechanical machine.</p>
+<p>Mathematically, a Turing Machine for Decision Problems are defined as follows</p>
+<p>A <strong>Decision Turing Machine</strong> <span class="math inline">\(M\)</span> is the tuple <span class="math inline">\((Q, \Gamma, \Delta, \delta, q_\text{init}, q_\text{accept}, q_\text{reject})\)</span> where</p>
+<ul>
+<li><span class="math inline">\(Q\)</span> is a finite non-empty set of <em>states</em></li>
+<li><span class="math inline">\(\Gamma\)</span> is an <strong>input alphabet</strong> such that <span class="math inline">\(\sqcup \notin \Gamma\)</span></li>
+<li><span class="math inline">\(\Delta\)</span> is a <strong>tape alphabet</strong>, satisfying the following conditions:
+<ol type="1">
+<li><span class="math inline">\(\Gamma \subseteq \Delta\)</span></li>
+<li><span class="math inline">\(\sqcup \in \Delta\)</span></li>
+<li><span class="math inline">\(\Delta \cap \Gamma = \emptyset\)</span></li>
+</ol></li>
+<li><span class="math inline">\(q_\text{init}, q_\text{accept}, q_\text{reject} \in Q\)</span></li>
+<li><span class="math inline">\(\delta\)</span> (called the <strong>transition function</strong> or <strong>program</strong>) is a finite set of instructions in the form <span class="math inline">\(q_i, s_n \rightarrow q_j, s_m, D\)</span>
+<ol type="1">
+<li><span class="math inline">\(q_i, q_j \in Q\)</span></li>
+<li><span class="math inline">\(s_n, s_m \in \Gamma\)</span></li>
+<li><span class="math inline">\(D \in \{ L, R \}\)</span></li>
+<li>and for all <span class="math inline">\(q \in Q \backslash \{q_\text{accept}, q_\text{reject}\}\)</span> and all <span class="math inline">\(s \in \Delta\)</span> there exists only one instruction in <span class="math inline">\(\delta\)</span> that has the form <span class="math inline">\(q, s \rightarrow q^\prime, s^\prime, D\)</span></li>
+</ol></li>
+</ul>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>We have seen previously that Decision Problems and Computational Problems are equivalent if an algorithm exists for one, then an algorithm must exist for the other. Try to rewrite this proof but using a Turing Machine (See <a href="#Computation-Problems">Computation Problems</a> for a definition of Computational Turing Machines) instead of a generic algorithm.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Notation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Decision and Computation equivalence means that the exact specifics of our Turing Machine are not that important. We stick to a Decision Turing Machine because it is a stronger continuation from Regular Languages and Context-Free Grammers. However, there is no reason you cannot tackle this entire branch using Computational problems instead.</p>
+</div>
+</div>
+</section>
+<section id="computing" class="level3" data-number="3.2.3">
+<h3 data-number="3.2.3" class="anchored" data-anchor-id="computing"><span class="header-section-number">3.2.3</span> Computing</h3>
+<p>A <strong>configuration</strong> is the current state of our Turing Machine, where the head is positioned, and what symbols are on the tape.</p>
+<p>Let <span class="math inline">\(M\)</span> be a Turing Machine,</p>
+<ul>
+<li>A <strong>configuration</strong> of <span class="math inline">\(M\)</span> and tape is a word <span class="math inline">\(w\)</span> in the alphabet <span class="math inline">\(Q \cup \Delta\)</span> satisfying the following:
+<ol type="1">
+<li><span class="math inline">\(w\)</span> contains exactly one symbol from <span class="math inline">\(Q\)</span></li>
+<li><span class="math inline">\(w\)</span> does not begin with <span class="math inline">\(\sqcup\)</span></li>
+<li>If the last symbol of <span class="math inline">\(w\)</span> is a <span class="math inline">\(\sqcup\)</span>, the it is preceded by a symbol from <span class="math inline">\(Q\)</span></li>
+</ol></li>
+<li>A <strong>configuration</strong> is <em>halting</em> if it contains <span class="math inline">\(q_\text{accept}\)</span>, <span class="math inline">\(q_\text{reject}\)</span></li>
+<li>A <strong>configuration</strong> is <em>accepting</em> if it contains <span class="math inline">\(q_\text{accept}\)</span></li>
+<li>A <strong>configuration</strong> is <em>rejecting</em> if it contains <span class="math inline">\(q_\text{reject}\)</span></li>
+</ul>
+<p>Our machine starts in <span class="math inline">\(q_\text{init}\)</span> and has the input string written on its tape</p>
+<p>Let <span class="math inline">\(M\)</span> be a Turing Machine, and <span class="math inline">\(x \in \Gamma^\ast\)</span>,</p>
+<p>The <strong>initial configuration</strong> of <span class="math inline">\(M\)</span> on <span class="math inline">\(x\)</span> is <span class="math display">\[ q_\text{init}x \]</span></p>
+<p>Computation is the process of moving between different configurations of our machine and tape. In fact, a computation is the sequence of configurations start from the initial configuration until it is in a halting configuration.</p>
+<p>Let <span class="math inline">\(M\)</span> be a Turing Machine, and <span class="math inline">\(w\)</span> and <span class="math inline">\(v\)</span> are configurations of <span class="math inline">\(M\)</span>,</p>
+<p>We say that <span class="math inline">\(w\)</span> yields to <span class="math inline">\(v\)</span> (<span class="math inline">\(w \vdash v\)</span>) if one of the following conditions hold:</p>
+<ol type="1">
+<li><span class="math inline">\(q, s \rightarrow, q^\prime, s^\prime, L \in \delta\)</span> and
+<ul>
+<li>either <span class="math inline">\(w = xtqsy\)</span> and <span class="math inline">\(v = xq^\prime t s^\prime y\)</span> for <span class="math inline">\(t \in \Delta\)</span> and <span class="math inline">\(x, y \in \Delta^\ast\)</span></li>
+<li>or <span class="math inline">\(w = qsx\)</span> and <span class="math inline">\(v = q^\prime\sqcup s^\prime x\)</span> for <span class="math inline">\(x \in \Delta*\)</span></li>
+</ul></li>
+<li><span class="math inline">\(q, s \rightarrow, q^\prime, s^\prime, R \in \delta\)</span> and
+<ul>
+<li>either <span class="math inline">\(w = xqsy\)</span> and <span class="math inline">\(v = x s^\prime q^\prime y\)</span> for <span class="math inline">\(x, y \in \Delta^\ast\)</span></li>
+<li>or <span class="math inline">\(w = xqs\)</span> and <span class="math inline">\(v = x s^\prime q^\prime \sqcup\)</span> for <span class="math inline">\(x \in \Delta*\)</span></li>
+</ul></li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Our example in 3.2.1 produces the sequence of configurations <span class="math display">\[ q_0 0111 \vdash 0 q_1 111 \vdash 01 q_1 11 \vdash 011 q_1 1 \vdash 0111 q_1 \sqcup \vdash 0111\sqcup q_\text{halt} \sqcup \]</span></p>
+</div>
+</div>
+<p>Let <span class="math inline">\(M\)</span> be a Turing Machine and <span class="math inline">\(x \in \Gamma^\ast\)</span>,</p>
+<p>The <strong>computation</strong> of <span class="math inline">\(M\)</span> on <span class="math inline">\(x\)</span> is the sequence of configurations <span class="math inline">\(c_0, c_1, c_2, ...\)</span> such that</p>
+<ol type="1">
+<li><span class="math inline">\(c_0\)</span> is the initial configuration of <span class="math inline">\(M\)</span> on <span class="math inline">\(x\)</span></li>
+<li><span class="math inline">\(c_i \vdash c_{i + 1}\)</span> for all <span class="math inline">\(i \geq 0\)</span></li>
+<li>The sequence has at most one halting configuration.</li>
+<li>If the sequence has a halting configuration <span class="math inline">\(c_n\)</span>, then <span class="math inline">\(c_n\)</span> is the last configuration in the sequence.</li>
+</ol>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Notation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>We will use the symbol <span class="math inline">\(C(M,x)\)</span> to refer to the computation of <span class="math inline">\(M\)</span> on <span class="math inline">\(x\)</span>.</p>
+<p>The length of a computation <span class="math inline">\(|C(M,x)|\)</span> is the number of configurations in a sequence.</p>
+</div>
+</div>
+<p>We want to identify the <strong>status</strong> of our computation</p>
+<p>Let <span class="math inline">\(M\)</span> be a Turing Machine <span class="math inline">\(M\)</span> and <span class="math inline">\(x \in \Gamma^\ast\)</span></p>
+<ul>
+<li><span class="math inline">\(M\)</span> <strong>halts</strong> on <span class="math inline">\(x\)</span> if the computation <span class="math inline">\(C(M,x)\)</span> (sequence <span class="math inline">\(c_0, c_1, c_2, ...\)</span>) contains a halting configuration</li>
+<li><span class="math inline">\(M\)</span> <strong>loops</strong> on <span class="math inline">\(x\)</span> if the sequence <span class="math inline">\(c_0, c_1, c_2, ...\)</span> does not contain a halting configuration</li>
+<li><span class="math inline">\(M\)</span> <strong>accepts</strong> <span class="math inline">\(x\)</span> if the sequence <span class="math inline">\(c_0, c_1, c_2, ...\)</span> contains an accepting configuration</li>
+<li><span class="math inline">\(M\)</span> <strong>rejects</strong> <span class="math inline">\(x\)</span> if the sequence <span class="math inline">\(c_0, c_1, c_2, ...\)</span> contains a rejecting configuration</li>
+</ul>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Notation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><span class="math display">\[
+    M(x) = \begin{cases}
+        1 &amp; \text{if $M$ accepts $x$} \\
+        0 &amp; \text{if $M$ rejects $x$} \\
+        \infty &amp; \text{otherwise}
+    \end{cases}
+\]</span></p>
+</div>
+</div>
+<p>Lastly, we want a way to classify TM’s based on whether they accept, reject or loop on all inputs.</p>
+<p>Let <span class="math inline">\(M\)</span> be a Turing Machine</p>
+<ul>
+<li><span class="math inline">\(M\)</span> is a <strong>decider</strong> if it accepts or rejects <span class="math inline">\(x\)</span> for all <span class="math inline">\(x \in \Gamma^\ast\)</span></li>
+<li><span class="math inline">\(M\)</span> <strong>decides</strong> / <strong>solves</strong> a decision problem <span class="math inline">\(P: \Gamma^\ast \mapsto \{ 0, 1 \}\)</span> if <span class="math inline">\(\forall x \in \Gamma^\ast, M(x) = P(x)\)</span></li>
+</ul>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Let <span class="math inline">\(M\)</span> be a Turing Machine</p>
+<ol type="1">
+<li>If <span class="math inline">\(M\)</span> is a decider, does it solve some decision problem?</li>
+<li>If <span class="math inline">\(M\)</span> solves a decision problem, is it a decider?</li>
+</ol>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Notation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>We say that a Turing Machine <span class="math inline">\(M\)</span> <strong>decides</strong> a language <span class="math inline">\(L \subseteq \Gamma^\ast\)</span> if <span class="math display">\[ M(x) = 1 \iff x \in L \]</span></p>
+</div>
+</div>
+<p>Two Turing Machines <span class="math inline">\(M\)</span> and <span class="math inline">\(N\)</span> on the same input alphabet <span class="math inline">\(\Gamma\)</span> are equivalent if they have the same input and output behaviour <span class="math display">\[ \forall x \in \Gamma^\ast, M(x) = N(x)\]</span></p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>How many equivalent Turing Machines are there?</p>
+<p><strong>Proof Sketch</strong>: If I take some Turing Machine <span class="math inline">\(M\)</span>, we can add a new state <span class="math inline">\(q\)</span> and make the new machine <span class="math inline">\(M^\prime\)</span>. We can make <span class="math inline">\(q\)</span> fall between any state <span class="math inline">\(q_i\)</span> that has some transition to <span class="math inline">\(q_\text{accept}\)</span>.</p>
+<ol type="1">
+<li>If <span class="math inline">\(q_i\)</span> has a transition to <span class="math inline">\(q_\text{accept}\)</span>, make it instead transition to <span class="math inline">\(q\)</span> (leaving the rest of the transition unmodified)</li>
+<li><span class="math inline">\(q\)</span> transitions to <span class="math inline">\(q_\text{accept}\)</span> on every symbol, leaving the symbol unmodified.</li>
+</ol>
+<p><span class="math inline">\(M^\prime\)</span> has not changed anything about any computation besides add a new configuration <span class="math inline">\(c_{n + 1}\)</span> to the sequence. It has not changed the outcome, nor has it changed the tape in anyway. Thus <span class="math inline">\(M^\prime\)</span> is equivalent to <span class="math inline">\(M\)</span>.</p>
+<p>We can then create <span class="math inline">\(M^{\prime\prime}\)</span> in the exact same fashion from <span class="math inline">\(M^\prime\)</span>. Repeat this ad-infinitum, and we have an infinite number of equivalent Turing Machines.</p>
+</div>
+</div>
+</section>
+<section id="computational-problems" class="level3" data-number="3.2.4">
+<h3 data-number="3.2.4" class="anchored" data-anchor-id="computational-problems"><span class="header-section-number">3.2.4</span> Computational Problems</h3>
+<p>A Turing Machine for computational problems is very similar to the standard definition. The only difference is that we have a single notable state <span class="math inline">\(q_\text{halt}\)</span> instead of <span class="math inline">\(q_\text{accept}\)</span> and <span class="math inline">\(q_\text{accept}\)</span></p>
+<p>A <strong>Computational Turing Machine</strong> <span class="math inline">\(M\)</span> is the tuple <span class="math inline">\((Q, \Gamma, \Delta, \delta, q_\text{init}, q_\text{halt})\)</span> where</p>
+<ul>
+<li><span class="math inline">\(Q\)</span> is a finite non-empty set of <em>states</em></li>
+<li><span class="math inline">\(\Gamma\)</span> is an <strong>input alphabet</strong> such that <span class="math inline">\(\sqcup \notin \Gamma\)</span></li>
+<li><span class="math inline">\(\Delta\)</span> is a <strong>tape alphabet</strong>, satisfying the following conditions:
+<ol type="1">
+<li><span class="math inline">\(\Gamma \subseteq \Delta\)</span> - Our input alphabet can be written on the tape</li>
+<li><span class="math inline">\(\sqcup \in \Delta\)</span> - Our tape has a blank symbol</li>
+<li><span class="math inline">\(\Delta \cap \Gamma = \emptyset\)</span> - The symbols and states are different</li>
+</ol></li>
+<li><span class="math inline">\(q_\text{init}, q_\text{halt} \in Q\)</span></li>
+<li><span class="math inline">\(\delta\)</span> (called the <strong>transition function</strong> or <strong>program</strong>) is a finite set of instructions in the form <span class="math inline">\(q_i, s_n \rightarrow q_j, s_m, D\)</span>
+<ol type="1">
+<li><span class="math inline">\(q_i, q_j \in Q\)</span></li>
+<li><span class="math inline">\(s_n, s_m \in \Gamma\)</span></li>
+<li><span class="math inline">\(D \in \{ L, R \}\)</span></li>
+<li>and for all <span class="math inline">\(q \in Q \backslash \{q_\text{halt}\}\)</span> and all <span class="math inline">\(s \in \Delta\)</span> there exists only one instruction in <span class="math inline">\(\delta\)</span> that has the form <span class="math inline">\(q, s \rightarrow q^\prime, s^\prime, D\)</span></li>
+</ol></li>
+</ul>
+<p>The definitions of computation and status of a Computational TM remain the same as a Decision TM. However, we will use a slightly different configuration to define these objects:</p>
+<ul>
+<li>A <strong>configuration</strong> is halting if contains <span class="math inline">\(q_\text{halt}\)</span></li>
+</ul>
+<p>Computational Turing Machines need to provide some form of output string that we can read off the tape. To be consistent, we say that our resultant string is the string from the tapes head until the next blank symbol that is composed of only input symbols <span class="math inline">\(\Gamma\)</span>.</p>
+<p>Let <span class="math inline">\(M\)</span> be a Computational Turing Machine.</p>
+<p>We define the <strong>result</strong> of a computation of <span class="math inline">\(M\)</span> on <span class="math inline">\(x\)</span> as the string <span class="math inline">\(w\)</span> satisfying the following properties</p>
+<ul>
+<li><span class="math inline">\(w \in \Gamma^\ast\)</span></li>
+<li><span class="math inline">\(w\)</span> is written on the tap</li>
+<li><span class="math inline">\(w\)</span> is immediately followed by <span class="math inline">\(\sqcup\)</span></li>
+<li><span class="math inline">\(M\)</span> is scanning the first symbol of <span class="math inline">\(w\)</span></li>
+</ul>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Notation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><span class="math display">\[ M(x) = \begin{cases}
+    w &amp; \text{if } C(M,x) \text{ halts} \\
+    \infty &amp; \text{otherwise} \\
+\end{cases}
+\]</span></p>
+</div>
+</div>
+<p>Computational TM’s can also <strong>solve</strong> some Computational Problem <span class="math inline">\(P: \Gamma^\ast \mapsto \Gamma^\ast\)</span>. However we use the term <span class="math inline">\(M\)</span> <strong>computes</strong> <span class="math inline">\(P\)</span> to specify it is a computational problem.</p>
+<p>Let <span class="math inline">\(M\)</span> be a Computational Turing Machine and <span class="math inline">\(P: \Gamma^\ast \mapsto \Gamma^\ast\)</span> a computational problem</p>
+<ul>
+<li><span class="math inline">\(M\)</span> <strong>computes</strong> <span class="math inline">\(P\)</span> if <span class="math display">\[ \forall x \in \Gamma^\ast, M(x) = P(x)\]</span></li>
+</ul>
+<p>and this gives us a fairly strong definition for when something is computable or not.</p>
+<p>Let <span class="math inline">\(f:\Sigma^\ast \mapsto \Sigma^\ast\)</span> be a function.</p>
+<ul>
+<li><span class="math inline">\(f\)</span> is <strong>computable</strong> if there exists some Turing Machine that computes <span class="math inline">\(f\)</span></li>
+</ul>
+</section>
+</section>
+<section id="turing-machines-as-algorithms" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="turing-machines-as-algorithms"><span class="header-section-number">3.3</span> Turing Machines as Algorithms</h2>
+<section id="analysis-of-turing-machines" class="level3" data-number="3.3.1">
+<h3 data-number="3.3.1" class="anchored" data-anchor-id="analysis-of-turing-machines"><span class="header-section-number">3.3.1</span> Analysis of Turing Machines</h3>
+<p>When we perform an analysis of an algorithm, we typically focus on two resources available to our algorithm:</p>
+<ul>
+<li>Time Complexity - How long will it take to run our algorithm</li>
+<li>Space Complexity - How much memory do we need for our algorithm</li>
+</ul>
+<p>If we want to use Turing Machines as a mathematical model for our algorithms, we need to define these same tools.</p>
+<section id="time" class="level4" data-number="3.3.1.1">
+<h4 data-number="3.3.1.1" class="anchored" data-anchor-id="time"><span class="header-section-number">3.3.1.1</span> Time</h4>
+<p>Our Turing Machine has only the single instruction. If we build this machine in reality, then it will take a roughly fixed amount of time to execute this instruction, no matter how many times we do it.</p>
+<ul>
+<li>If we built this device using mechanical components, this time is how long it takes to rotate the gears, manipulate the linkages and so on.</li>
+<li>If we built it use electronic signals, it would be the time to change the voltage of our circuit.</li>
+</ul>
+<p>This means we can discard the actual unit and instead count the number of times an instruction is executed. We can recover the actual execution time by taking an average time to execute a single instruction and multiply it by the number of instructions.</p>
+<p>A single instruction allows us to move between the different configurations of our machine, thus the number of instructions is the number of configurations in a computation.</p>
+<p>Let <span class="math inline">\(M\)</span> be a Turing Machine and <span class="math inline">\(x \in \Gamma^\ast\)</span>,</p>
+<p>The <strong>computation time</strong> of <span class="math inline">\(M\)</span> on <span class="math inline">\(x\)</span> is the length of the computation.</p>
+<p><span class="math display">\[ T(M,x) = |C(M,x)| \]</span></p>
+<p><span class="math inline">\(T(M,x)\)</span> allows us to analyse the execution of a single input, but we want to understand how it runs on all inputs. However, if two strings are of equal length, then the machine will do the roughly the same <em>amount</em> of work, even if the result of that work is different. Instead of the individual strings we analyse the length of the strings.</p>
+<p>Let <span class="math inline">\(M\)</span> be a Turing Machine that will halt on every input,</p>
+<p>The <strong>time function</strong> <span class="math inline">\(t: \mathbb{N} \mapsto \mathbb{N}\)</span> of <span class="math inline">\(M\)</span> is <span class="math display">\[ t(n) = \max \{ T(M,x) = |C(M,x)| : x \in \Gamma^n \} \]</span></p>
+<p>In english, our time function for a given input <span class="math inline">\(n\)</span> is the maximum computation time across all strings of length <span class="math inline">\(n\)</span>.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>We use the maximum time because some inputs of the same length may occasionally do less work.</p>
+<p>Consider the following python script</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> <span class="bu">input</span>()</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>, <span class="bu">len</span>(x))</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> x[i] <span class="op">==</span> <span class="st">"0"</span>:</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>If we input “111”, the for loop will be executed 3 times. If we instead input “101” it will only be executed twice, even though the strings are the same length.</p>
+<p>When analysing this algorithm, we want to know the worst it will do at a given length, not the best. So we take <span class="math inline">\(t(3) = \max\{ 1, 2, 3, 3 \} = 3\)</span> (Inputs: <span class="math inline">\(\{ 0xx, 10x, 110, 111 \}\)</span> where <span class="math inline">\(x \in \Gamma\)</span>)</p>
+</div>
+</div>
+</section>
+<section id="space" class="level4" data-number="3.3.1.2">
+<h4 data-number="3.3.1.2" class="anchored" data-anchor-id="space"><span class="header-section-number">3.3.1.2</span> Space</h4>
+<p>In a digital computer, space is measured in the number of bits used. We can do the same here, but instead of bits we will use our tape instead of transistors.</p>
+<p>Let <span class="math inline">\(M\)</span> be a Turing Machine and <span class="math inline">\(x \in \Gamma^\ast\)</span>,</p>
+<p>The <strong>computation space</strong> <span class="math inline">\(S(M,x)\)</span> of <span class="math inline">\(M\)</span> on <span class="math inline">\(x\)</span> is the number of unique tape cells accessed by our machine.</p>
+<p>This is more difficult to tie down an exact value, but we can define some bounds.</p>
+<p>The machine can only move left or right on an instruction, it cannot stay in place. Even if we use the empty string, the machine scans a cell in the initial configuration, and scans the next cell after the instruction that may let it halt.</p>
+<p><span class="math display">\[ q_\text{init}, \sqcup \rightarrow q_\text{halt / accept / reject}, s, D \]</span></p>
+<p>For any other string, we can do the same, or just move back and forth between these two cells infinitely. So the smallest number of unique cells we can use is 2. And if we never re-use a cell i.e.&nbsp;every instruction accesses a new cell, then we can only access as many cells as there are instructions.</p>
+<p><span class="math display">\[ 2 \leq S(M,x) \leq T(M,x) \]</span></p>
+<p>For the same reasons as time, we want to study the lengths of a string and how the machine behaves, so we define our <strong>space function</strong> in a similar manner.</p>
+<p>Let <span class="math inline">\(M\)</span> be a Turing Machine that will halt on every input,</p>
+<p>The <strong>space function</strong> <span class="math inline">\(s: \mathbb{N} \mapsto \mathbb{N}\)</span> of <span class="math inline">\(M\)</span> is <span class="math display">\[ s(n) = \max \{ S(M,x) : x \in \Gamma^n \} \]</span></p>
+</section>
+</section>
+<section id="the-church-turing-thesis" class="level3" data-number="3.3.2">
+<h3 data-number="3.3.2" class="anchored" data-anchor-id="the-church-turing-thesis"><span class="header-section-number">3.3.2</span> The Church-Turing Thesis</h3>
+<p>At this point, you should have an understanding that Turing Machines are a fairly strong model for algorithms. We can analyse them the same way as algorithms, we can program them using instructions, we can build them in the real world (this is a surprisingly important idea), and there is more yet to come.</p>
+<p>However, we have not really discussed if a Turing Machine is an exact model of an algorithm. To jump the gun, yes. Turing Machines are an incredibly robust model, and every definition of computer that has been developed in the last 100 years has been shown to be equivalent to at least some form of Turing Machine. Even digital computers with Random-Access Memory are just slightly faster versions of a Turing Machine. In <a href="../lectures/lecture_4.html#Turing-Equivalency">Turing Equivalency</a>, we will study this idea more concretely.</p>
+<p>To formulate this, we have developed a simple thesis.</p>
+<blockquote class="blockquote">
+<p>Every computational problem solvable by an algorithm, can also be solved by a Turing Machine.</p>
+</blockquote>
+<p>This is the Church-Turing Thesis. It allows us to assert that an algorithm <em>is</em> a Turing Machine. If we can’t write a Turing Machine, then we can’t write an algorithm and vice versa.</p>
+<p>This is not a mathematical statement however. It converts an intuitive concept (an algorithm - sequence of steps) and converts it into a mathematical object (a TM - sequence of instructions). We cannot really prove this assertion, we only take it as true so long as it appears to be true.</p>
+
+
+</section>
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p><a href="https://en.wikipedia.org/wiki/Clarke%27s_three_laws">Arthur C. Clarke’s third law</a><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>citation needed<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>One day I will find citations for this…<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../lectures/lecture_2.html" class="pagination-link" aria-label="Data, Representations, and Problems">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Data, Representations, and Problems</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../lectures/lecture_4.html" class="pagination-link" aria-label="Turing Machines II">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Turing Machines II</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
