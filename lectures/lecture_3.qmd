@@ -47,6 +47,7 @@ Imagine a physical device that has three components:
 3. A control unit to tell the the head what symbol it should be writing - a box that keeps track of our algorithm steps and where along that algorithm where are
 
 - On our tape, we have a set of symbols on every cell - even if that symbol is a "blank" ($\sqcup$) symbol to represent nothing ($\sqcup, 0, 1, 2, ...$).
+- We will also assume that our tape has as much space as it needs - i.e. an infinite tape.
 - Our head mechanism, can move between the different cells going either left or right along it.
 - The control unit is composed of various 'device states' ($q_1, q_2, q_3, ...$) that holds the information about whats happened so far (Gears in different positions, or electronic signals in specific patterns).
 
@@ -66,8 +67,7 @@ If we tried to build this device in the real world, these instructions are just 
 :::
 
 We will add the stipulation that if our machine enters specific states, the computation will stop:
-For a Yes / No (Accept / Reject) machine we will have the special states $q_\text{accept}, q_\text{reject}$ indicating the corresponding answer,
-and for a device that finds an answer we will have $q_\text{halt}$ that tells us the device has stopped.
+For a Yes / No (Accept / Reject) machine we will have the special states $q_\text{accept}, q_\text{reject}$ indicating the corresponding answer.
 
 Additionally, we need to start somewhere, so we designate $q_0$ as the 'start state'.
 If we need to run this device, we must first reset it so that we are in $q_0$.
@@ -86,13 +86,13 @@ Our programming language for this device will be all the possible permutations o
 Our program $\delta$ is the subset of of these permutations that describe the particular behaviour we want.
 
 - In $q_0$
-    - reading $\sqcup$, go to $q_0$, writing $\sqcup$ and moving $R$
-    - reading $0$, go to $q_1$, writing $0$ and moving $R$
-    - reading $1$, go to $q_1$, writing $0$ and moving $R$
+    - reading $\sqcup$, go to $q_1$, writing $\sqcup$ and moving $L$
+    - reading $0$, go to $q_0$, writing $0$ and moving $R$
+    - reading $1$, go to $q_0$, writing $1$ and moving $R$
 - In $q_1$
-    - reading $\sqcup$, go to $q_\text{halt}$, writing $\sqcup$ and moving $R$
-    - reading $0$, go to $q_1$, writing $0$ and moving $R$
-    - reading $1$, go to $q_1$, writing $1$ and moving $R$
+    - reading $\sqcup$, go to $q_\text{reject}$, writing $\sqcup$ and moving $R$
+    - reading $0$, go to $q_\text{reject}$, writing $0$ and moving $R$
+    - reading $1$, go to $q_\text{accept}$, writing $1$ and moving $R$
 
 :::{.callout-warning}
 # Question
@@ -106,52 +106,33 @@ And a computation is the series of changes that has occured in our device and ta
 
 1. Set the tape to be the input string $0111$,
 2. Set the device to be in $q_0$ and the head to be at the first symbol
-3. Follow each instruction until $q_\text{halt}$
-    - In $q_0$, head is at cell $0$, reading symbol $0$, go to $q_1$, write $1$, move right to cell $1$
-    - In $q_1$, head is at cell $1$, reading symbol $1$, go to $q_1$, write $1$, move right to cell $2$
-    - In $q_1$, head is at cell $2$, reading $1$, to $q_1$, write $1$, move right to cell $3$
-    - In $q_1$, head is at cell $3$, reading $1$, to $q_1$, write $1$, move right to cell $4$
-        - Now we have moved off the end of string, so we assume that there will always be another cell with a blank symbol (i.e. a tape of infinite length)
-    - In $q_1$, head is at cell $4$, reading $\sqcup$, to $q_\text{halt}$, write $\sqcup$, move right to cell $5$
-        - We are in $q_\text{halt}$ so our device stops
-4. Read the resulting string $1111$ off of our tape
+    - We always start at the first symbol of our input
+3. Follow each instruction until $q_\text{accept}$ or $q_\text{reject}$
+    - Step $0$: In $q_0$, scanning cell $0$, reading symbol $0$, go to $q_0$, write $0$, move right to cell $1$
+        - $q_0 0111$
+    - Step $1$: In $q_0$, scanning cell $1$, reading symbol $1$, go to $q_0$, write $1$, move right to cell $2$
+        - $0 q_0 111$
+    - Step $2$: In $q_0$, scanning cell $2$, reading symbol $1$, go to $q_0$, write $1$, move right to cell $3$
+        - $01 q_0 11$
+    - Step $3$: In $q_0$, scanning cell $3$, reading symbol $1$, go to $q_0$, write $1$, move right to cell $4$
+        - $011 q_0 1$
+    - Step $4$: In $q_0$, scanning cell $4$, reading symbol $\sqcup$, go to $q_1$, write $\sqcup$, move left to cell $3$
+        - We have moved off the end of our string into a "blank" cell
+        - $0111 q_0 \sqcup$
+    - Step $5$: In $q_1$, scanning cell $3$, reading symbol $1$, go to $q_\text{accept}$, write $1$, move right to cell $4$
+        - $011 q_1 1$
+    - Step $6$: In $q_\text{accept}$ scanning cell $4$ $\rightarrow$ halt
+        - $0111 q_\text{accept} \sqcup$
+4. Read the result as $1$ as we are in $q_\text{accept}$
 
 Congratulations, we have just built a physical device that evaluates some algorithm.
-If we use $\left< z \right>_\mathbb{Z}$, then this algorithm is computing the absolute value of $z$, and our device is now a very simple mechanical calculator.
-
-:::{.callout-warning}
-## Question
-
-- There is an even simpler version of this algorithm using only two states: $q_0, q_\text{halt}$.
-Try to describe this new device in the same way we just did.
-- This device computes the absolute value of an integer $$\text{ABSOLUTE\_INT}(\left<z\right>) = \left< | z | \right> $$.
-    1. Write the equivalent decision problem.
-    2. Try describe the decision problem's device.
-- What changes need to be applied to this device for it to work over the rationals as well?
-:::
+If we use $\left< z \right>_\mathbb{Z}$, then this algorithm determines if the given integer is even or odd.
 
 ### Formal Definition
 
 The previous device is essentially an implementation of a Turing Machine as a mechanical machine.
 
-Mathematically, our Turing Machine that evaluates computation problems, $P: \Gamma^\ast |-> \Gamma^\ast$, is
-
-A **Computational Turing Machine** $M$ is the tuple $(Q, \Gamma, \Delta, \delta, q_\text{init}, q_\text{halt})$ where
-
-- $Q$ is a finite non-empty set of *states*
-- $\Gamma$ is an **input alphabet** such that $\sqcup \notin \Gamma$
-- $\Delta$ is a **tape alphabet**, satisfying the following conditions:
-    1. $\Gamma \subseteq \Delta$ - Our input alphabet can be written on the tape
-    2. $\sqcup \in \Delta$ - Our tape has a blank symbol
-    3. $\Delta \cap \Gamma = \emptyset$ - The symbols and states are different
-- $q_\text{init}, q_\text{halt} \in Q$
-- $\delta$ (called the **transition function** or **program**) is a finite set of instructions in the form $q_i, s_n \rightarrow q_j, s_m, D$
-    1. $q_i, q_j \in Q$
-    2. $s_n, s_m \in \Gamma$
-    3. $D \in \{ L, R \}$
-    4. and for all $q \in Q \backslash \{q_\text{halt}\}$ and all $s \in \Delta$ there exists only one instruction in $\delta$ that has the form $q, s \rightarrow q^\prime, s^\prime, D$
-
-Decision problems, $P: \Gamma^\ast \mapsto \{0, 1\}$ have their own variant of Turing Machine.
+Mathematically, a Turing Machine for Decision Problems are defined as follows
 
 A **Decision Turing Machine** $M$ is the tuple $(Q, \Gamma, \Delta, \delta, q_\text{init}, q_\text{accept}, q_\text{reject})$ where
 
@@ -172,16 +153,15 @@ A **Decision Turing Machine** $M$ is the tuple $(Q, \Gamma, \Delta, \delta, q_\t
 ## Question
 
 We have seen previously that Decision Problems and Computational Problems are equivalent if an algorithm exists for one, then an algorithm must exist for the other.
-Try to rewrite this proof but using the relevant Turing Machine instead of a generic algorithm.
+Try to rewrite this proof but using a Turing Machine (See [Computation Problems](#Computation-Problems) for a definition of Computational Turing Machines) instead of a generic algorithm.
 :::
 
-:::{.callout-tip}
+:::{.callout-note}
 ## Notation
 
-Decision and Computation equivalence means that we can simplify our discussion.
-Instead of distinguishing between a Decision and Computational Turing Machine, if I refer to just a Turing Machine, then it is a Decision Turing Machine.
-
-A **Turing Machine** $M$ is a Decision Turing Machine $(Q, \Gamma, \Delta, \delta, q_\text{init}, q_\text{accept}, q_\text{reject})$ unless otherwise stated.
+Decision and Computation equivalence means that the exact specifics of our Turing Machine are not that important.
+We stick to a Decision Turing Machine because it is a stronger continuation from Regular Languages and Context-Free Grammers.
+However, there is no reason you cannot tackle this entire branch using Computational problems instead.
 :::
 
 ### Computing
@@ -194,7 +174,7 @@ Let $M$ be a Turing Machine,
     1. $w$ contains exactly one symbol from $Q$
     2. $w$ does not begin with $\sqcup$
     3. If the last symbol of $w$ is a $\sqcup$, the it is preceded by a symbol from $Q$
-- A **configuration** is _halting_ if it contains $q_\text{accept}$, $q_\text{reject}$, or $q_\text{halt}$
+- A **configuration** is _halting_ if it contains $q_\text{accept}$, $q_\text{reject}$
 - A **configuration** is _accepting_ if it contains $q_\text{accept}$
 - A **configuration** is _rejecting_ if it contains $q_\text{reject}$
 
@@ -202,7 +182,7 @@ Our machine starts in $q_\text{init}$ and has the input string written on its ta
 
 Let $M$ be a Turing Machine, and $x \in \Gamma^\ast$,
 
-The **initial configuration** of $M$ on $x$ ($M(x)$) is $$ q_\text{init}x $$
+The **initial configuration** of $M$ on $x$ is $$ q_\text{init}x $$
 
 Computation is the process of moving between different configurations of our machine and tape.
 In fact, a computation is the sequence of configurations start from the initial configuration until it is in a halting configuration.
@@ -211,11 +191,11 @@ Let $M$ be a Turing Machine, and $w$ and $v$ are configurations of $M$,
 
 We say that $w$ yields to $v$ ($w \vdash v$) if one of the following conditions hold:
 
-1. $q, s \rightarrow, q^\prime, s^\prime L \in \delta$ and
+1. $q, s \rightarrow, q^\prime, s^\prime, L \in \delta$ and
     - either $w = xtqsy$ and $v = xq^\prime t s^\prime y$ for $t \in \Delta$ and $x, y \in \Delta^\ast$
     - or $w = qsx$ and $v = q^\prime\sqcup s^\prime x$ for $x \in \Delta*$
 
-1. $q, s \rightarrow, q^\prime, s^\prime R \in \delta$ and
+1. $q, s \rightarrow, q^\prime, s^\prime, R \in \delta$ and
     - either $w = xqsy$ and $v = x s^\prime q^\prime y$ for $x, y \in \Delta^\ast$
     - or $w = xqs$ and $v = x s^\prime q^\prime \sqcup$ for $x \in \Delta*$
 
@@ -233,14 +213,22 @@ The **computation** of $M$ on $x$ is the sequence of configurations $c_0, c_1, c
 3. The sequence has at most one halting configuration.
 4. If the sequence has a halting configuration $c_n$, then $c_n$ is the last configuration in the sequence.
 
+:::{.callout-tip}
+## Notation
+
+We will use the symbol $C(M,x)$ to refer to the computation of $M$ on $x$.
+
+The length of a computation $|C(M,x)|$ is the number of configurations in a sequence.
+:::
+
 We want to identify the **status** of our computation
 
 Let $M$ be a Turing Machine $M$ and $x \in \Gamma^\ast$
 
-- $M$ **halts** on $x$ if the sequence $c_0, c_1, c_2, ...$ contains a halting configuration
+- $M$ **halts** on $x$ if the computation $C(M,x)$ (sequence $c_0, c_1, c_2, ...$) contains a halting configuration
 - $M$ **loops** on $x$ if the sequence $c_0, c_1, c_2, ...$ does not contain a halting configuration
-- $M$ **accepts** on $x$ if the sequence $c_0, c_1, c_2, ...$ contains an accepting configuration
-- $M$ **rejects** on $x$ if the sequence $c_0, c_1, c_2, ...$ contains a rejecting configuration
+- $M$ **accepts** $x$ if the sequence $c_0, c_1, c_2, ...$ contains an accepting configuration
+- $M$ **rejects** $x$ if the sequence $c_0, c_1, c_2, ...$ contains a rejecting configuration
 
 :::{.callout-tip}
 ## Notation
@@ -261,6 +249,8 @@ Let $M$ be a Turing Machine
 - $M$ **decides** / **solves** a decision problem $P: \Gamma^\ast \mapsto \{ 0, 1 \}$ if $\forall x \in \Gamma^\ast, M(x) = P(x)$
 
 :::{.callout-warning}
+## Question
+
 Let $M$ be a Turing Machine
 
 1. If $M$ is a decider, does it solve some decision problem?
@@ -272,18 +262,6 @@ Let $M$ be a Turing Machine
 
 We say that a Turing Machine $M$ **decides** a language $L \subseteq \Gamma^\ast$ if
 $$ M(x) = 1 \iff x \in L $$
-:::
-
-:::{.callout-note}
-We can define a similar concept for Computational Turing Machines.
-
-Let $M$ be a Computation Turing Machine
-
-- $M$ computes the computational problem $P: \Gamma^\ast \mapsto \Gamma^\ast$ if $\forall x \in \Gamma^\ast, M(x) = P(x)$
-
-More importantly, this gives us a definition of when something is computable.
-
-Some function $f: \Sigma^\ast \mapsto \Sigma^\ast$ over an alphabet $\Sigma$ is **computable** if there exists a Computation Turing Machine that computes $f$
 :::
 
 Two Turing Machines $M$ and $N$ on the same input alphabet $\Gamma$ are equivalent if they have the same input and output behaviour
@@ -309,8 +287,175 @@ We can then create $M^{\prime\prime}$ in the exact same fashion from $M^\prime$.
 Repeat this ad-infinitum, and we have an infinite number of equivalent Turing Machines.
 :::
 
-## The Church-Turing Thesis
+### Computational Problems
 
-### Machines are algorithms - 10 minutes
+A Turing Machine for computational problems is very similar to the standard definition.
+The only difference is that we have a single notable state $q_\text{halt}$ instead of $q_\text{accept}$ and $q_\text{accept}$
 
-### Algorithm Resources - 10 minutes
+A **Computational Turing Machine** $M$ is the tuple $(Q, \Gamma, \Delta, \delta, q_\text{init}, q_\text{halt})$ where
+
+- $Q$ is a finite non-empty set of *states*
+- $\Gamma$ is an **input alphabet** such that $\sqcup \notin \Gamma$
+- $\Delta$ is a **tape alphabet**, satisfying the following conditions:
+    1. $\Gamma \subseteq \Delta$ - Our input alphabet can be written on the tape
+    2. $\sqcup \in \Delta$ - Our tape has a blank symbol
+    3. $\Delta \cap \Gamma = \emptyset$ - The symbols and states are different
+- $q_\text{init}, q_\text{halt} \in Q$
+- $\delta$ (called the **transition function** or **program**) is a finite set of instructions in the form $q_i, s_n \rightarrow q_j, s_m, D$
+    1. $q_i, q_j \in Q$
+    2. $s_n, s_m \in \Gamma$
+    3. $D \in \{ L, R \}$
+    4. and for all $q \in Q \backslash \{q_\text{halt}\}$ and all $s \in \Delta$ there exists only one instruction in $\delta$ that has the form $q, s \rightarrow q^\prime, s^\prime, D$
+    
+The definitions of computation and status of a Computational TM remain the same as a Decision TM.
+However, we will use a slightly different configuration to define these objects:
+
+- A **configuration** is halting if contains $q_\text{halt}$
+
+Computational Turing Machines need to provide some form of output string that we can read off the tape.
+To be consistent, we say that our resultant string is the string from the tapes head until the next blank symbol that is composed of only input symbols $\Gamma$.
+
+Let $M$ be a Computational Turing Machine.
+
+We define the **result** of a computation of $M$ on $x$ as the string $w$ satisfying the following properties
+
+- $w \in \Gamma^\ast$
+- $w$ is written on the tap
+- $w$ is immediately followed by $\sqcup$
+- $M$ is scanning the first symbol of $w$
+
+:::{.callout-tip}
+## Notation
+$$ M(x) = \begin{cases}
+    w & \text{if } C(M,x) \text{ halts} \\
+    \infty & \text{otherwise} \\
+\end{cases}
+$$
+:::
+
+Computational TM's can also **solve** some Computational Problem $P: \Gamma^\ast \mapsto \Gamma^\ast$.
+However we use the term $M$ **computes** $P$ to specify it is a computational problem.
+
+Let $M$ be a Computational Turing Machine and $P: \Gamma^\ast \mapsto \Gamma^\ast$ a computational problem
+
+- $M$ **computes** $P$ if 
+$$ \forall x \in \Gamma^\ast, M(x) = P(x)$$
+
+and this gives us a fairly strong definition for when something is computable or not.
+
+Let $f:\Sigma^\ast \mapsto \Sigma^\ast$ be a function.
+
+- $f$ is **computable** if there exists some Turing Machine that computes $f$
+
+## Turing Machines as Algorithms
+
+### Analysis of Turing Machines
+
+When we perform an analysis of an algorithm, we typically focus on two resources available to our algorithm:
+
+- Time Complexity - How long will it take to run our algorithm
+- Space Complexity - How much memory do we need for our algorithm
+
+If we want to use Turing Machines as a mathematical model for our algorithms, we need to define these same tools.
+
+#### Time
+
+Our Turing Machine has only the single instruction. 
+If we build this machine in reality, then it will take a roughly fixed amount of time to execute this instruction, no matter how many times we do it.
+
+- If we built this device using mechanical components, this time is how long it takes to rotate the gears, manipulate the linkages and so on.
+- If we built it use electronic signals, it would be the time to change the voltage of our circuit.
+
+This means we can discard the actual unit and instead count the number of times an instruction is executed.
+We can recover the actual execution time by taking an average time to execute a single instruction and multiply it by the number of instructions.
+
+A single instruction allows us to move between the different configurations of our machine, thus the number of instructions is the number of configurations in a computation.
+
+Let $M$ be a Turing Machine and $x \in \Gamma^\ast$,
+
+The **computation time** of $M$ on $x$ is the length of the computation.
+
+$$ T(M,x) = |C(M,x)| $$
+
+$T(M,x)$ allows us to analyse the execution of a single input, but we want to understand how it runs on all inputs.
+However, if two strings are of equal length, then the machine will do the roughly the same _amount_ of work, even if the result of that work is different.
+Instead of the individual strings we analyse the length of the strings.
+
+Let $M$ be a Turing Machine that will halt on every input,
+
+The **time function** $t: \mathbb{N} \mapsto \mathbb{N}$ of $M$ is
+$$ t(n) = \max \{ T(M,x) = |C(M,x)| : x \in \Gamma^n \} $$
+
+In english, our time function for a given input $n$ is the maximum computation time across all strings of length $n$.
+
+:::{.callout-note}
+We use the maximum time because some inputs of the same length may occasionally do less work.
+
+Consider the following python script 
+
+```py
+x = input()
+for i in range(0, len(x))
+    if x[i] == "0":
+        break
+```
+
+If we input "111", the for loop will be executed 3 times.
+If we instead input "101" it will only be executed twice, even though the strings are the same length.
+
+When analysing this algorithm, we want to know the worst it will do at a given length, not the best.
+So we take $t(3) = \max\{ 1, 2, 3, 3 \} = 3$ (Inputs: $\{ 0xx, 10x, 110, 111 \}$ where $x \in \Gamma$)
+:::
+
+#### Space
+
+In a digital computer, space is measured in the number of bits used.
+We can do the same here, but instead of bits we will use our tape instead of transistors.
+
+
+Let $M$ be a Turing Machine and $x \in \Gamma^\ast$,
+
+The **computation space** $S(M,x)$ of $M$ on $x$ is the number of unique tape cells accessed by our machine.
+
+This is more difficult to tie down an exact value, but we can define some bounds.
+
+The machine can only move left or right on an instruction, it cannot stay in place.
+Even if we use the empty string, the machine scans a cell in the initial configuration, and scans the next cell after the instruction that may let it halt.
+
+$$ q_\text{init}, \sqcup \rightarrow q_\text{halt / accept / reject}, s, D $$
+
+For any other string, we can do the same, or just move back and forth between these two cells infinitely.
+So the smallest number of unique cells we can use is 2.
+And if we never re-use a cell i.e. every instruction accesses a new cell, then we can only access as many cells as there are instructions.
+
+$$ 2 \leq S(M,x) \leq T(M,x) $$
+
+For the same reasons as time, we want to study the lengths of a string and how the machine behaves, so we define our **space function** in a similar manner.
+
+Let $M$ be a Turing Machine that will halt on every input,
+
+The **space function** $s: \mathbb{N} \mapsto \mathbb{N}$ of $M$ is
+$$ s(n) = \max \{ S(M,x) : x \in \Gamma^n \} $$
+
+### The Church-Turing Thesis
+
+At this point, you should have an understanding that Turing Machines are a fairly strong model for algorithms.
+We can analyse them the same way as algorithms, we can program them using instructions, we can build them in the real world (this is a surprisingly important idea), and there is more yet to come.
+
+However, we have not really discussed if a Turing Machine is an exact model of an algorithm.
+To jump the gun, yes.
+Turing Machines are an incredibly robust model, and every definition of computer that has been developed in the last 100 years has been shown to be equivalent to at least some form of Turing Machine.
+Even digital computers with Random-Access Memory are just slightly faster versions of a Turing Machine.
+In [Turing Equivalency](./lecture_4.qmd#Turing-Equivalency), we will study this idea more concretely.
+
+To formulate this, we have developed a simple thesis.
+
+> Every computational problem solvable by an algorithm, can also be solved by a Turing Machine.
+
+This is the Church-Turing Thesis.
+It allows us to assert that an algorithm _is_ a Turing Machine.
+If we can't write a Turing Machine, then we can't write an algorithm and vice versa.
+
+This is not a mathematical statement however. 
+It converts an intuitive concept (an algorithm - sequence of steps) and converts it into a mathematical object (a TM - sequence of instructions).
+We cannot really prove this assertion, we only take it as true so long as it appears to be true.
