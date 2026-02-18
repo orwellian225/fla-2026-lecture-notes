@@ -74,7 +74,7 @@
     "href": "lectures/lecture_3.html",
     "title": "3  Turing Machines I",
     "section": "",
-    "text": "3.1 A machine that computes\nYour intuition might be that a computer is a small box that sits on a desk, in a server rack, and even in your pocket. Making use of electronics, digital circuits, and millions of bits and bytes to perform what is sufficiently indistinguishable from magic 1.\nIn 1936, they had a very different picture. The closest equivalent were mechanical devices that used levers, linkages, and gears to produce work - similar to the combustion engine. Instead of work being motion, it would be the evaluation a series of steps, generally finding a solution to some form of arithmetic. Mechanical calculators were probably the most well known instances of a “computer”.\nWhen we build our mathematical model of a computer and algorithm, I want you to keep in mind the ‘mechanical’ nature of it.\nFor our model to be correct, there are important ideas that need to be captured:",
+    "text": "3.1 A machine that computes\nYour intuition might be that a computer is a small box that sits on a desk, in a server rack, and even in your pocket. Making use of electronics, digital circuits, and millions of bits and bytes to perform what is sufficiently indistinguishable from magic 1.\nIn 1936, they had a very different picture. The closest equivalent were mechanical devices that used levers, linkages, and gears to produce work - similar to a train. Instead of work being motion, it would be the evaluation a series of steps, generally finding a solution to some form of arithmetic. Mechanical calculators were probably the most well known instances of a “computer”.\nWhen we build our mathematical model of a computer and algorithm, I want you to keep in mind the ‘mechanical’ nature of it.\nFor our model to be correct, there are important ideas that need to be captured:",
     "crumbs": [
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>Turing Machines I</span>"
     ]
@@ -117,36 +117,6 @@
     "text": "Arthur C. Clarke’s third law↩︎\ncitation needed↩︎\nOne day I will find citations for this…↩︎",
     "crumbs": [
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>Turing Machines I</span>"
-    ]
-  },
-  {
-    "objectID": "lectures/lecture_4.html",
-    "href": "lectures/lecture_4.html",
-    "title": "4  Turing Machines II",
-    "section": "",
-    "text": "4.1 Resource Usage",
-    "crumbs": [
-      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Turing Machines II</span>"
-    ]
-  },
-  {
-    "objectID": "lectures/lecture_4.html#machine-variants",
-    "href": "lectures/lecture_4.html#machine-variants",
-    "title": "4  Turing Machines II",
-    "section": "4.2 Machine Variants",
-    "text": "4.2 Machine Variants\n\n4.2.1 One-Way Tapes\n\n\n4.2.2 Multi-step instructions",
-    "crumbs": [
-      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Turing Machines II</span>"
-    ]
-  },
-  {
-    "objectID": "lectures/lecture_4.html#machines-as-data",
-    "href": "lectures/lecture_4.html#machines-as-data",
-    "title": "4  Turing Machines II",
-    "section": "4.3 Machines as Data",
-    "text": "4.3 Machines as Data",
-    "crumbs": [
-      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Turing Machines II</span>"
     ]
   }
 ]
