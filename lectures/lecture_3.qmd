@@ -8,7 +8,7 @@ Making use of electronics, digital circuits, and millions of bits and bytes to p
 [^1]: [Arthur C. Clarke's third law](https://en.wikipedia.org/wiki/Clarke%27s_three_laws)
 
 In 1936, they had a very different picture.
-The closest equivalent were mechanical devices that used levers, linkages, and gears to produce work - similar to the combustion engine.
+The closest equivalent were mechanical devices that used levers, linkages, and gears to produce work - similar to a train.
 Instead of work being motion, it would be the evaluation a series of steps, generally finding a solution to some form of arithmetic.
 Mechanical calculators were probably the most well known instances of a "computer".
 
@@ -93,13 +93,17 @@ Our program $\delta$ is the subset of of these permutations that describe the pa
     - reading $\sqcup$, go to $q_\text{reject}$, writing $\sqcup$ and moving $R$
     - reading $0$, go to $q_\text{reject}$, writing $0$ and moving $R$
     - reading $1$, go to $q_\text{accept}$, writing $1$ and moving $R$
+    
+```{=html}
+<iframe src="https://automata.seagrass.co.za/?automata_desc=H4sIAAAAAAAACo2S3WqEMBBG32WuFRKXUvCur9DbUsIYh26KP2mS0hXx3TvRShWXNXc6-c5J8pERwmAJSqhJG2_6ToUWMgjkg9LoyUP59p5Bi_pqOs6N4AOGeTyCqaEUGTRYUcOKL8FkbfDDYRuTtvcmsDJ-36DMC8HhgZFpmrKFlhtaPqQPaLFBXx6i677589M_ftngr0n4THMX1vVVQ63Cxl7ZELgKiDeXwIsBLe1W1Dx12C3OpTj97Zyai1R_HTrCWvmhrfp4IsW6jm5hk-Gmfpzhn12oNo70ctZcxqudmcXRLA5msTcniWWKWJ6LZUIXl7MuksR3qjiKE6o4iO9UUZxXwc_EdPxGsFm4uT_UmmxYB0Xc6ZORdXCZpl8jpvFHwQMAAA%7E%7E" width=780 height=500></iframe>
+```
 
 :::{.callout-warning}
 # Question
 What do these instructions actually do?
 Try describe the above algorithm in english.
 
-If we use the binary repesentation of integer's, $\left< z \right>_\mathbb{Z}$, what is happening to the number $z \in \mathbb{Z}$?
+If we use the binary repesentation of integer's, $\left< z \right>_{\mathbb{Z}}$, what is happening to the number $z \in \mathbb{Z}$?
 :::
 
 And a computation is the series of changes that has occured in our device and tape.
@@ -126,7 +130,7 @@ And a computation is the series of changes that has occured in our device and ta
 4. Read the result as $1$ as we are in $q_\text{accept}$
 
 Congratulations, we have just built a physical device that evaluates some algorithm.
-If we use $\left< z \right>_\mathbb{Z}$, then this algorithm determines if the given integer is even or odd.
+If we use $\left< z \right>_{\mathbb{Z}}$, then this algorithm determines if the given integer is even or odd.
 
 ### Formal Definition
 
