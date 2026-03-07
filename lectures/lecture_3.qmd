@@ -145,7 +145,7 @@ A **Decision Turing Machine** $M$ is the tuple $(Q, \Gamma, \Delta, \delta, q_\t
 - $\Delta$ is a **tape alphabet**, satisfying the following conditions:
     1. $\Gamma \subseteq \Delta$
     2. $\sqcup \in \Delta$
-    3. $\Delta \cap \Gamma = \emptyset$
+    3. $Q \cap \Gamma = \emptyset$
 - $q_\text{init}, q_\text{accept}, q_\text{reject} \in Q$
 - $\delta$ (called the **transition function** or **program**) is a finite set of instructions in the form $q_i, s_n \rightarrow q_j, s_m, D$
     1. $q_i, q_j \in Q$
@@ -303,7 +303,7 @@ A **Computational Turing Machine** $M$ is the tuple $(Q, \Gamma, \Delta, \delta,
 - $\Delta$ is a **tape alphabet**, satisfying the following conditions:
     1. $\Gamma \subseteq \Delta$ - Our input alphabet can be written on the tape
     2. $\sqcup \in \Delta$ - Our tape has a blank symbol
-    3. $\Delta \cap \Gamma = \emptyset$ - The symbols and states are different
+    3. $Q \cap \Gamma = \emptyset$ - The symbols and states are different
 - $q_\text{init}, q_\text{halt} \in Q$
 - $\delta$ (called the **transition function** or **program**) is a finite set of instructions in the form $q_i, s_n \rightarrow q_j, s_m, D$
     1. $q_i, q_j \in Q$
