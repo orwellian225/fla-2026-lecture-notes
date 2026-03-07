@@ -65,6 +65,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
+<link href="../lectures/lecture_4.html" rel="next">
 <link href="../lectures/lecture_2.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -76,7 +77,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-70a47bd5681a7291082a5b9f83d58762.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-27c261d06b905028a18691de25d09dde.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -193,6 +194,12 @@ window.Quarto = {
   <div class="sidebar-item-container"> 
   <a href="../lectures/lecture_3.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Turing Machines I</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lectures/lecture_4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Turing Machines II</span></span></a>
   </div>
 </li>
     </ul>
@@ -343,7 +350,7 @@ Note
 <li>reading <span class="math inline">\(1\)</span>, go to <span class="math inline">\(q_\text{accept}\)</span>, writing <span class="math inline">\(1\)</span> and moving <span class="math inline">\(R\)</span></li>
 </ul></li>
 </ul>
-<iframe src="https://automata.seagrass.co.za/?automata_desc=H4sIAAAAAAAACo2S3WqEMBBG32WuFRKXUvCur9DbUsIYh26KP2mS0hXx3TvRShWXNXc6-c5J8pERwmAJSqhJG2_6ToUWMgjkg9LoyUP59p5Bi_pqOs6N4AOGeTyCqaEUGTRYUcOKL8FkbfDDYRuTtvcmsDJ-36DMC8HhgZFpmrKFlhtaPqQPaLFBXx6i677589M_ftngr0n4THMX1vVVQ63Cxl7ZELgKiDeXwIsBLe1W1Dx12C3OpTj97Zyai1R_HTrCWvmhrfp4IsW6jm5hk-Gmfpzhn12oNo70ctZcxqudmcXRLA5msTcniWWKWJ6LZUIXl7MuksR3qjiKE6o4iO9UUZxXwc_EdPxGsFm4uT_UmmxYB0Xc6ZORdXCZpl8jpvFHwQMAAA%7E%7E" width="780" height="500"></iframe>
+<iframe src="https://automata.seagrass.co.za/?automata_desc=H4sIAAAAAAAACo2S3WqEMBBG32WuFRKXUvCur9DbUsIYh26KP2mS0hXx3TvRShWXNXc6-c5J8pERwmAJSqhJG2_6ToUWMgjkg9LoyUP59p5Bi_pqOs6N4AOGeTyCqaEUGTRYUcOKL8FkbfDDYRuTtvcmsDJ-36DMC8HhgZFpmrKFlhtaPqQPaLFBXx6i677589M_ftngr0n4THMX1vVVQ63Cxl7ZELgKiDeXwIsBLe1W1Dx12C3OpTj97Zyai1R_HTrCWvmhrfp4IsW6jm5hk-Gmfpzhn12oNo70ctZcxqudmcXRLA5msTcniWWKWJ6LZUIXl7MuksR3qjiKE6o4iO9UUZxXwc_EdPxGsFm4uT_UmmxYB0Xc6ZORdXCZpl8jpvFHwQMAAA%7E%7E" width="750" height="500"></iframe>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -413,7 +420,7 @@ Note
 <ol type="1">
 <li><span class="math inline">\(\Gamma \subseteq \Delta\)</span></li>
 <li><span class="math inline">\(\sqcup \in \Delta\)</span></li>
-<li><span class="math inline">\(\Delta \cap \Gamma = \emptyset\)</span></li>
+<li><span class="math inline">\(Q \cap \Gamma = \emptyset\)</span></li>
 </ol></li>
 <li><span class="math inline">\(q_\text{init}, q_\text{accept}, q_\text{reject} \in Q\)</span></li>
 <li><span class="math inline">\(\delta\)</span> (called the <strong>transition function</strong> or <strong>program</strong>) is a finite set of instructions in the form <span class="math inline">\(q_i, s_n \rightarrow q_j, s_m, D\)</span>
@@ -615,7 +622,7 @@ Note
 <ol type="1">
 <li><span class="math inline">\(\Gamma \subseteq \Delta\)</span> - Our input alphabet can be written on the tape</li>
 <li><span class="math inline">\(\sqcup \in \Delta\)</span> - Our tape has a blank symbol</li>
-<li><span class="math inline">\(\Delta \cap \Gamma = \emptyset\)</span> - The symbols and states are different</li>
+<li><span class="math inline">\(Q \cap \Gamma = \emptyset\)</span> - The symbols and states are different</li>
 </ol></li>
 <li><span class="math inline">\(q_\text{init}, q_\text{halt} \in Q\)</span></li>
 <li><span class="math inline">\(\delta\)</span> (called the <strong>transition function</strong> or <strong>program</strong>) is a finite set of instructions in the form <span class="math inline">\(q_i, s_n \rightarrow q_j, s_m, D\)</span>
@@ -733,7 +740,7 @@ Note
 <section id="the-church-turing-thesis" class="level3" data-number="3.3.2">
 <h3 data-number="3.3.2" class="anchored" data-anchor-id="the-church-turing-thesis"><span class="header-section-number">3.3.2</span> The Church-Turing Thesis</h3>
 <p>At this point, you should have an understanding that Turing Machines are a fairly strong model for algorithms. We can analyse them the same way as algorithms, we can program them using instructions, we can build them in the real world (this is a surprisingly important idea), and there is more yet to come.</p>
-<p>However, we have not really discussed if a Turing Machine is an exact model of an algorithm. To jump the gun, yes. Turing Machines are an incredibly robust model, and every definition of computer that has been developed in the last 100 years has been shown to be equivalent to at least some form of Turing Machine. Even digital computers with Random-Access Memory are just slightly faster versions of a Turing Machine. In <a href="./lecture_4.qmd#Turing-Equivalency">Turing Equivalency</a>, we will study this idea more concretely.</p>
+<p>However, we have not really discussed if a Turing Machine is an exact model of an algorithm. To jump the gun, yes. Turing Machines are an incredibly robust model, and every definition of computer that has been developed in the last 100 years has been shown to be equivalent to at least some form of Turing Machine. Even digital computers with Random-Access Memory are just slightly faster versions of a Turing Machine. In <a href="../lectures/lecture_4.html#Turing-Equivalency">Turing Equivalency</a>, we will study this idea more concretely.</p>
 <p>To formulate this, we have developed a simple thesis.</p>
 <blockquote class="blockquote">
 <p>Every computational problem solvable by an algorithm, can also be solved by a Turing Machine.</p>
@@ -1161,6 +1168,9 @@ Note
       </a>          
   </div>
   <div class="nav-page nav-page-next">
+      <a href="../lectures/lecture_4.html" class="pagination-link" aria-label="Turing Machines II">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Turing Machines II</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
   </div>
 </nav>
 </div> <!-- /content -->
