@@ -1,0 +1,402 @@
+# Undecidability by Diagonalisation
+
+## Countable and Uncountable Infinity
+
+Up until this point, we have touched on the distinction between the countable infinity $\aleph_0$, and uncountable infinity $\mathfrak{c}$.
+However, to understand the distinction between Decision Problems and Algorithms concretely, we need to understand _how_ different they are.
+
+To begin with, we need the two definitions of countable and uncountable sets:
+
+An infinite set $A$ is **countable** if there exists a bijective function $\alpha$ between $A$ and the natural numbers $\mathbb{N}$, 
+and an infinite set $B$ is **uncountable** if there is no bijection between $B$ and $\mathbb{N}$.
+
+:::{.callout-warning}
+## Question - Why does it need to be a bijective function?
+
+The surjective property $$\forall n \in \mathbb{N}, \exists x \in X \text{ such that } \alpha(x) = n$$ allows us to state that _every_ natural number has at least one element in $X$.
+
+The injective property $$\forall x \in X, \exists! n \in \mathbb{N} \text{ such that } \alpha(x) = n$$ means that some $x$ only ever has one natural number.
+
+For every object, there is only one natural number, and every natural number has some object.
+Thus every natural number must have only one object, and there is as many objects as there are natural numbers.
+:::
+
+Intuitively, we can recognize that there are more real numbers then there are natural numbers.
+It is tempting to believe that this is because of density (between any two real numbers, we can find some other real number) but this property also applies to the rational numbers.
+
+:::{.callout-tip}
+## Prove that the set of rational numbers is dense
+
+As a start, for any two rational numbers $\frac{a}{b} < \frac{c}{d} \in \mathbb{Q}$, show that we can construct some rational number $\frac{x}{y} \in \mathbb{Q}$ such that
+$$ \frac{a}{b} < \frac{x}{y} < \frac{c}{d} $$
+
+$$ \frac{x}{y} = ??? $$
+:::
+
+We need to find some other property of countable sets that we can use to demonstrate the size difference.
+This property is enumeration.
+
+We can **enumerate** the set of natural numbers in a fairly simple manner: The next natural number is the previous number plus one $$ n = m + 1 $$
+This enumeration means we can theoretically list out all natural numbers.
+$$ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ... $$
+
+We can also enumerate _any_ countable set $A$ using this idea, and our bijection $\alpha: A \mapsto \mathbb{N}$.
+\begin{align*}
+    & 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ... \\
+    & \alpha(0), \alpha(1), \alpha(2), \alpha(3), \alpha(4), \alpha(5), \alpha(6), \alpha(7), \alpha(8), \alpha(9), ... \\
+\end{align*}
+
+If we can show that there is no way to enumerate the set of all real numbers, then the bijection that constructs the enumeration must also not exist.
+
+***
+
+**Theorem:** The set of all real numbers has larger cardinality then the set of natural numbers.
+
+Assume, for contradiction, that the subset $[0,1] \subset \mathbb{R}$ is countable.
+Then we can enumerate these numbers.
+$$ x_1, x_2, x_3, x_4, x_5, ... \text{ where } x_i = \alpha(i), i \in \mathbb{N} $$
+
+We can represent a real number $x \in [0,1]$ as the _infinite_ binary sequence by representing each digit as a binary word.
+One such representation is to tie the value of each digit to where along the interval $x$ is found ([More info here](https://veitner.bearblog.dev/infinite-binary-string/)).
+
+Using our binary enumeration, we can construct the following table
+
+\begin{align*}
+    & x_1 \mid 0\: 0\: 0\: 0\: 0\: 0\: ... \\
+    & x_2 \mid 1\: 1\: 1\: 1\: 1\: 1\: ... \\
+    & x_3 \mid 1\: 0\: 1\: 0\: 1\: 0\: ... \\
+    & x_4 \mid 0\: 1\: 0\: 1\: 0\: 1\: ... \\
+    & x_5 \mid 0\: 1\: 0\: 0\: 0\: 1\: ... \\
+    & \vdots
+\end{align*}
+
+Now for every row in this table, $x_i$, we move to the $i$-th digit (along the **diagonal**) and take the opposite that value and make a new binary string $x'$
+
+\begin{align*}
+    & x_1 \mid \textcolor{red}{0}\: 0\: 0\: 0\: 0\: ... \\
+    & x_2 \mid 1\: \textcolor{red}{1}\: 1\: 1\: 1\: ... \\
+    & x_3 \mid 1\: 0\: \textcolor{red}{1}\: 0\: 1\: ... \\
+    & x_4 \mid 0\: 1\: 0\: \textcolor{red}{1}\: 0\: ... \\
+    & x_5 \mid 0\: 1\: 0\: 0\: \textcolor{red}{0}\: ... \\
+    & \vdots \\
+    & \hline \\
+    & x' \mid \textcolor{blue}{1\: 0\: 0\: 0\: 1\:} ...
+\end{align*}
+
+The enumeration would eventually list all the real numbers $x_i \in [0, 1]$.
+For any $x_i$, we can find some digit in $x'$ where $x'$ is different to $x_i$.
+Thus $x'$ is different from every $x_i$ and as it is _not_ apart of the enumerated list, $x' \notin [0,1]$.
+However, $x'$ _is_ an infinite binary string so it represents some real number in $[0, 1]$.
+
+1. $x' \notin [0,1]$
+2. $x' \in [0,1]$
+
+This is a contradiction, and thus our original assumption must be false.
+Therefore $[0,1]$ is not a countable set.
+If $[0,1] \subset \mathbb{R}$ is not countable, then $\mathbb{R}$ must also not be countable.
+
+***
+
+## Algorithms and Decision Problems
+
+### How many algorithms are there?
+
+We know that we can represent a Turing Machine $M$ as the binary string $\langle M \rangle$.
+So the **set of all _non-equivalent_ Turing Machines** $\mathbb{M}$ can be converted into a set of strings $\langle \mathbb{M} \rangle \subseteq \{0,1\}^\ast$
+As an upperbound, there can only be as many Turing Machines as there are strings.
+
+$$ |\mathbb{M}| \leq |\{0,1\}^\ast| $$
+
+We also know that there are an infinite number of Turing Machines.
+
+$$ |\mathbb{M}| \geq \aleph_0 $$
+
+:::{.callout-warning}
+## Why can we make this claim?
+
+Take a look at the proof sketch for equivalent Turing Machines in [Lecture 3](./lecture_3).
+Can we use a similar idea to show that there are at least an infinite number of _non-equivalent_ Turing Machine?
+:::
+
+To find the size of $\mathbb{M}$, we need to find how many strings there are.
+Fortunately, we know this already.
+
+The bijection between $\{0,1\}^\ast$ is just the representation for binary natural numbers $\langle n \rangle_{\mathbb{N}, 2}$.
+Therefore, there are as many binary strings as there are natural numbers.
+
+$$ |\{ 0, 1\}^\ast| = |\mathbb{N}| = \aleph_0 $$
+
+All together now,
+
+$$ \aleph_0 \leq |\mathbb{M}| \leq \aleph_0 \implies |\mathbb{M}| = \aleph_0 $$
+
+Therefore, there are a countably infinite number of Turing Machines.
+
+### How many decision problems are there?
+
+Every decision problem $P: \{0,1\}^\ast \mapsto \{0,1\}$ has an equivalent language $L \subseteq \{0,1\}^\ast$.
+We need to identify how many languages there are.
+
+A language $L$ is by definition a subset of the set of all strings $\{0,1\}^\ast$, so it is also a member of the powerset of all strings $\mathcal{P}(\{0,1\}^\ast)$ (The set of all subsets).
+
+$$ L \subseteq \{0,1\}^\ast \implies L \in \mathcal{P}(\{0,1\}^\ast) $$
+
+The cardinality of a powerset of some set $A$ is $2^{|A|}$.
+So the cardinality of $\mathcal{P}(\{0,1\}^\ast)$ is $2^{\aleph_0}$.
+
+The set of decision problems is larger then the set of natural numbers.
+
+:::{.callout-note}
+## Cardinality of the powerset of some finite set example
+
+Let $A = \{ 0, 1, 2 \}$
+
+\begin{align*}
+    & \mathcal{P}(A) = \{ \emptyset, \{0\}, \{1\}, \{2\}, \{0, 1\}, \{0, 2\}, \{1, 2\}, \{0, 1, 2\} \}  \\
+    & |A| = 3 \\
+    & |\mathcal{P}(A)| = 8 = 2^3 = 2^{|A|}
+\end{align*}
+:::
+
+### Undecidability
+
+The last two sections have identified the following facts:
+
+1. $|\mathbb{M}| = \aleph_0$
+2. $|\mathcal{P}(\{0,1\}^\ast)| = 2^{\aleph_0}$
+
+Putting these two statements together, we get,
+
+$$ |\mathbb{M}| < |\mathcal{P}(\{0,1\}^\ast)| $$
+
+There are more decision problems then there are non-equivalent Turing Machines.
+This doesn't give us enough information to conclude that some problems don't have a deciding Turing Machine.
+It is entirely possible that one Turing Machine is capable of solving multiple different decision problems.
+
+So we need to show that not every decision problem has some decider.
+We can do this with another proof by contradiction.
+
+***
+**Theorem** There are decision problems that are not decidable.
+
+Assume, for contradiction, that every decision problem is decidable.
+Therefore, for every $P: \{0,1\}^\ast \mapsto \{0, 1\}$, there is some $M_P \in \mathbb{M}$ that decides $P$.
+
+Let $f$ be a relation that links a decision problem $P$ to its decider $M_P$.
+
+- We assumed that every decision problem is decidable, so $f$ is total - every input has at least one output.
+- The definition of $\mathbb{M}$ was that it was the set of all non-equivalent Turing Machines, so $f$ is also injective - every output has only one input.
+
+If there is an injective, total relation $\alpha$ between two sets $X$ and $Y$, then $|X| \leq |Y|$.
+Therefore, by $f$, $$\mathcal{P}(\{0,1\}^\ast) \leq \mathbb{M}$$
+
+:::{.callout-note}
+We don't have surjectivity, so not all elements in $Y$ have an $X$.
+This means that every $x$ has a unique $y$ but not all $y$'s have an $x$, thus $|X| \leq |Y|$ _not_ $|X| = |Y|$
+:::
+
+This is a contradiction with the previously established fact
+$$ |\mathbb{M}| < |\mathcal{P}(\{0,1\}^\ast)| $$
+
+Thus our assumption is false, and therefore not all decision problems are decidable.
+
+***
+
+## An undecidable problem
+
+To find an example of an undecidable problem, we are going to rely on the same proof technique we used earlier to show that $|\mathbb{N}| < |\mathbb{R}|$, **diagonalisation**.
+But first, we need to understand two key ideas for this proof to come together.
+
+### String Casting
+
+The only data structure we are using for our Turing Machines are strings.
+To do useful work, we rely on representations of an object as a string to perform a computation over that object using a Turing Machine.
+However, we don't distinguish between different kinds of objects our strings represent.
+
+As a result, one string can mean two completely different objects when we choose a different representation.
+
+\begin{align*}
+    \langle 3 \rangle_{\mathbb{N}, 2} &= 11 \\
+    \langle -1 \rangle_{\mathbb{Z}, 2} &= 11 \\
+\end{align*}
+
+This is where the idea of types come from in programming.
+They allow us to distinguish that even though we can have the same binary string of data, we can still have two different objects.
+
+Most programming languages also provide a tool to convert between different types.
+This tool is called casting.
+
+```cpp
+    uint8_t a = 255; // In memory a is the binary string 1111 1111
+    int8_t b = (int8_t)a; // In memory b is the binary string 1111 1111
+    
+    std::cout << a << std::endl; // prints 255
+    std::cout << b << std::endl; // prints -1
+```
+
+It is important to recognise that any string $w \in \{0,1\}^\ast$ could represent any object, and that the representation of some object $\langle o \rangle$ can be used as any other string.
+
+### Feeding TM strings into TMs
+
+Why do are we interested in string casting?
+It is the tool that allows us to do incredibly strange things such as this:
+
+Let $PAL$ be a TM that decides $\text{PALINDROME}$.
+
+We can represent $PAL$ as a string, $\langle PAL \rangle$.
+
+Let $w \in \{ 0, 1 \}^\ast$ be $\langle PAL \rangle$ cast as a string.
+
+We can run the computation $C(PAL, w)$ and get the result $PAL(w)$ i.e. is the string $w$ a palindrome?
+But
+$$ w = \langle PAL \rangle $$
+so $$ PAL(w) = PAL(\langle PAL \rangle) $$
+
+We can run a Turing Machine on the string representation of itself.
+Even if a Turing Machine $M$ does not test for some property on Turing Machines, there is nothing stopping us from _still_ running Turing Machines through $M$ and getting some result.
+
+Using this idea, we can define the following set of languages
+\begin{align*}
+    \text{SELF-ACCEPT} &:= \{ \langle M \rangle | M(\langle M \rangle) = 1 \} \\
+    \text{NOT-SELF-ACCEPT} &:= \{ \langle M \rangle | M(\langle M \rangle) \neq 1 \} \\
+    \\
+    \text{SELF-REJECT} &:= \{ \langle M \rangle | M(\langle M \rangle) = 0 \} \\
+    \text{NOT-SELF-REJECT} &:= \{ \langle M \rangle | M(\langle M \rangle) \neq 0 \} \\
+    \\
+    \text{SELF-HALT} &:= \{ \langle M \rangle | M(\langle M \rangle) \neq \infty \} \\
+    \text{NOT-SELF-HALT} &:= \{ \langle M \rangle | M(\langle M \rangle) = \infty \} \\
+\end{align*}
+
+:::{.callout-tip}
+The above languages can be a bit trippy to read the first time you see them.
+If we write them in english however it may become a bit clearer what exactly these languages are.
+
+$\text{SELF-ACCEPT}$ is the set of all Turing Machines (as strings) that accept when the string representation of itself (cast as a normal string) is given as input.
+
+$\text{NOT-SELF-ACCEPT}$ is the set of all Turing Machines (as strings) that do not accept (i.e. reject _or_ loop) when the string representation of itself (cast as a normal string) is given as input.
+:::
+
+### Diagonalisation
+
+We are going to show that $\text{NOT-SELF-ACCEPT}$ is an undecidable problem.
+To do this, we are going to rely on diagonalisation again.
+
+***
+**Theorem**: The language $\text{NOT-SELF-ACCEPT}$ is undecidable.
+
+**PROOF SKETCH**
+
+The set of all non-equivalent Turing Machines $\mathbb{M}$ is countable.
+Therefore we can enumerate it as 
+    $$ M_1, M_2, M_3, M_4, M_5, M_6, ... $$ 
+and then we can represent this list as strings
+    $$ \langle M_1\rangle, \langle M_2\rangle, \langle M_3\rangle, \langle M_4\rangle, \langle M_5\rangle, \langle M_6\rangle, ... $$ 
+
+Using these two lists, we can construct the following table.
+The value at row $i$ and column $j$ is the result of $M_i(\langle M_j\rangle)$.
+We don't actually know what the result of these computations are, so for the sake of the argument we will pick essentially random values.
+
+\begin{matrix}
+
+        & \langle M_1\rangle & \langle M_2\rangle & \langle M_3 \rangle & \langle M_4 \rangle & \langle M_5 \rangle & \langle M_6 \rangle & ... \\
+    M_1 & 1 & 0 & \infty & 0 & 0 & 1 & ... \\
+    M_2 & \infty & 0 & 0 & 1 & 1 & \infty & ... \\
+    M_3 & 1 & 0 & \infty & \infty & 1 & 1 & ... \\
+    M_4 & 0 & 1 & \infty & 0 & 0 & 1 & ... \\
+    M_5 & \infty & 1 & 1 & 1 & 1 & \infty & ... \\
+    M_6 & 0 & \infty & \infty & 1 & 0 & \infty & ... \\
+    \vdots & & & & & & & \ddots \\
+
+\end{matrix}
+
+The the values on diagonal of this table are the results of running a TM on itself as input.
+We can therefore construct some language by taking these values and changing their results.
+
+In this case, we will take the value and say it is $1$ if $M_i(\langle M_i \rangle) \neq 1$ and $0$ if it is equal to one.
+This constructed language is $\text{NOT-SELF-ACCEPT}$.
+
+\begin{matrix}
+
+        & \langle M_1\rangle & \langle M_2\rangle & \langle M_3 \rangle & \langle M_4 \rangle & \langle M_5 \rangle & \langle M_6 \rangle & ... \\
+    M_1 & \textcolor{red}{1} & 0 & \infty & 0 & 0 & 1 & ... \\
+    M_2 & \infty & \textcolor{red}{0} & 0 & 1 & 1 & \infty & ... \\
+    M_3 & 1 & 0 & \textcolor{red}{\infty} & \infty & 1 & 1 & ... \\
+    M_4 & 0 & 1 & \infty & \textcolor{red}{0} & 0 & 1 & ... \\
+    M_5 & \infty & 1 & 1 & 1 & \textcolor{red}{1} & \infty & ... \\
+    M_6 & 0 & \infty & \infty & 1 & 0 & \textcolor{red}{\infty} & ... \\
+    \vdots & & & & & & & \ddots \\
+    \hline \\
+    \text{NOT-SELF-ACCEPT} & \textcolor{blue}{0} & \textcolor{blue}{1} & \textcolor{blue}{1} & \textcolor{blue}{1} & \textcolor{blue}{0} & \textcolor{blue}{1} & ...
+
+\end{matrix}
+
+If we assume that $\text{NOT-SELF-ACCEPT}$ is decidable, then the decider $M_{NSA}$ must at some point be enumerated in the list.
+The row of $M_{NSA}$ is equal to the constructed $\text{NOT-SELF-ACCEPT}$ as it is the decider for the problem.
+
+\begin{matrix}
+
+        & \langle M_1\rangle & \langle M_2\rangle & \langle M_3 \rangle & \langle M_4 \rangle & \langle M_5 \rangle & \langle M_6 \rangle & ... & \langle M_{NSA} \rangle & ... \\
+    M_1 & \textcolor{red}{1} & 0 & \infty & 0 & 0 & 1 & ... & 0 & ... \\
+    M_2 & \infty & \textcolor{red}{0} & 0 & 1 & 1 & \infty & ... & 1 & ... \\
+    M_3 & 1 & 0 & \textcolor{red}{\infty} & \infty & 1 & 1 & ... & 0 &  ... \\
+    M_4 & 0 & 1 & \infty & \textcolor{red}{0} & 0 & 1 & ... & \infty & ... \\
+    M_5 & \infty & 1 & 1 & 1 & \textcolor{red}{1} & \infty & ... & 0 & ... \\
+    M_6 & 0 & \infty & \infty & 1 & 0 & \textcolor{red}{\infty} & ... & \infty & ... \\
+    \vdots & & & & & & & \ddots \\
+    M_{NSA} & \textcolor{blue}{0} & \textcolor{blue}{1} & \textcolor{blue}{1} & \textcolor{blue}{1} & \textcolor{blue}{0} & \textcolor{blue}{1} & ... & \textcolor{red}{???} & ... \\
+    \vdots & & & & & & & & & \ddots \\
+    \hline \\
+    \text{NOT-SELF-ACCEPT} & \textcolor{blue}{0} & \textcolor{blue}{1} & \textcolor{blue}{1} & \textcolor{blue}{1} & \textcolor{blue}{0} & \textcolor{blue}{1} & ... & \textcolor{blue}{???} & ...
+
+\end{matrix}
+
+To construct $\text{NOT-SELF-ACCEPT}$ we need to flip the diagonal values in the table.
+But what appears in the table for $M_{NSA}$ on $\langle M_{NSA} \rangle$?
+If it is $\infty$, then $\text{NOT-SELF-ACCEPT}$ would be $1$, so in the table we need to have the value $1$?
+If it is $1$, then $\text{NOT-SELF-ACCEPT}$ would $0$, so in the table we would need to have $0$?
+
+The expected output of $M_{NSA}$ on $\langle M_{NSA} \rangle$ is unclear and contradictory.
+
+:::{.callout-note}
+The above argument was not a rigourous proof.
+Using diagonalisation, $\text{NOT-SELF-ACCEPT}$ has no Turing Machine, but we've not relied on a correct proof technique to show this.
+Instead it has been the rough idea of what we expect to actually happen.
+
+The Turing Machine 
+:::
+***
+**PROOF**
+
+Let $\text{NOT-SELF-ACCEPT}$ be a decision problem defined as follows
+$$
+    \text{NOT-SELF-ACCEPT}(\langle M \rangle) := \begin{cases}
+        1 & M( \langle M \rangle ) \neq 1 \\
+        0 \text{ otherwise}
+    \end{cases}
+$$
+
+Assume, for contradiction, that there exists a decider $M_{NSA}$ for $\text{NOT-SELF-ACCEPT}$ (abbrev. $\text{NSA}$)
+
+There are two ideas we need here
+
+1. $\text{NSA}(\langle M_{NSA} \rangle) = 1 \iff M_{NSA}(\langle M_{NSA} \rangle) \neq 1$ by the definition of $\text{NSA}$
+2. $M_{NSA}( \langle M_{NSA} \rangle ) = 1 \iff \text{NSA}(\langle M_{NSA} \rangle) = 1$ by assumption that $M_{NSA}$ is a decider for $\text{NSA}$
+
+Putting these together
+
+\begin{align*}
+    & M_{NSA}( \langle M_{NSA} \rangle ) = 1 \iff \text{NSA}(\langle M_{NSA} \rangle) = 1 \iff M_{NSA}(\langle M_{NSA} \rangle) \neq 1 \\
+    \therefore \; & M_{NSA}( \langle M_{NSA} \rangle ) = 1 \iff M_{NSA}(\langle M_{NSA} \rangle) \neq 1
+\end{align*}
+
+We have a contradiction. 
+Thus our assumption that there exists a decider for $\text{NOT-SELF-ACCEPT}$ is wrong.
+
+Therefore, there is no decider for $\text{NOT-SELF-ACCEPT}$
+
+***
+
+:::{.callout-tip}
+You can use any of the mentioned languages to construct a similar proof.
+Try it for yourself.
+:::
