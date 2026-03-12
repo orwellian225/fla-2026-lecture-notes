@@ -184,15 +184,24 @@ We can do this with another proof by contradiction.
 **Theorem** There are decision problems that are not decidable.
 
 Assume, for contradiction, that every decision problem is decidable.
-Therefore, for every $P: \{0,1\}^\ast \mapsto \{0, 1\}$, there is some $M_P \in \mathbb{M}$ that decides $P$.
+Therefore, for every $P: \{0,1\}^\ast \mapsto \{0, 1\}$, there is some $M \in \mathbb{M}$ that decides $P$.
 
-Let $f$ be a relation that links a decision problem $P$ to its decider $M_P$.
+Let $f$ be a relation that links a decision problem $P$ to its decider $M$.
 
 - We assumed that every decision problem is decidable, so $f$ is total - every input has at least one output.
-- The definition of $\mathbb{M}$ was that it was the set of all non-equivalent Turing Machines, so $f$ is also injective - every output has only one input.
-
-If there is an injective, total relation $\alpha$ between two sets $X$ and $Y$, then $|X| \leq |Y|$.
-Therefore, by $f$, $$\mathcal{P}(\{0,1\}^\ast) \leq \mathbb{M}$$
+	$$ \forall P \: \exists M, f(P) = M $$
+- Two decision problems $P_1$ and $P_2$ are distinct if $\forall w \in \{0,1\}^\ast, P_1(w) \neq P_2(w)$
+	- If $P_1$ and $P_2$ are distinct, but they are solved by the same decider $M$, then 
+		\begin{align*}
+			& P_1(w) = M(w) \\
+			& P_2(w) = M(w) \\
+			& \implies P_1(w) = M(w) = P_2(w) \\
+			& \implies \forall w \in \Gamma, P_1(w) = P_2
+		\end{align*}
+	- Therefore no two distinct decision problems can be solved by the same decider.
+	$$ \forall P \: \exists! M, f(P) = M $$
+	
+Therefore, by $f$, $$|\mathcal{P}(\{0,1\}^\ast)| \leq |\mathbb{M}|$$
 
 :::{.callout-note}
 We don't have surjectivity, so not all elements in $Y$ have an $X$.
@@ -379,6 +388,8 @@ $$
         0 \text{ otherwise}
     \end{cases}
 $$
+or
+$$ \text{NOT-SELF-ACCEPT}(\langle M \rangle) = 1 \iff M(\langle M \rangle) \neq 1 $$
 
 Assume, for contradiction, that there exists a decider $M_{NSA}$ for $\text{NOT-SELF-ACCEPT}$ (abbrev. $\text{NSA}$)
 
