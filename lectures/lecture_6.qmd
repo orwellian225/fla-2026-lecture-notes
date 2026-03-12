@@ -61,27 +61,31 @@ One such representation is to tie the value of each digit to where along the int
 
 Using our binary enumeration, we can construct the following table
 
-\begin{align*}
-    & x_1 \mid 0\: 0\: 0\: 0\: 0\: 0\: ... \\
-    & x_2 \mid 1\: 1\: 1\: 1\: 1\: 1\: ... \\
-    & x_3 \mid 1\: 0\: 1\: 0\: 1\: 0\: ... \\
-    & x_4 \mid 0\: 1\: 0\: 1\: 0\: 1\: ... \\
-    & x_5 \mid 0\: 1\: 0\: 0\: 0\: 1\: ... \\
-    & \vdots
-\end{align*}
+$$
+\begin{array}{l}
+    x_1 \mid 0\: 0\: 0\: 0\: 0\: 0\: ... \\
+    x_2 \mid 1\: 1\: 1\: 1\: 1\: 1\: ... \\
+    x_3 \mid 1\: 0\: 1\: 0\: 1\: 0\: ... \\
+    x_4 \mid 0\: 1\: 0\: 1\: 0\: 1\: ... \\
+    x_5 \mid 0\: 1\: 0\: 0\: 0\: 1\: ... \\
+    \vdots
+\end{array}
+$$
 
 Now for every row in this table, $x_i$, we move to the $i$-th digit (along the **diagonal**) and take the opposite that value and make a new binary string $x'$
 
-\begin{align*}
-    & x_1 \mid \textcolor{red}{0}\: 0\: 0\: 0\: 0\: ... \\
-    & x_2 \mid 1\: \textcolor{red}{1}\: 1\: 1\: 1\: ... \\
-    & x_3 \mid 1\: 0\: \textcolor{red}{1}\: 0\: 1\: ... \\
-    & x_4 \mid 0\: 1\: 0\: \textcolor{red}{1}\: 0\: ... \\
-    & x_5 \mid 0\: 1\: 0\: 0\: \textcolor{red}{0}\: ... \\
-    & \vdots \\
-    & \hline \\
-    & x' \mid \textcolor{blue}{1\: 0\: 0\: 0\: 1\:} ...
-\end{align*}
+$$
+\begin{array}{l}
+    x_1 \mid \textcolor{red}{0}\: 0\: 0\: 0\: 0\: ... \\
+    x_2 \mid 1\: \textcolor{red}{1}\: 1\: 1\: 1\: ... \\
+    x_3 \mid 1\: 0\: \textcolor{red}{1}\: 0\: 1\: ... \\
+    x_4 \mid 0\: 1\: 0\: \textcolor{red}{1}\: 0\: ... \\
+    x_5 \mid 0\: 1\: 0\: 0\: \textcolor{red}{0}\: ... \\
+    \vdots \\
+    \hline
+    x' \mid \textcolor{blue}{1\: 0\: 0\: 0\: 1\:} ...
+\end{array}
+$$
 
 The enumeration would eventually list all the real numbers $x_i \in [0, 1]$.
 For any $x_i$, we can find some digit in $x'$ where $x'$ is different to $x_i$.
@@ -296,18 +300,19 @@ Using these two lists, we can construct the following table.
 The value at row $i$ and column $j$ is the result of $M_i(\langle M_j\rangle)$.
 We don't actually know what the result of these computations are, so for the sake of the argument we will pick essentially random values.
 
-\begin{matrix}
-
-        & \langle M_1\rangle & \langle M_2\rangle & \langle M_3 \rangle & \langle M_4 \rangle & \langle M_5 \rangle & \langle M_6 \rangle & ... \\
-    M_1 & 1 & 0 & \infty & 0 & 0 & 1 & ... \\
-    M_2 & \infty & 0 & 0 & 1 & 1 & \infty & ... \\
-    M_3 & 1 & 0 & \infty & \infty & 1 & 1 & ... \\
-    M_4 & 0 & 1 & \infty & 0 & 0 & 1 & ... \\
-    M_5 & \infty & 1 & 1 & 1 & 1 & \infty & ... \\
-    M_6 & 0 & \infty & \infty & 1 & 0 & \infty & ... \\
+$$
+\begin{array}{r|ccccccc}
+        & \langle M_1\rangle & \langle M_2\rangle & \langle M_3 \rangle & \langle M_4 \rangle & \langle M_5 \rangle & \langle M_6 \rangle & \cdots \\
+    \hline
+    M_1 & 1 & 0 & \infty & 0 & 0 & 1 & \cdots \\
+    M_2 & \infty & 0 & 0 & 1 & 1 & \infty & \cdots \\
+    M_3 & 1 & 0 & \infty & \infty & 1 & 1 & \cdots \\
+    M_4 & 0 & 1 & \infty & 0 & 0 & 1 & \cdots \\
+    M_5 & \infty & 1 & 1 & 1 & 1 & \infty & \cdots \\
+    M_6 & 0 & \infty & \infty & 1 & 0 & \infty & \cdots \\
     \vdots & & & & & & & \ddots \\
-
-\end{matrix}
+\end{array}
+$$
 
 The the values on diagonal of this table are the results of running a TM on itself as input.
 We can therefore construct some language by taking these values and changing their results.
@@ -315,40 +320,42 @@ We can therefore construct some language by taking these values and changing the
 In this case, we will take the value and say it is $1$ if $M_i(\langle M_i \rangle) \neq 1$ and $0$ if it is equal to one.
 This constructed language is $\text{NOT-SELF-ACCEPT}$.
 
-\begin{matrix}
-
-        & \langle M_1\rangle & \langle M_2\rangle & \langle M_3 \rangle & \langle M_4 \rangle & \langle M_5 \rangle & \langle M_6 \rangle & ... \\
-    M_1 & \textcolor{red}{1} & 0 & \infty & 0 & 0 & 1 & ... \\
-    M_2 & \infty & \textcolor{red}{0} & 0 & 1 & 1 & \infty & ... \\
-    M_3 & 1 & 0 & \textcolor{red}{\infty} & \infty & 1 & 1 & ... \\
-    M_4 & 0 & 1 & \infty & \textcolor{red}{0} & 0 & 1 & ... \\
-    M_5 & \infty & 1 & 1 & 1 & \textcolor{red}{1} & \infty & ... \\
-    M_6 & 0 & \infty & \infty & 1 & 0 & \textcolor{red}{\infty} & ... \\
+$$
+\begin{array}{r|ccccccccc}
+        & \langle M_1\rangle & \langle M_2\rangle & \langle M_3 \rangle & \langle M_4 \rangle & \langle M_5 \rangle & \langle M_6 \rangle & \cdots \\
+    \hline
+    M_1 & \textcolor{red}{1} & 0 & \infty & 0 & 0 & 1 & \cdots \\
+    M_2 & \infty & \textcolor{red}{0} & 0 & 1 & 1 & \infty & \cdots \\
+    M_3 & 1 & 0 & \textcolor{red}{\infty} & \infty & 1 & 1 & \cdots \\
+    M_4 & 0 & 1 & \infty & \textcolor{red}{0} & 0 & 1 & \cdots \\
+    M_5 & \infty & 1 & 1 & 1 & \textcolor{red}{1} & \infty & \cdots \\
+    M_6 & 0 & \infty & \infty & 1 & 0 & \textcolor{red}{\infty} & \cdots \\
     \vdots & & & & & & & \ddots \\
-    \hline \\
-    \text{NOT-SELF-ACCEPT} & \textcolor{blue}{0} & \textcolor{blue}{1} & \textcolor{blue}{1} & \textcolor{blue}{1} & \textcolor{blue}{0} & \textcolor{blue}{1} & ...
-
-\end{matrix}
+    \hline
+    \text{NOT-SELF-ACCEPT} & \textcolor{blue}{0} & \textcolor{blue}{1} & \textcolor{blue}{1} & \textcolor{blue}{1} & \textcolor{blue}{0} & \textcolor{blue}{1} & \cdots \\
+\end{array}
+$$
 
 If we assume that $\text{NOT-SELF-ACCEPT}$ is decidable, then the decider $M_{NSA}$ must at some point be enumerated in the list.
 The row of $M_{NSA}$ is equal to the constructed $\text{NOT-SELF-ACCEPT}$ as it is the decider for the problem.
 
-\begin{matrix}
-
-        & \langle M_1\rangle & \langle M_2\rangle & \langle M_3 \rangle & \langle M_4 \rangle & \langle M_5 \rangle & \langle M_6 \rangle & ... & \langle M_{NSA} \rangle & ... \\
-    M_1 & \textcolor{red}{1} & 0 & \infty & 0 & 0 & 1 & ... & 0 & ... \\
-    M_2 & \infty & \textcolor{red}{0} & 0 & 1 & 1 & \infty & ... & 1 & ... \\
-    M_3 & 1 & 0 & \textcolor{red}{\infty} & \infty & 1 & 1 & ... & 0 &  ... \\
-    M_4 & 0 & 1 & \infty & \textcolor{red}{0} & 0 & 1 & ... & \infty & ... \\
-    M_5 & \infty & 1 & 1 & 1 & \textcolor{red}{1} & \infty & ... & 0 & ... \\
-    M_6 & 0 & \infty & \infty & 1 & 0 & \textcolor{red}{\infty} & ... & \infty & ... \\
-    \vdots & & & & & & & \ddots \\
-    M_{NSA} & \textcolor{blue}{0} & \textcolor{blue}{1} & \textcolor{blue}{1} & \textcolor{blue}{1} & \textcolor{blue}{0} & \textcolor{blue}{1} & ... & \textcolor{red}{???} & ... \\
+$$
+\begin{array}{r|ccccccccc}
+        & \langle M_1\rangle & \langle M_2\rangle & \langle M_3 \rangle & \langle M_4 \rangle & \langle M_5 \rangle & \langle M_6 \rangle & \cdots & \langle M_{NSA} \rangle & \cdots \\
+    \hline
+    M_1 & \textcolor{red}{1} & 0 & \infty & 0 & 0 & 1 & \cdots & 0 & \cdots \\
+    M_2 & \infty & \textcolor{red}{0} & 0 & 1 & 1 & \infty & \cdots & 1 & \cdots \\
+    M_3 & 1 & 0 & \textcolor{red}{\infty} & \infty & 1 & 1 & \cdots & 0 & \cdots \\
+    M_4 & 0 & 1 & \infty & \textcolor{red}{0} & 0 & 1 & \cdots & \infty & \cdots \\
+    M_5 & \infty & 1 & 1 & 1 & \textcolor{red}{1} & \infty & \cdots & 0 & \cdots \\
+    M_6 & 0 & \infty & \infty & 1 & 0 & \textcolor{red}{\infty} & \cdots & \infty & \cdots \\
+    \vdots & & & & & & & \ddots & & \\
+    M_{NSA} & \textcolor{blue}{0} & \textcolor{blue}{1} & \textcolor{blue}{1} & \textcolor{blue}{1} & \textcolor{blue}{0} & \textcolor{blue}{1} & \cdots & \textcolor{red}{???} & \cdots \\
     \vdots & & & & & & & & & \ddots \\
-    \hline \\
-    \text{NOT-SELF-ACCEPT} & \textcolor{blue}{0} & \textcolor{blue}{1} & \textcolor{blue}{1} & \textcolor{blue}{1} & \textcolor{blue}{0} & \textcolor{blue}{1} & ... & \textcolor{blue}{???} & ...
-
-\end{matrix}
+    \hline
+    \text{NOT-SELF-ACCEPT} & \textcolor{blue}{0} & \textcolor{blue}{1} & \textcolor{blue}{1} & \textcolor{blue}{1} & \textcolor{blue}{0} & \textcolor{blue}{1} & \cdots & \textcolor{blue}{???} & \cdots \\
+\end{array}
+$$
 
 To construct $\text{NOT-SELF-ACCEPT}$ we need to flip the diagonal values in the table.
 But what appears in the table for $M_{NSA}$ on $\langle M_{NSA} \rangle$?
@@ -359,10 +366,8 @@ The expected output of $M_{NSA}$ on $\langle M_{NSA} \rangle$ is unclear and con
 
 :::{.callout-note}
 The above argument was not a rigourous proof.
-Using diagonalisation, $\text{NOT-SELF-ACCEPT}$ has no Turing Machine, but we've not relied on a correct proof technique to show this.
-Instead it has been the rough idea of what we expect to actually happen.
-
-The Turing Machine 
+Using diagonalisation, we can show that the that behaviour of $M_{NSA}$ is ambiguous, but it doesn't necessarily imply a contradiction.
+We need to use a correct math proof to demonstrate that this ambiguity is in fact a mathematical problem.
 :::
 ***
 **PROOF**
