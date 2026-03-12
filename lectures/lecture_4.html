@@ -297,12 +297,205 @@ window.Quarto = {
 <h2 data-number="4.2" class="anchored" data-anchor-id="tm-variants"><span class="header-section-number">4.2</span> TM Variants</h2>
 <section id="different-kinds-of-tapes" class="level3" data-number="4.2.1">
 <h3 data-number="4.2.1" class="anchored" data-anchor-id="different-kinds-of-tapes"><span class="header-section-number">4.2.1</span> Different kinds of Tapes</h3>
+<p>When we defined a Turing Machine, we described the tape as infinite in length. The reason for this was to clarify that any algorithm would have as much space as it possibly needs. We never have to worry about running out of memory.</p>
+<p>The standard description of a Turing Machine is that we can infinitely in either direction. This is akin to the integers on a number line.</p>
+<p><span class="math display">\[ \mathbb{Z} = (-\infty, \infty) \]</span></p>
+<p>However, we know that there are other kinds of infinite such as the naturals.</p>
+<p><span class="math display">\[ \mathbb{N} = [0, \infty) \]</span></p>
+<p>So it stands that we can construct different kinds of infinite tapes for a Turing Machine. The first kind is what we have used before and the normal definition: A tape that is infinite in two directions - bidirectional. The second kind is a tape that is infinite in only one directin - unidirectional.</p>
+<p>A Turing Machine with a bidirectional tape is called a <strong>two-way infinite tape</strong> Turing Machine, or a Two-Way TM</p>
+<p>&lt;insert diagram of two way tape turing machine&gt;</p>
+<p>A Turing Machine with a unidirectional tape is called a <strong>one-way infinite tape</strong> Turing Machine, or a One-Way TM.</p>
+<p>&lt;insert diagram of one way tape turing machine&gt;</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Be careful when discussing a unidirectional tape. It does <em>not</em> mean that our tape head can only move in a single direction, but that there is some leftmost cell that the tapehead cannot move past.</p>
+</div>
+</div>
+<p>The One-Way TM works by adding a new symbol, <span class="math inline">\(\triangleright\)</span>, to its tape alphabet to mark that we are at the end of the tape. This new symbol <span class="math inline">\(\triangleright\)</span> is placed on the leftmost cell of our tape. We then add the following instruction to <em>every</em> state:</p>
+<p><span class="math display">\[ \forall q \in Q \; q, \triangleright \rightarrow q, \triangleright, R \]</span></p>
+<p>For clarity, when we write an input string <span class="math inline">\(x\)</span> on our tape, we place it after the end-of-tape marker. This means that the initial configuration of a one-way tape Turing Machine is <span class="math display">\[ c_0 = \triangleright q_\text{init} x \]</span></p>
+<p>What this means is that our TM will ‘bounce’ off the end-of-tape marker whenever it reaches the leftmost cell. It will never be able to move beyond that cell.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>The direction of a One-Way TM
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Something to note is that english readers might place the end-of-tape marker <span class="math inline">\(\triangleright\)</span> on the left most cell as we read from left to right. There is no explicit reason for this beyond preference, so it is entirely possible to make use of a different symbol <span class="math inline">\(\triangleleft\)</span> that is on the rightmost cell instead.</p>
+<p><span class="math display">\[ \forall q \in Q \; q, \triangleleft \rightarrow q, \triangleleft, L \]</span></p>
+<p>This would mean that the Turing Machine has a unidirectional tape to the left instead of the right.</p>
+<p>Later we will see how this convention can be used.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Bounded Tapes
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A special kind of Turing Machine called a <strong>Linear Bounded Turing Machine</strong> has a finite tape. The exact definition is similar to a One-Way TM, but with both a left and right end-of-tape marker.</p>
+</div>
+</div>
+<p>We have constructed two different types of Turing Machine. Can they do the same things?</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>What does it mean for two Turing Machines to do the same thing? Previously we have seen a definition for equivalent Turing Machines: <span class="math display">\[ \forall x \in \Gamma^\ast, M(x) = N(x) \]</span></p>
+<p>Is this definition sufficient to show that different kinds of Turing Machines are equivalent?</p>
+</div>
+</div>
+<p>To show that these two types of Turing Machine are equivalent, we can describe the process by which we can convert a Two-Way TM into a One-Way TM and vice versa.</p>
+<p><strong>Show that any One-Way TM can be converted into a Two-Way TM</strong></p>
+<p><strong>Proof sketch</strong>: <em> We want to recreate the behaviour of a two-way machine on a one-way machine. To accomplish this, if our tape head on the two-way machine needs to move left, and no more space is available, we need to provide that needed space. If we shift every accessed cell over by one, we have ‘appended’ a new blank symbol to the right, and our machine can continue moving left. </em></p>
+<p>Let <span class="math inline">\(M\)</span> be a two-way TM, define a one-way TM <span class="math inline">\(M^\prime\)</span> as follows:</p>
+<ol type="1">
+<li>If the head is not at the leftmost cell, execute the transition as usual.</li>
+<li>If the transition would move the head to the leftmost cell (Scanning <span class="math inline">\(\triangleright\)</span>), then
+<ol type="1">
+<li>Move every cell used so far on the tape, one cell to the right</li>
+<li>Set the leftmost cell before end-of-tape to blank</li>
+</ol></li>
+</ol>
+<p><strong>Show that any Two-Way TM can be converted into a One-Way TM</strong></p>
+<p><strong>Proof sketch</strong>: <em> A one-way TM starts in the initial configuration of <span class="math inline">\(\triangleright q_\text{init} x\)</span>. So when our two-way TM starts, we can recreate the one-way behaviour by manually adding an end-of-tape marker to the left of the input tape. Then, for all states we can add the instruction to bounce off the end-of-tape marker. Essentially, we are saying that even though there is infinite memory in the left direction, we will not make use of it. </em></p>
+<p>Let <span class="math inline">\(M\)</span> be a one-way TM, define a two-way TM <span class="math inline">\(M^\prime\)</span> as follows:</p>
+<p>Let <span class="math inline">\(Q^\prime = Q \cup \{ q^\prime_\text{init} \}\)</span> where <span class="math inline">\(q^\prime_\text{init}\)</span> is the initial state of <span class="math inline">\(M^\prime\)</span>. Add the following instruction to every state <span class="math inline">\(q \in Q\)</span> execpt <span class="math inline">\(q^\prime_\text{init}\)</span>: <span class="math display">\[ q, \triangleright \rightarrow q, \triangleright, R \]</span></p>
+<p>Define the following instruction for <span class="math inline">\(q^\prime_\text{init}\)</span>: <span class="math display">\[\begin{align*}
+    &amp; \forall s \in \Delta, \; q^\prime_\text{init}, s \rightarrow q^\prime_\text{init}, s, L \\
+    &amp; q^\prime_\text{init}, \sqcup \rightarrow q_\text{init}, \triangleright, R
+\end{align*}\]</span></p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Question: Comparing running times
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>For both of the above proofs, what is the running time of <span class="math inline">\(M^\prime\)</span> compared to <span class="math inline">\(M\)</span>?</p>
+<p><strong>The time function of the two-way TM <span class="math inline">\(M^\prime\)</span> compared to the one-way TM <span class="math inline">\(M\)</span></strong></p>
+<p>Let <span class="math inline">\(t(n)\)</span> be the time function of the one-way TM <span class="math inline">\(M\)</span> Our new machine <span class="math inline">\(M^\prime\)</span> leaves the machine mostly the same but right at the beginning it does two things: 1. Immediatly moves left one cell 2. Writes <span class="math inline">\(\triangleright\)</span> and moves right</p>
+<p>and then continues the computation as <span class="math inline">\(M\)</span> would.</p>
+<p>So <span class="math inline">\(M^\prime\)</span> executes only two more instructions then <span class="math inline">\(M\)</span>, so <span class="math display">\[ t^\prime(n) = t(n) + 2 = O(t(n)) \]</span></p>
+<p><strong>The time function of the one-way TM <span class="math inline">\(M^\prime\)</span> compared to the two-way TM <span class="math inline">\(M\)</span></strong></p>
+<p>Let <span class="math inline">\(t(n)\)</span> be the time function of the two-way TM <span class="math inline">\(M\)</span></p>
+<p>The new machine <span class="math inline">\(M^\prime\)</span> leaves <span class="math inline">\(M\)</span> mostly unchanged except that any time it moves left onto the end-of-tape marker, it shifts every cell over once to the right.</p>
+<p>The worst case scenario is when <span class="math inline">\(M\)</span> always moves left, so for every step <span class="math inline">\(M^\prime\)</span> takes, it must execute the subroutine of shifting the cells over. We need to shift the cells over <span class="math inline">\(t(n)\)</span> times. This shift operation is linear so the runtime of a single shift is the total number of cells accessed so far, or the space function <span class="math inline">\(s(n)\)</span>. <span class="math inline">\(s(n)\)</span> is bounded above by <span class="math inline">\(t(n)\)</span> so in the worst case, the shift operation is <span class="math inline">\(O(t(n))\)</span></p>
+<p>Therefore, <span class="math display">\[ t^\prime(n) = t(n) \cdot O(t(n)) = O(t^2(n)) \]</span></p>
+</div>
+</div>
 </section>
 <section id="extended-instruction-sets" class="level3" data-number="4.2.2">
 <h3 data-number="4.2.2" class="anchored" data-anchor-id="extended-instruction-sets"><span class="header-section-number">4.2.2</span> Extended Instruction Sets</h3>
+<p>An important part of the original pitch for a Turing Machine as a mathematical model of computation was that it was simple. One of the componets of this simplicity is in the definition of an instruction.</p>
+<p><span class="math display">\[ q, s, \rightarrow q', s', \{L, R\} \]</span></p>
+<p>Our tape head can only ever move left or right a single cell. The instruction does not provide a way to stay in place, nor to skip multiple cells at a time.</p>
+<p>However, if we ignore the simplicity requirement, we can add additional movement to the tape head.</p>
+<p>A Turing Machine with a stationary movement is called a <strong>stationary</strong> Turing Machine, and has instructions of the form <span class="math display">\[ q, s, \rightarrow q', s', \{L, S, R\} \]</span></p>
+<p>What this looks like as configuration with the instruction <span class="math inline">\(q_i, v_1 \rightarrow q_j, v_1', S\)</span>, <span class="math display">\[ w \: q_i \: v_1 v_2 ... v_n \vdash w \: q_j \: v_1' v_2 ... v_n \]</span></p>
+<p>Does this stationary movement make it solve any additional problems that the standard Turing Machine cannot? No, as we can recreate that stationary movement in a standard Turing Machine by moving left and then right over two configurations.</p>
+<p><span class="math display">\[\begin{align}
+    &amp; q_i, s, \rightarrow q_j, s', S \text{ becomes } \\
+    &amp; q_i, s \rightarrow q_i', s', R \text{ and } \forall \sigma \in \Delta, q_i', \sigma \rightarrow q_j, \sigma, L
+\end{align}\]</span></p>
+<p><span class="math display">\[ w \: q_i \: v_1 v_2 ... v_n \vdash w v_1' \: q_i' \: v_2 ... v_n \vdash w \: q_j \: v_1' v_2 ... v_n \]</span></p>
+<p>&lt;diagram of stationary instruction being modified into standard instruction&gt;</p>
+<p>We can do the exact same thing for a movement that steps twice in one instruction.</p>
+<p>A Turing Machine with a two-step movement is called a <strong>two-step</strong> Turing Machine, and has instructions of the form <span class="math display">\[ q, s, \rightarrow q', s', \{LL, L, R, RR\} \]</span></p>
+<p>As a configurations following the instruction <span class="math inline">\(q_i, v_1 \rightarrow q_j, v_1', RR\)</span>, <span class="math display">\[ w \: q_i \: v_1 v_2 v_3 ... v_n \vdash w  v_1' v_2 \: q_j \: v_3 ... v_n \]</span></p>
+<p>We can use the same idea from stationary machines for simulating two step movement on a standard Turing Machine</p>
+<p><span class="math display">\[\begin{align}
+    &amp; q_i, s, \rightarrow q_j, s', RR \text{ becomes } \\
+    &amp; q_i, s \rightarrow q_i', s', R \text{ and } \forall \sigma \in \Delta, q_i', \sigma \rightarrow q_j, \sigma, L
+    \\\\
+    &amp; q_i, s, \rightarrow q_j, s', LL \text{ becomes } \\
+    &amp; q_i, s \rightarrow q_i', s', L \text{ and } \forall \sigma \in \Delta, q_i', \sigma \rightarrow q_j, \sigma, L
+\end{align}\]</span></p>
+<p>The instruction <span class="math inline">\(q_i, v_1 \rightarrow q_j, v_1', RR\)</span>, is now executed as <span class="math display">\[ w \: q_i \: v_1 v_2 v_3 ... v_n \vdash w  v'_1 \: q'_i \: v_2 v_3 ... v_n \vdash w  v'_1 v_2 \: q_j \: v_3 ... v_n \]</span></p>
+<p>&lt;diagram of two step instruction being modified into standard instruction&gt;</p>
+<p>There is no particular reason to limit ourselves to just two steps. We can define a <strong><span class="math inline">\(k\)</span>-step</strong> Turing Machine, which has instructions of the form <span class="math display">\[ q, s, \rightarrow q', s', \{ L^k \mid k &gt; 0 \} \cup \{ R^k \mid k &gt; 0 \} \]</span></p>
+<p>A <strong>multi-step</strong> Turing Machine is the umbrella term for a <span class="math inline">\(k\)</span>-step Turing Machine with <span class="math inline">\(k &gt; 1\)</span>.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Proof practice
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Try prove that a <span class="math inline">\(k\)</span>-step Turing Machine is equivalent to a standard Turing Machine by induction.</p>
+<p>We have seen the base case that <span class="math inline">\(k = 2\)</span> is can be simulated by a standard (<span class="math inline">\(k = 1\)</span>) Turing Machine. So now all you need to prove is that a <span class="math inline">\(k + 1\)</span>-step TM can be simulated by a <span class="math inline">\(k\)</span>-step TM.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>We’ve seen above that simulating the stationary and two-step instructions require additional instructions, and thus configurations, in a standard TM.</p>
+<p>Identify the time functions of both the multi-step and stationary machines, as well as the standard machines that recreate the behaviour. What advantages are provided by the additional instructions?</p>
+</div>
+</div>
 </section>
 <section id="multi-tape-turing-machines" class="level3" data-number="4.2.3">
 <h3 data-number="4.2.3" class="anchored" data-anchor-id="multi-tape-turing-machines"><span class="header-section-number">4.2.3</span> Multi-tape Turing Machines</h3>
+<p>All of our previous machines have only ever had a single tape. Truthfully, this is because of the same pursuit for simplicity as our simple instructions.</p>
+<p>&lt; diagram of 2-tape turing machine &gt;</p>
+<p>A <span class="math inline">\(k\)</span>-tape Turing Machine has <span class="math inline">\(k\)</span> infinte tapes, where each tape has its own head to read and write symbols as well as move.</p>
+<p>Our instructions for <span class="math inline">\(k\)</span>-tape Turing Machines change to be a conditional statement based off the symbols on <em>every</em> tape currently being scanned. Additionally they need to specify what we write on <em>every</em> tape, and the direction to move the head on <em>every</em> tape.</p>
+<p><span class="math display">\[ q, \begin{pmatrix} s_1 \\ s_2 \\ ... \\ s_k \end{pmatrix} \rightarrow q', \begin{pmatrix} s_1' \\ s_2' \\ ... \\ s_k' \end{pmatrix}, \begin{pmatrix} D_1 \\ D_2 \\ ... \\ D_k \end{pmatrix} = q, \vec{s} \rightarrow q', \vec{s'}, \vec{D} \]</span></p>
+<p>Multi-tape Turing Machines are convenient as they allow for information to be shared across tapes, and make it faster to access that information. However, they are significantly more complex to write.</p>
+<p>In a standard Turing Machine, there needs to be <span class="math inline">\(|\delta| = (|Q| - 2) \times |\Delta|\)</span> instructions. A <span class="math inline">\(k\)</span>-tape Turing Machine has <span class="math inline">\(|\delta| = (|Q| - 2) \times |\Delta|^k\)</span> instructions. We need an instruction for every combination of symbols being read across all the tapes.</p>
+<p>Do these multi-tape Turing Machines provide any additional capability over a standard Turing Machine? Again, no. We can simulate a <span class="math inline">\(k\)</span>-tape Turing Machine on a standard TM by segmenting the single tape into <span class="math inline">\(k\)</span> segments. We can distinguish between tapes by end-of-tape markers <span class="math inline">\(\triangleright\)</span> and <span class="math inline">\(\triangleleft\)</span>, and now we can rely on the same logic as our One-Way and Two-Way TM’s to simulate the infinite space of these tapes.</p>
+<p>&lt; diagram of two tapes on a single tape &gt;</p>
+<p>The last thing we need to consider is how do we update the tape head positions and symbols on the different tapes. For every one instruction in the <span class="math inline">\(k\)</span>-tape TM, we need to move to each tape segment and update it accordingly.</p>
+<p>On each tape, we can record the head position by a special symbol: If the head is currently scanning a cell with symbol <span class="math inline">\(s\)</span>, we write <span class="math inline">\(\dot{s}\)</span>.</p>
+<p>To process an instruction,</p>
+<ol type="1">
+<li>Move to the first tape</li>
+<li>For each tape
+<ol type="1">
+<li>We scan for the <span class="math inline">\(\dot{s}\)</span> symbol on the current tape</li>
+<li>Update it to the new symbol</li>
+<li>Remove the dot</li>
+<li>Move to the next head position,</li>
+<li>Update the new head position symbol <span class="math inline">\(s\)</span> to <span class="math inline">\(\dot{s}\)</span></li>
+<li>Move on to the next tape</li>
+</ol></li>
+</ol>
 </section>
 </section>
 <section id="turing-machines-as-data" class="level2" data-number="4.3">
