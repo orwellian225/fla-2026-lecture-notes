@@ -76,7 +76,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-70a47bd5681a7291082a5b9f83d58762.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-27c261d06b905028a18691de25d09dde.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -400,13 +400,22 @@ window.Quarto = {
 <p>So we need to show that not every decision problem has some decider. We can do this with another proof by contradiction.</p>
 <hr>
 <p><strong>Theorem</strong> There are decision problems that are not decidable.</p>
-<p>Assume, for contradiction, that every decision problem is decidable. Therefore, for every <span class="math inline">\(P: \{0,1\}^\ast \mapsto \{0, 1\}\)</span>, there is some <span class="math inline">\(M_P \in \mathbb{M}\)</span> that decides <span class="math inline">\(P\)</span>.</p>
-<p>Let <span class="math inline">\(f\)</span> be a relation that links a decision problem <span class="math inline">\(P\)</span> to its decider <span class="math inline">\(M_P\)</span>.</p>
+<p>Assume, for contradiction, that every decision problem is decidable. Therefore, for every <span class="math inline">\(P: \{0,1\}^\ast \mapsto \{0, 1\}\)</span>, there is some <span class="math inline">\(M \in \mathbb{M}\)</span> that decides <span class="math inline">\(P\)</span>.</p>
+<p>Let <span class="math inline">\(f\)</span> be a relation that links a decision problem <span class="math inline">\(P\)</span> to its decider <span class="math inline">\(M\)</span>.</p>
 <ul>
-<li>We assumed that every decision problem is decidable, so <span class="math inline">\(f\)</span> is total - every input has at least one output.</li>
-<li>The definition of <span class="math inline">\(\mathbb{M}\)</span> was that it was the set of all non-equivalent Turing Machines, so <span class="math inline">\(f\)</span> is also injective - every output has only one input.</li>
+<li>We assumed that every decision problem is decidable, so <span class="math inline">\(f\)</span> is total - every input has at least one output. <span class="math display">\[ \forall P \: \exists M, f(P) = M \]</span></li>
+<li>Two decision problems <span class="math inline">\(P_1\)</span> and <span class="math inline">\(P_2\)</span> are distinct if <span class="math inline">\(\forall w \in \{0,1\}^\ast, P_1(w) \neq P_2(w)\)</span>
+<ul>
+<li>If <span class="math inline">\(P_1\)</span> and <span class="math inline">\(P_2\)</span> are distinct, but they are solved by the same decider <span class="math inline">\(M\)</span>, then <span class="math display">\[\begin{align*}
+      &amp; P_1(w) = M(w) \\
+      &amp; P_2(w) = M(w) \\
+      &amp; \implies P_1(w) = M(w) = P_2(w) \\
+      &amp; \implies \forall w \in \Gamma, P_1(w) = P_2
+  \end{align*}\]</span></li>
+<li>Therefore no two distinct decision problems can be solved by the same decider. <span class="math display">\[ \forall P \: \exists! M, f(P) = M \]</span></li>
+</ul></li>
 </ul>
-<p>If there is an injective, total relation <span class="math inline">\(\alpha\)</span> between two sets <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>, then <span class="math inline">\(|X| \leq |Y|\)</span>. Therefore, by <span class="math inline">\(f\)</span>, <span class="math display">\[\mathcal{P}(\{0,1\}^\ast) \leq \mathbb{M}\]</span></p>
+<p>Therefore, by <span class="math inline">\(f\)</span>, <span class="math display">\[|\mathcal{P}(\{0,1\}^\ast)| \leq |\mathbb{M}|\]</span></p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -557,7 +566,7 @@ Note
         1 &amp; M( \langle M \rangle ) \neq 1 \\
         0 \text{ otherwise}
     \end{cases}
-\]</span></p>
+\]</span> or <span class="math display">\[ \text{NOT-SELF-ACCEPT}(\langle M \rangle) = 1 \iff M(\langle M \rangle) \neq 1 \]</span></p>
 <p>Assume, for contradiction, that there exists a decider <span class="math inline">\(M_{NSA}\)</span> for <span class="math inline">\(\text{NOT-SELF-ACCEPT}\)</span> (abbrev. <span class="math inline">\(\text{NSA}\)</span>)</p>
 <p>There are two ideas we need here</p>
 <ol type="1">
