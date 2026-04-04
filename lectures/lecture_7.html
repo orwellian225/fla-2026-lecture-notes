@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>6&nbsp; Undecidability by Reduction – FLA 2026 Lecture Notes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../lectures/lecture_6.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-27c261d06b905028a18691de25d09dde.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../lectures/lecture_7.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Undecidability by Reduction</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">FLA 2026 Lecture Notes</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lectures/lecture_1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">An Introduction to Theoretical Computer Science</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lectures/lecture_2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Data, Representations, and Problems</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lectures/lecture_3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Turing Machines I</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lectures/lecture_4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Turing Machines II</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lectures/lecture_6.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Undecidability by Diagonalisation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../lectures/lecture_7.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Undecidability by Reduction</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#definitions" id="toc-definitions" class="nav-link active" data-scroll-target="#definitions"><span class="header-section-number">6.1</span> Definitions</a></li>
+  <li><a href="#properties-of-undecidability" id="toc-properties-of-undecidability" class="nav-link" data-scroll-target="#properties-of-undecidability"><span class="header-section-number">6.2</span> Properties of undecidability</a></li>
+  <li><a href="#reductions" id="toc-reductions" class="nav-link" data-scroll-target="#reductions"><span class="header-section-number">6.3</span> Reductions</a>
+  <ul class="collapse">
+  <li><a href="#textaccept-is-undecidable-by-reduction" id="toc-textaccept-is-undecidable-by-reduction" class="nav-link" data-scroll-target="#textaccept-is-undecidable-by-reduction"><span class="header-section-number">6.3.1</span> <span class="math inline">\(\text{ACCEPT}\)</span> is undecidable by reduction</a></li>
+  <li><a href="#textempty-is-undecidable-by-reduction" id="toc-textempty-is-undecidable-by-reduction" class="nav-link" data-scroll-target="#textempty-is-undecidable-by-reduction"><span class="header-section-number">6.3.2</span> <span class="math inline">\(\text{EMPTY}\)</span> is undecidable by reduction</a></li>
+  </ul></li>
+  <li><a href="#mapping-reductions" id="toc-mapping-reductions" class="nav-link" data-scroll-target="#mapping-reductions"><span class="header-section-number">6.4</span> Mapping Reductions</a>
+  <ul class="collapse">
+  <li><a href="#textaccept-is-undecidable-by-mapping-reduction" id="toc-textaccept-is-undecidable-by-mapping-reduction" class="nav-link" data-scroll-target="#textaccept-is-undecidable-by-mapping-reduction"><span class="header-section-number">6.4.1</span> <span class="math inline">\(\text{ACCEPT}\)</span> is undecidable by mapping reduction</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Undecidability by Reduction</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="definitions" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="definitions"><span class="header-section-number">6.1</span> Definitions</h2>
+<p>The <strong>language of a Turing Machine</strong> <span class="math inline">\(M\)</span> is the set of all strings <span class="math inline">\(w\)</span> such that <span class="math inline">\(M\)</span> accepts <span class="math inline">\(w\)</span>. The notation <span class="math inline">\(L(M)\)</span> is used to denote the language of <span class="math inline">\(M\)</span>.</p>
+<p><span class="math display">\[ w \in L(M) \iff M(w) = 1 \]</span></p>
+<p>A Turing Machine <span class="math inline">\(M\)</span> is a <strong>decider</strong> if it halts on all inputs. <span class="math inline">\(M\)</span> decides the language <span class="math inline">\(L(M)\)</span></p>
+<p>A language <span class="math inline">\(L\)</span> is <strong>decidable</strong> if there exists a decider <span class="math inline">\(M\)</span> such that <span class="math inline">\(L(M) = L\)</span>, or equivalently, <span class="math display">\[ w \in L \iff M(w) = 1 \]</span></p>
+<p>A function <span class="math inline">\(f\)</span> is <strong>computable</strong> if there exists a Turing Machine <span class="math inline">\(M\)</span> such that <span class="math display">\[ f(x) = y \iff M(x) = y \]</span></p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Technically, we could call the <span class="math inline">\(M\)</span> of a computable function <span class="math inline">\(f\)</span> the <em>computer</em> of <span class="math inline">\(f\)</span> similar to how we call it a decider for decision problems.</p>
+<p>However, the term <em>computer</em> is more commonly used to refer to the general purpose devices we interact with daily. Therefore to avoid confusion, we will not have a specific term for the <span class="math inline">\(M\)</span> of a computable function.</p>
+</div>
+</div>
+</section>
+<section id="properties-of-undecidability" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="properties-of-undecidability"><span class="header-section-number">6.2</span> Properties of undecidability</h2>
+<p><a href="../lectures/lecture_6.html">Previously</a> we showed that there exists at least one undecidable language <span class="math inline">\(\text{NOT-SELF-ACCEPT}\)</span>. However, if we want to apply the diagonalisation proof to other languages, we either cannot construct the contradiction the same way (<span class="math inline">\(\text{SELF-ACCEPT}\)</span>) or no contradiction can be constructed at all.</p>
+<p>Instead of starting from scratch every time, we can instead identify and prove some useful properties of undecidable and decidable languages to assist us in this process.</p>
+<ol type="1">
+<li>The set of all strings <span class="math inline">\(\Sigma^\ast\)</span> is decidable</li>
+<li>The set of no strings <span class="math inline">\(\emptyset\)</span> is decidable</li>
+<li><span class="math inline">\(L\)</span> is decidable if and only if <span class="math inline">\(\bar{L} = \Sigma^\ast \setminus L\)</span> is undecidable
+<ul>
+<li><span class="math inline">\(L\)</span> is decidable <span class="math inline">\(\implies\)</span> <span class="math inline">\(\bar{L}\)</span> is decidable</li>
+<li><span class="math inline">\(\bar{L}\)</span> is decidable <span class="math inline">\(\implies\)</span> <span class="math inline">\(L\)</span> is decidable</li>
+<li><span class="math inline">\(L\)</span> is undecidable <span class="math inline">\(\implies\)</span> <span class="math inline">\(\bar{L}\)</span> is undecidable</li>
+<li><span class="math inline">\(\bar{L}\)</span> is undecidable <span class="math inline">\(\implies\)</span> <span class="math inline">\(L\)</span> is undecidable</li>
+</ul></li>
+<li><span class="math inline">\(L_1 \cup L_2\)</span> is undecidable <span class="math inline">\(\implies\)</span> <span class="math inline">\(L_1\)</span> or <span class="math inline">\(L_2\)</span> is undecidable</li>
+<li><span class="math inline">\(L_1\)</span> and <span class="math inline">\(L_2\)</span> is decidable <span class="math inline">\(\implies\)</span> <span class="math inline">\(L_1 \cup L_2\)</span> is decidable</li>
+<li><span class="math inline">\(L_1 \cap L_2\)</span> is undecidable <span class="math inline">\(\implies\)</span> <span class="math inline">\(L_1\)</span> or <span class="math inline">\(L_2\)</span> is undecidable</li>
+<li><span class="math inline">\(L_1\)</span> and <span class="math inline">\(L_2\)</span> is decidable <span class="math inline">\(\implies\)</span> <span class="math inline">\(L_1 \cap L_2\)</span> is decidable</li>
+<li><span class="math inline">\(L\)</span> is finite <span class="math inline">\(\implies L\)</span> is decidable</li>
+</ol>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>To prove most theorems in undecidability, we can use a simple heuristic to help us structure the proof.</p>
+<ol type="1">
+<li>Choose a proof technique</li>
+<li>Apply the definitions from the <em>antecedent</em> of the implication</li>
+<li>Define the TM that will be decider of the <em>concequent</em></li>
+<li>Show that the TM is a decider</li>
+<li>Show that the TM decides the language of the <em>concequent</em></li>
+<li>Conclude</li>
+</ol>
+</div>
+</div>
+<hr>
+<p><strong>Theorem</strong> <span class="math inline">\(L_1 \cup L_2\)</span> is undecidable <span class="math inline">\(\implies\)</span> <span class="math inline">\(L_1\)</span> or <span class="math inline">\(L_2\)</span> is undecidable</p>
+<p><span style="color:red;"> Step 1: Choose a proof technique - Proof by contraposition. <span></span></span></p>
+<p>RTP: <span class="math inline">\(L_1\)</span> and <span class="math inline">\(L_2\)</span> are decidable <span class="math inline">\(\implies\)</span> <span class="math inline">\(L_1 \cup L_2\)</span> is decidable</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Contraposition is a very useful proof technique. It is defined as <span class="math display">\[ P \rightarrow Q \iff \neg Q \rightarrow \neg P \]</span></p>
+<p><span class="math inline">\(Q\)</span> is <span class="math inline">\(L_1\)</span> or <span class="math inline">\(L_2\)</span> is decidable, so <span class="math inline">\(\neg Q\)</span> becomes <span class="math inline">\(L_1\)</span> and <span class="math inline">\(L_2\)</span> are not decidable. Importantly, we applied De-Morgan’s Law here to evaluate the negation of <span class="math inline">\(Q\)</span>.</p>
+<p>If we write <span class="math inline">\(Q\)</span> into a formal logic sentence, we have: <span class="math inline">\(Decidable(L_1) \lor Decidable(L_2)\)</span></p>
+<p><span class="math display">\[\begin{align*}
+  \neg Q &amp;\equiv \neg (Undecidable(L_1) \lor Undecidable(L_2)) \\
+  &amp;\equiv \neg Undecidable(L_1) \land \neg Undecidable(L_2)
+\end{align*}\]</span></p>
+<p><span class="math inline">\(P\)</span> is <span class="math inline">\(L_1 \cup L_2\)</span> is undecidable, so <span class="math inline">\(\neg P\)</span> becomes <span class="math inline">\(L_1 \cup L_2\)</span> is decidable. Be careful to <em>not</em> confuse the difference between Set Or (<span class="math inline">\(\cup\)</span>) and Logical Or (<span class="math inline">\(\lor\)</span>). For <span class="math inline">\(P\)</span> we do <em>not</em> apply De-Morgan’s Law - we are negating the <em>set union</em> directly.</p>
+<p><span class="math inline">\(P\)</span> in formal logic is <span class="math inline">\(Undecidable(L_1 \cup L_2)\)</span></p>
+</div>
+</div>
+<p><span style="color:red;"> Step 2: Apply the definitions from the <em>antecedent</em> of the implication <span></span></span></p>
+<p>Let <span class="math inline">\(L_1\)</span> and <span class="math inline">\(L_2\)</span> be decidable languages. Then there exists <span class="math inline">\(M_1\)</span> and <span class="math inline">\(M_2\)</span> such that <span class="math display">\[\begin{align*}
+  w \in L_1 &amp;\iff M_1(w) = 1 \\
+  w \in L_2 &amp;\iff M_2(w) = 1
+\end{align*}\]</span></p>
+<p><span style="color:red;"> Step 3: Define the TM that will be decider of the <em>concequent</em> <span></span></span></p>
+<p>define <span class="math inline">\(M\)</span> on input <span class="math inline">\(x\)</span>:</p>
+<ul>
+<li>if <span class="math inline">\(M_1(x) = 1\)</span>:
+<ul>
+<li>Accept</li>
+</ul></li>
+<li>if <span class="math inline">\(M_2(x) = 1\)</span>:
+<ul>
+<li>Accept</li>
+</ul></li>
+<li>Reject</li>
+</ul>
+<p><span style="color:red;"> Step 4: Show that the TM is a decider <span></span></span></p>
+<p><span class="math inline">\(M\)</span> is a decider as <span class="math inline">\(M_1\)</span> and <span class="math inline">\(M_2\)</span> are both deciders, and an if statement is a decidable procedure.</p>
+<p><span style="color:red;"> Step 5: Show that the TM decides the language of the <em>concequent</em> <span></span></span></p>
+<p><span class="math display">\[\begin{align*}
+  M(x) = 1 &amp;\iff M_1(x) = 1 \text{ or } M_2(x) = 1 \\
+  &amp;\iff x \in L_1 \text{ or } x \in L_2 \qquad \textcolor{green}{A \cup B = \{ x \mid x \in A \text{ or } x \in B \}}\\
+  &amp;\iff x \in L_1 \cup L_2
+\end{align*}\]</span></p>
+<p>hence, <span class="math inline">\(M\)</span> decides <span class="math inline">\(L_1 \cup L_2\)</span>.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The reason we split the decider and decides step in two is because the decider step restricts the possible outputs of the TM to either <span class="math inline">\(1\)</span> or <span class="math inline">\(0\)</span>.</p>
+<p>We show that that we can discard the looping case of our Turing Machine, <em>and</em> we only need to prove the one case of <span class="math inline">\(M(x) = 1 \iff x \in L_1 \cup L_2\)</span>.</p>
+<p>The opposite case (<span class="math inline">\(M(x) = 0\)</span>) is implicitly shown by the if and only if statement.</p>
+</div>
+</div>
+<p><span style="color:red;"> Step 6: Conclude <span></span></span></p>
+<p>Therefore, by contraposition, if <span class="math inline">\(L_1 \cup L_2\)</span> is undecidable, then <span class="math inline">\(L_1\)</span> or <span class="math inline">\(L_2\)</span> is undecidable.</p>
+<hr>
+</section>
+<section id="reductions" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="reductions"><span class="header-section-number">6.3</span> Reductions</h2>
+<p>Properties are useful for proving languages that are related by Set Theory to an undecidable language are also undecidable. But, what if the language we want to prove is undecidable cannot be constructed using Set Theory operations?</p>
+<p>For example, how do we prove that <span class="math display">\[ \text{ACCEPT} := \{ \langle M, x \rangle \mid M(x) = 1 \} \]</span> is undecidable? <span class="math inline">\(\text{ACCEPT}\)</span> cannot be constructed from something like <span class="math inline">\(\text{SELF-ACCEPT}\)</span> so we need to find a different way to prove it is undecidable.</p>
+<p>Our new technique is called a <strong>reduction</strong>.</p>
+<p>A reduction is a relationship that exists between two languages <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>. If we have some Turing Machine <span class="math inline">\(M_B\)</span> that decides <span class="math inline">\(B\)</span>, then we can use it to construct a Turing Machine <span class="math inline">\(M_A\)</span> that decides <span class="math inline">\(A\)</span>.</p>
+<p>We say that <strong><span class="math inline">\(A\)</span> reduces to <span class="math inline">\(B\)</span></strong> if a decider for <span class="math inline">\(A\)</span> can be constructed from a decider for <span class="math inline">\(B\)</span>.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Notationally, we write <span class="math inline">\(A \leq_T B\)</span> to indicate that <span class="math inline">\(A\)</span> reduces to <span class="math inline">\(B\)</span>. This kind of reduction is also called a Turing Reduction (hence the <span class="math inline">\(T\)</span>).</p>
+<p>At a technical level, reductions rely on something called an oracle. Oracles are special Turing Machines that behave as black boxes - we don’t actually know how the underlying computation is performed. They are particularly important in Complexity Theory but we will not cover them here.</p>
+<p>The machine <span class="math inline">\(M_A\)</span> is called an <strong>oracle machine</strong>, and <span class="math inline">\(M_B\)</span> is the <strong>oracle</strong> but these terms will not be used in this course.</p>
+</div>
+</div>
+<p>Using a reduction, we can construct a basic proof structure for showing that a language is undecidable.</p>
+<p>To prove that <span class="math inline">\(B\)</span> is undecidable using the undecidable language <span class="math inline">\(A\)</span></p>
+<ol type="1">
+<li>Assume that <span class="math inline">\(B\)</span> is decidable</li>
+<li>Construct a decider <span class="math inline">\(M_A\)</span> for <span class="math inline">\(A\)</span> using the decider <span class="math inline">\(M_B\)</span> for <span class="math inline">\(B\)</span></li>
+<li>Therefore <span class="math inline">\(A\)</span> is decidable, but we know by previous work that <span class="math inline">\(A\)</span> is undecidable</li>
+<li>Therefore, by contradiction, <span class="math inline">\(B\)</span> is undecidable</li>
+</ol>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The above is not a formal proof, just a rough argument.</p>
+<p>Try to write the formal proof yourself for the following theorem:</p>
+<p><span class="math display">\[ A \text{ is undecidable and } A \text{ reduces to } B \implies B \text{ is undecidable} \]</span></p>
+<p>Use the proof structure from the first section as a guide.</p>
+</div>
+</div>
+<p>To help demonstrate the proof technique of a reduction, let’s consider the following example.</p>
+<section id="textaccept-is-undecidable-by-reduction" class="level3" data-number="6.3.1">
+<h3 data-number="6.3.1" class="anchored" data-anchor-id="textaccept-is-undecidable-by-reduction"><span class="header-section-number">6.3.1</span> <span class="math inline">\(\text{ACCEPT}\)</span> is undecidable by reduction</h3>
+<p><span style="color:red;"> Step 1: Choose a proof technique - Proof by reduction. <span></span></span></p>
+<p>RTP: <span class="math inline">\(\text{SELF-ACCEPT}\)</span> reduces to <span class="math inline">\(\text{ACCEPT}\)</span> <span class="math inline">\(\implies\)</span> <span class="math inline">\(\text{ACCEPT}\)</span> is undecidable</p>
+<p>Assume that <span class="math inline">\(\text{ACCEPT}\)</span> is decidable.</p>
+<p><span style="color:red;"> Step 2: Apply the definitions from the <em>antecedent</em> of the implication <span></span></span></p>
+<p>Therefore, <span class="math inline">\(\text{ACCEPT}\)</span> is decidable, so <span class="math inline">\(M_A\)</span> decides it.</p>
+<p><span class="math display">\[\begin{align*}
+  \text{ACCEPT} &amp;= \{ \langle M, x \rangle \mid M(x) = 1 \} \\
+  \text{SELF-ACCEPT} &amp;= \{ \langle M \rangle \mid M(\langle M \rangle) = 1 \}
+\end{align*}\]</span></p>
+<p><span style="color:red;"> Step 3: Define the TM that will be decider of the language we are reducing <em>from</em> <span></span></span></p>
+<p>define <span class="math inline">\(M_{SA}\)</span> on input <span class="math inline">\(\langle M \rangle\)</span>:</p>
+<div style="margin-left: 2em;">
+<p>modify <span class="math inline">\(\langle M \rangle\)</span> into <span class="math inline">\(\langle M, M \rangle\)</span><br>
+return <span class="math inline">\(M_A(\langle M, M \rangle)\)</span></p>
+</div>
+<p><span style="color:red;"> Step 4: Show that the TM is a decider <span></span></span></p>
+<p><span class="math inline">\(M_A\)</span> is a decider, and the copy modification is computable. Therefore, <span class="math inline">\(M_{SA}\)</span> is a decider.</p>
+<p><span style="color:red;"> Step 5: Show that the TM decides the language we are reducing from <span></span></span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A good place to start is always <span class="math inline">\(M_{SA}(\langle M \rangle) = 1\)</span>, then when is this the possible outcome from the machines program.</p>
+</div>
+</div>
+<p><span class="math display">\[\begin{align*}
+  M_{SA}(\langle M \rangle) = 1 &amp;\iff M_A(\langle M, M \rangle) = 1 \\
+  &amp; \iff \langle M, M \rangle \in \text{ACCEPT} \\
+  &amp; \iff M(\langle M \rangle) = 1 \\
+  &amp; \iff \langle M \rangle \in \text{SELF-ACCEPT}
+\end{align*}\]</span></p>
+<p>hence <span class="math inline">\(M_{SA}\)</span> decides <span class="math inline">\(\text{SELF-ACCEPT}\)</span>.</p>
+<p><span style="color:red;"> Step 6: Conclude <span></span></span></p>
+<p>So <span class="math inline">\(\text{SELF-ACCEPT}\)</span> is decided by <span class="math inline">\(M_{SA}\)</span>, but we know <span class="math inline">\(\text{SELF-ACCEPT}\)</span> is undecidable. Therefore, by contradiction, <span class="math inline">\(\text{ACCEPT}\)</span> is undecidable.</p>
+</section>
+<section id="textempty-is-undecidable-by-reduction" class="level3" data-number="6.3.2">
+<h3 data-number="6.3.2" class="anchored" data-anchor-id="textempty-is-undecidable-by-reduction"><span class="header-section-number">6.3.2</span> <span class="math inline">\(\text{EMPTY}\)</span> is undecidable by reduction</h3>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>To come up with the specific machine you need to construct, I use the following steps:</p>
+<ul>
+<li>What property does the assumed decider give us?</li>
+<li>What do we need to do to <span class="math inline">\(M\)</span> so that the the assumed decider has <em>predictable</em> behaviour?</li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Exercise
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Over the next proof, I am going to stop refering to the steps. To help build your own intuition for a reduction proof, identify what part of the proof applies to each step.</p>
+</div>
+</div>
+<p>RTP: <span class="math inline">\(\text{ACCEPT}\)</span> reduces to <span class="math inline">\(\text{EMPTY}\)</span> <span class="math inline">\(\implies\)</span> <span class="math inline">\(\text{EMPTY}\)</span> is undecidable</p>
+<p><span class="math display">\[\begin{align*}
+  \text{EMPTY} &amp;= \{ \langle M \rangle \mid L(M) = \emptyset \} \\
+  \text{ACCEPT} &amp;= \{ \langle M, x \rangle \mid M(x) = 1 \}
+\end{align*}\]</span></p>
+<p>Assume that <span class="math inline">\(\text{EMPTY}\)</span> is decidable, therefore there exists <span class="math inline">\(M_E\)</span> that decides it.</p>
+<p>define <span class="math inline">\(M_A\)</span> on input <span class="math inline">\(\langle M, x \rangle\)</span>:</p>
+<div style="margin-left: 2em;">
+<p>write <span class="math inline">\(\langle N \rangle\)</span> onto the tape where <span class="math inline">\(N\)</span> is a Turing Machine defined as follows</p>
+<p>define <span class="math inline">\(N\)</span> on input <span class="math inline">\(w\)</span>:<br>
+<span class="math inline">\(\quad\quad\)</span> if <span class="math inline">\(w \neq x\)</span> then<br>
+<span class="math inline">\(\quad\quad\quad\)</span> Reject<br>
+<span class="math inline">\(\quad\quad\)</span> else<br>
+<span class="math inline">\(\quad\quad\quad\)</span> return <span class="math inline">\(M(x)\)</span></p>
+<p>return not <span class="math inline">\(M_E(\langle N \rangle)\)</span></p>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Scope Capturing
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In <span class="math inline">\(N\)</span>, we use the value of <span class="math inline">\(x\)</span> in its program, but <span class="math inline">\(x\)</span> is not defined as an input parameter for <span class="math inline">\(N\)</span>. What exactly is happening here?</p>
+<p>The value of <span class="math inline">\(x\)</span> is captured into <span class="math inline">\(N\)</span>’s scope, it is essentially hard-coded into the program of <span class="math inline">\(N\)</span>. If we tried to create <span class="math inline">\(N\)</span> outside the context of the machine <span class="math inline">\(M_A\)</span>, we would not have access to the value of <span class="math inline">\(x\)</span>, so it would not be well defined Turing Machine.</p>
+<p>We can do the same thing in python:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> <span class="dv">32</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="ss">f"""</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ss">print(</span><span class="sc">{</span>x<span class="sc">}</span><span class="ss">)</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ss">"""</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>If we evaluated the string <code>N</code> as a <a href="https://stackoverflow.com/questions/9383740/what-does-pythons-eval-do">python script</a>, then it would print <code>32</code> to the console.</p>
+<p>If we used the following script instead</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> <span class="dv">16</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="ss">f"""</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ss">print(</span><span class="sc">{</span>x<span class="sc">}</span><span class="ss">)</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ss">"""</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> <span class="dv">32</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>What would be printed to the console if we evaluated <code>N</code>?</p>
+<p>In our example, we take <span class="math inline">\(x\)</span> as an input parameter to <span class="math inline">\(M_A\)</span>, so the this example would be</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> <span class="bu">input</span>()</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="ss">f"""</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ss">print(</span><span class="sc">{</span>x<span class="sc">}</span><span class="ss">)</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="ss">"""</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><span class="math inline">\(M_A\)</span> in our example is essentially the following python script</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>M <span class="op">=</span> <span class="bu">input</span>()</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> <span class="bu">input</span>()</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="ss">f"""</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="ss">    w = input()</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="ss">    if w != </span><span class="sc">{</span>x<span class="sc">}</span><span class="ss">:</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="ss">        return 0</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="ss">    else:</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="ss">        return eval(</span><span class="sc">{</span>M<span class="sc">}</span><span class="ss"> on </span><span class="sc">{</span>x<span class="sc">}</span><span class="ss">)</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="ss">"""</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="cf">return</span> <span class="kw">not</span> M_E(N)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<p>Writing <span class="math inline">\(\langle N \rangle\)</span> is a computable function as <span class="math inline">\(N\)</span> is a well defined Turing Machine, <span class="math inline">\(M_E\)</span> is a decider, and inverting the output of <span class="math inline">\(M_E\)</span> is a computable function. Therefore <span class="math inline">\(M_A\)</span> is a decider.</p>
+<p><em>Importantly</em> while we write <span class="math inline">\(N\)</span> onto the tape, it never gets executed. While <span class="math inline">\(N\)</span> can loop, it does not affect the execution of <span class="math inline">\(M_A\)</span> because it is never called.</p>
+<p>Let us try understand the behaviour of <span class="math inline">\(N\)</span> as well. <span class="math inline">\(N\)</span> is not a decider so it can loop, therefore we must cover every possible output case:</p>
+<p><span class="math display">\[\begin{align}
+  N(w) = 1 &amp;\iff w = x \text{ and } M(x) = 1 \\
+  N(w) = 0 &amp;\iff w \neq x \text{ or } M(x) = 0 \\
+  N(w) = \infty &amp;\iff w = x \text{ and } M(x) = \infty
+\end{align}\]</span></p>
+<p>If the string <span class="math inline">\(w\)</span> is not <span class="math inline">\(x\)</span>, then <span class="math inline">\(N\)</span> immediately rejects. If it is <span class="math inline">\(x\)</span>, then <span class="math inline">\(N\)</span> <em>may</em> accept but it could still loop or reject. Therefore, the language of <span class="math inline">\(N\)</span> is either just <span class="math inline">\(\{ x \}\)</span> if <span class="math inline">\(M(x) = 1\)</span> or <span class="math inline">\(\emptyset\)</span> if <span class="math inline">\(M(x) \neq 1\)</span>.</p>
+<p><span class="math display">\[\begin{align*}
+  L(N) = \{ x \} &amp;\iff M(x) = 1 \\
+  &amp; \text{or} \\
+  L(N) = \emptyset &amp;\iff M(x) \neq 1 \\
+\end{align*}\]</span></p>
+<p><span class="math display">\[\begin{align*}
+  M_A(\langle M, x \rangle) = 1 &amp;\iff M_E(\langle N \rangle) = 0 \\
+  &amp;\iff \langle N \rangle \notin \text{EMPTY} \\
+  &amp;\iff L(N) \neq \emptyset \\
+  &amp;\iff L(N) = \{ x \} \\
+  &amp;\iff M(x) = 1 \\
+  &amp;\iff \langle M, x \rangle \in \text{ACCEPT} \\
+\end{align*}\]</span> hence, <span class="math inline">\(M_A\)</span> decides <span class="math inline">\(\text{ACCEPT}\)</span>, but <span class="math inline">\(\text{ACCEPT}\)</span> is undecidable.</p>
+<p>Therefore, by contradiction, <span class="math inline">\(\text{EMPTY}\)</span> is undecidable.</p>
+</section>
+</section>
+<section id="mapping-reductions" class="level2" data-number="6.4">
+<h2 data-number="6.4" class="anchored" data-anchor-id="mapping-reductions"><span class="header-section-number">6.4</span> Mapping Reductions</h2>
+<p>In <a href="#textaccept-is-undecidable">the previous section</a>, we proved that <span class="math inline">\(\text{ACCEPT}\)</span> is undecidable with the following reduction:</p>
+<p>define <span class="math inline">\(M_{SA}\)</span> on input <span class="math inline">\(\langle M \rangle\)</span>:</p>
+<div style="margin-left: 2em;">
+<p>modify <span class="math inline">\(\langle M \rangle\)</span> into <span class="math inline">\(\langle M, M \rangle\)</span><br>
+return <span class="math inline">\(M_A(\langle M, M \rangle)\)</span></p>
+</div>
+<p>This is a special case of reductions where we have a computable function <span class="math inline">\(f\)</span> with a very specific property. <span class="math display">\[ \langle M \rangle \in \text{SELF-ACCEPT} \iff f(\langle M \rangle) = \langle M, M \rangle \in \text{ACCEPT} \]</span></p>
+<p>Using this property, we can construct a new proof technique called a <strong>mapping reduction</strong>.</p>
+<p>A language <span class="math inline">\(A\)</span> mapping-reduces to <span class="math inline">\(B\)</span> (<span class="math inline">\(A \leq_m B\)</span>) if there is a computable function <span class="math inline">\(f\)</span> such that <span class="math display">\[ x \in A \iff f(x) \in B \]</span>.</p>
+<p>Using this function <span class="math inline">\(f\)</span>, we can show that any mapping reduction <em>from</em> an undecidable language <span class="math inline">\(A\)</span> to a language <span class="math inline">\(B\)</span>, proves that <span class="math inline">\(B\)</span> is undecidable.</p>
+<hr>
+<p><strong>Theorem</strong> (MR-Undecidability): <span class="math inline">\(A \leq_m B \text{ and } A \text{ is undecidable } \implies B \text{ is undecidable}\)</span></p>
+<p><span class="math inline">\(A \leq_m B\)</span> therefore there exists a computable function <span class="math inline">\(f\)</span> such that <span class="math display">\[ x \in A \iff f(x) \in B \]</span> There is a Turing Machine <span class="math inline">\(M_f\)</span> that computes <span class="math inline">\(f\)</span>.</p>
+<p>Assume that <span class="math inline">\(B\)</span> is decidable, then there is a Turing Machine <span class="math inline">\(M_B\)</span> that decides <span class="math inline">\(B\)</span>.</p>
+<p>define <span class="math inline">\(M_A\)</span> on input <span class="math inline">\(x\)</span>:</p>
+<div style="margin-left: 2em;">
+<p><span class="math inline">\(y = M_f(x)\)</span><br>
+return <span class="math inline">\(M_B(y)\)</span></p>
+</div>
+<p><span class="math inline">\(M_B\)</span> is a decider, and <span class="math inline">\(M_f\)</span> computes <span class="math inline">\(f\)</span>. Therefore <span class="math inline">\(M_A\)</span> is a decider.</p>
+<p><span class="math display">\[\begin{align*}
+  M_A(x) = 1 &amp;\iff M_B(y) = 1 \\
+  &amp; \iff y \in B \\
+  &amp; \iff M_f(x) \in B \\
+  &amp; \iff f(x) \in B \\
+  &amp; \iff x \in A
+\end{align*}\]</span> hence, <span class="math inline">\(M_A\)</span> decides <span class="math inline">\(A\)</span>, but <span class="math inline">\(A\)</span> is undecidable.</p>
+<p>Therefore, by contradiction, <span class="math inline">\(B\)</span> is undecidable.</p>
+<hr>
+<p>Using this theorem, we can prove a language is undecidable by showing that there is some <span class="math inline">\(f\)</span> with another undecidable language.</p>
+<section id="textaccept-is-undecidable-by-mapping-reduction" class="level3" data-number="6.4.1">
+<h3 data-number="6.4.1" class="anchored" data-anchor-id="textaccept-is-undecidable-by-mapping-reduction"><span class="header-section-number">6.4.1</span> <span class="math inline">\(\text{ACCEPT}\)</span> is undecidable by mapping reduction</h3>
+<p>Let <span class="math inline">\(f(\langle M \rangle) = \langle M, M \rangle\)</span>.</p>
+<p><span class="math inline">\(f\)</span> is computable as it is a copy operation.</p>
+<p>By definition of <span class="math inline">\(\text{SELF-ACCEPT}\)</span> <span class="math display">\[ \langle M \rangle \in \text{SELF-ACCEPT} \iff M(\langle M \rangle) = 1 \]</span></p>
+<p>By definition of <span class="math inline">\(\text{ACCEPT}\)</span> <span class="math display">\[ \langle M, M \rangle \in \text{ACCEPT} \iff M(\langle M \rangle) = 1 \]</span></p>
+<p>Therefore <span class="math display">\[\begin{align*}
+  \langle M \rangle \in \text{SELF-ACCEPT}
+  &amp; \iff M(\langle M \rangle) = 1  \\
+  &amp; \iff \langle M, M \rangle \in \text{ACCEPT} \\
+  &amp; \iff f(\langle M \rangle) \in \text{ACCEPT}
+\end{align*}\]</span></p>
+<p>Therefore <span class="math inline">\(f\)</span> is a computable function such that <span class="math display">\[ \langle M \rangle \in \text{SELF-ACCEPT} \iff f(\langle M \rangle) \in \text{ACCEPT} \]</span></p>
+<p>Hence, <span class="math inline">\(\text{ACCEPT}\)</span> is undecidable by MR-Undecidability theorem.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>While the above proof seems more verbose then the original reduction, if we don’t go step by step, the entire proof can be condensed into the following:</p>
+<p>Let <span class="math inline">\(f(\langle M \rangle) = \langle M, M \rangle\)</span>. <span class="math inline">\(f\)</span> is computable as it is a copy operation.</p>
+<p><span class="math display">\[\begin{align*}
+  \langle M \rangle \in \text{SELF-ACCEPT}
+  &amp; \iff M(\langle M \rangle) = 1  \\
+  &amp; \iff \langle M, M \rangle \in \text{ACCEPT} \\
+  &amp; \iff f(\langle M \rangle) \in \text{ACCEPT}
+\end{align*}\]</span></p>
+<p>Therefore, <span class="math inline">\(\text{ACCEPT}\)</span> is undecidable by MR-Undecidability theorem.</p>
+</div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../lectures/lecture_6.html" class="pagination-link" aria-label="Undecidability by Diagonalisation">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Undecidability by Diagonalisation</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
