@@ -1,0 +1,481 @@
+# Undecidability by Reduction
+
+## Definitions
+
+The **language of a Turing Machine** $M$ is the set of all strings $w$ such that $M$ accepts $w$.
+The notation $L(M)$ is used to denote the language of $M$.
+
+$$ w \in L(M) \iff M(w) = 1 $$
+
+A Turing Machine $M$ is a **decider** if it halts on all inputs.
+$M$ decides the language $L(M)$
+
+A language $L$ is **decidable** if there exists a decider $M$ such that $L(M) = L$, or equivalently, 
+$$ w \in L \iff M(w) = 1 $$
+
+A function $f$ is **computable** if there exists a Turing Machine $M$ such that 
+$$ f(x) = y \iff M(x) = y $$
+
+:::{.callout-note}
+Technically, we could call the $M$ of a computable function $f$ the *computer* of $f$ similar to how we call it a decider for decision problems.
+
+However, the term *computer* is more commonly used to refer to the general purpose devices we interact with daily.
+Therefore to avoid confusion, we will not have a specific term for the $M$ of a computable function.
+:::
+
+## Properties of undecidability
+
+[Previously](./lecture_6.qmd) we showed that there exists at least one undecidable language $\text{NOT-SELF-ACCEPT}$.
+However, if we want to apply the diagonalisation proof to other languages, we either cannot construct the contradiction the same way ($\text{SELF-ACCEPT}$) or no contradiction can be constructed at all.
+
+Instead of starting from scratch every time, we can instead identify and prove some useful properties of undecidable and decidable languages to assist us in this process.
+
+1. The set of all strings $\Sigma^\ast$ is decidable
+2. The set of no strings $\emptyset$ is decidable
+3. $L$ is decidable if and only if $\bar{L} = \Sigma^\ast \setminus L$ is undecidable
+    - $L$ is decidable $\implies$ $\bar{L}$ is decidable
+    - $\bar{L}$ is decidable $\implies$ $L$ is decidable
+    - $L$ is undecidable $\implies$ $\bar{L}$ is undecidable
+    - $\bar{L}$ is undecidable $\implies$ $L$ is undecidable
+4. $L_1 \cup L_2$ is undecidable $\implies$ $L_1$ or $L_2$ is undecidable
+5. $L_1$ and $L_2$ is decidable $\implies$ $L_1 \cup L_2$ is decidable
+6. $L_1 \cap L_2$ is undecidable $\implies$ $L_1$ or $L_2$ is undecidable
+7. $L_1$ and $L_2$ is decidable $\implies$ $L_1 \cap L_2$ is decidable
+8. $L$ is finite $\implies L$ is decidable
+
+:::{.callout-tip}
+To prove most theorems in undecidability, we can use a simple heuristic to help us structure the proof.
+
+1. Choose a proof technique
+2. Apply the definitions from the _antecedent_ of the implication
+3. Define the TM that will be decider of the _concequent_
+4. Show that the TM is a decider
+5. Show that the TM decides the language of the _concequent_
+6. Conclude 
+:::
+
+***
+**Theorem** $L_1 \cup L_2$ is undecidable $\implies$ $L_1$ or $L_2$ is undecidable
+
+<span style="color:red;">
+    Step 1: Choose a proof technique - Proof by contraposition.
+<span>
+
+RTP: $L_1$ and $L_2$ are decidable $\implies$ $L_1 \cup L_2$ is decidable
+
+:::{.callout-note}
+Contraposition is a very useful proof technique. It is defined as
+$$ P \rightarrow Q \iff \neg Q \rightarrow \neg P $$
+
+$Q$ is $L_1$ or $L_2$ is decidable, so $\neg Q$ becomes $L_1$ and $L_2$ are not decidable.
+Importantly, we applied De-Morgan's Law here to evaluate the negation of $Q$.
+
+If we write $Q$ into a formal logic sentence, we have: $Decidable(L_1) \lor Decidable(L_2)$
+
+\begin{align*}
+  \neg Q &\equiv \neg (Undecidable(L_1) \lor Undecidable(L_2)) \\
+  &\equiv \neg Undecidable(L_1) \land \neg Undecidable(L_2)
+\end{align*}
+
+
+$P$ is $L_1 \cup L_2$ is undecidable, so $\neg P$ becomes $L_1 \cup L_2$ is decidable.
+Be careful to _not_ confuse the difference between Set Or ($\cup$) and Logical Or ($\lor$).
+For $P$ we do _not_ apply De-Morgan's Law - we are negating the _set union_ directly.
+
+$P$ in formal logic is $Undecidable(L_1 \cup L_2)$
+:::
+
+<span style="color:red;">
+    Step 2: Apply the definitions from the _antecedent_ of the implication
+<span>
+
+Let $L_1$ and $L_2$ be decidable languages.
+Then there exists $M_1$ and $M_2$ such that 
+\begin{align*}
+  w \in L_1 &\iff M_1(w) = 1 \\
+  w \in L_2 &\iff M_2(w) = 1
+\end{align*}
+
+<span style="color:red;">
+    Step 3: Define the TM that will be decider of the _concequent_
+<span>
+
+define $M$ on input $x$:
+
+  - if $M_1(x) = 1$:
+    - Accept
+  - if $M_2(x) = 1$:
+    - Accept
+  - Reject  
+  
+<span style="color:red;">
+    Step 4: Show that the TM is a decider
+<span>
+
+$M$ is a decider as $M_1$ and $M_2$ are both deciders, and an if statement is a decidable procedure.
+
+<span style="color:red;">
+    Step 5: Show that the TM decides the language of the _concequent_
+<span>
+
+\begin{align*}
+  M(x) = 1 &\iff M_1(x) = 1 \text{ or } M_2(x) = 1 \\
+  &\iff x \in L_1 \text{ or } x \in L_2 \qquad \textcolor{green}{A \cup B = \{ x \mid x \in A \text{ or } x \in B \}}\\
+  &\iff x \in L_1 \cup L_2 
+\end{align*}
+
+hence, $M$ decides $L_1 \cup L_2$.
+
+:::{.callout-note}
+  The reason we split the decider and decides step in two is because the decider step restricts the possible outputs of the TM to either $1$ or $0$.
+  
+  We show that that we can discard the looping case of our Turing Machine, _and_ we only need to prove the one case of $M(x) = 1 \iff x \in L_1 \cup L_2$.
+  
+  The opposite case ($M(x) = 0$) is implicitly shown by the if and only if statement.
+:::
+
+<span style="color:red;">
+    Step 6: Conclude
+<span>
+
+Therefore, by contraposition, if $L_1 \cup L_2$ is undecidable, then $L_1$ or $L_2$ is undecidable. 
+
+***
+
+## Reductions
+
+Properties are useful for proving languages that are related by Set Theory to an undecidable language are also undecidable.
+But, what if the language we want to prove is undecidable cannot be constructed using Set Theory operations?
+
+For example, how do we prove that $$ \text{ACCEPT} := \{ \langle M, x \rangle \mid M(x) = 1 \} $$ is undecidable?
+$\text{ACCEPT}$ cannot be constructed from something like $\text{SELF-ACCEPT}$ so we need to find a different way to prove it is undecidable.
+
+Our new technique is called a **reduction**.
+
+A reduction is a relationship that exists between two languages $A$ and $B$.
+If we have some Turing Machine $M_B$ that decides $B$, then we can use it to construct a Turing Machine $M_A$ that decides $A$.
+
+We say that **$A$ reduces to $B$** if a decider for $A$ can be constructed from a decider for $B$.
+
+:::{.callout-note}
+Notationally, we write $A \leq_T B$ to indicate that $A$ reduces to $B$.
+This kind of reduction is also called a Turing Reduction (hence the $T$).
+
+At a technical level, reductions rely on something called an oracle.
+Oracles are special Turing Machines that behave as black boxes - we don't actually know how the underlying computation is performed.
+They are particularly important in Complexity Theory but we will not cover them here.
+
+The machine $M_A$ is called an **oracle machine**, and $M_B$ is the **oracle** but these terms will not be used in this course.
+:::
+
+Using a reduction, we can construct a basic proof structure for showing that a language is undecidable.
+
+To prove that $B$ is undecidable using the undecidable language $A$
+
+1. Assume that $B$ is decidable
+2. Construct a decider $M_A$ for $A$ using the decider $M_B$ for $B$
+3. Therefore $A$ is decidable, but we know by previous work that $A$ is undecidable
+4. Therefore, by contradiction, $B$ is undecidable
+
+:::{.callout-warning}
+## Question
+
+The above is not a formal proof, just a rough argument.
+
+Try to write the formal proof yourself for the following theorem:
+
+$$ A \text{ is undecidable and } A \text{ reduces to } B \implies B \text{ is undecidable} $$
+
+Use the proof structure from the first section as a guide.
+:::
+
+To help demonstrate the proof technique of a reduction, let's consider the following example.
+
+### $\text{ACCEPT}$ is undecidable by reduction
+
+
+<span style="color:red;">
+    Step 1: Choose a proof technique - Proof by reduction.
+<span>
+
+RTP: $\text{SELF-ACCEPT}$ reduces to $\text{ACCEPT}$ $\implies$ $\text{ACCEPT}$ is undecidable 
+
+Assume that $\text{ACCEPT}$ is decidable.
+
+<span style="color:red;">
+    Step 2: Apply the definitions from the _antecedent_ of the implication
+<span>
+
+
+Therefore, $\text{ACCEPT}$ is decidable, so $M_A$ decides it.
+
+\begin{align*}
+  \text{ACCEPT} &= \{ \langle M, x \rangle \mid M(x) = 1 \} \\
+  \text{SELF-ACCEPT} &= \{ \langle M \rangle \mid M(\langle M \rangle) = 1 \} 
+\end{align*}
+
+<span style="color:red;">
+    Step 3: Define the TM that will be decider of the language we are reducing _from_
+<span>
+
+define $M_{SA}$ on input $\langle M \rangle$:
+
+::: {style="margin-left: 2em;"}
+  modify $\langle M \rangle$ into $\langle M, M \rangle$  
+  return $M_A(\langle M, M \rangle)$
+:::
+
+
+<span style="color:red;">
+    Step 4: Show that the TM is a decider
+<span>
+
+$M_A$ is a decider, and the copy modification is computable.
+Therefore, $M_{SA}$ is a decider.
+
+<span style="color:red;">
+    Step 5: Show that the TM decides the language we are reducing from
+<span>
+
+:::{.callout-tip}
+  A good place to start is always $M_{SA}(\langle M \rangle) = 1$, then when is this the possible outcome from the machines program.
+:::
+
+\begin{align*}
+  M_{SA}(\langle M \rangle) = 1 &\iff M_A(\langle M, M \rangle) = 1 \\
+  & \iff \langle M, M \rangle \in \text{ACCEPT} \\
+  & \iff M(\langle M \rangle) = 1 \\
+  & \iff \langle M \rangle \in \text{SELF-ACCEPT}
+\end{align*}
+
+hence $M_{SA}$ decides $\text{SELF-ACCEPT}$.
+
+<span style="color:red;">
+    Step 6: Conclude
+<span>
+
+So $\text{SELF-ACCEPT}$ is decided by $M_{SA}$, but we know $\text{SELF-ACCEPT}$ is undecidable.
+Therefore, by contradiction, $\text{ACCEPT}$ is undecidable. 
+
+### $\text{EMPTY}$ is undecidable by reduction
+
+:::{.callout-tip}
+  To come up with the specific machine you need to construct, I use the following steps:
+  
+  - What property does the assumed decider give us?
+  - What do we need to do to $M$ so that the the assumed decider has _predictable_ behaviour?
+:::
+
+:::{.callout-warning}
+## Exercise
+
+Over the next proof, I am going to stop refering to the steps.
+To help build your own intuition for a reduction proof, identify what part of the proof applies to each step.
+:::
+
+RTP: $\text{ACCEPT}$ reduces to $\text{EMPTY}$ $\implies$ $\text{EMPTY}$ is undecidable
+
+\begin{align*}
+  \text{EMPTY} &= \{ \langle M \rangle \mid L(M) = \emptyset \} \\
+  \text{ACCEPT} &= \{ \langle M, x \rangle \mid M(x) = 1 \}
+\end{align*}
+
+Assume that $\text{EMPTY}$ is decidable, therefore there exists $M_E$ that decides it.
+
+define $M_A$ on input $\langle M, x \rangle$:
+
+::: {style="margin-left: 2em;"}
+  write $\langle N \rangle$ onto the tape where $N$ is a Turing Machine defined as follows  
+  
+  define $N$ on input $w$:  
+    $\quad\quad$ if $w \neq x$ then  
+    $\quad\quad\quad$ Reject  
+    $\quad\quad$ else   
+    $\quad\quad\quad$ return $M(x)$
+  
+  return not $M_E(\langle N \rangle)$
+:::
+
+:::{.callout-tip}
+## Scope Capturing
+
+In $N$, we use the value of $x$ in its program, but $x$ is not defined as an input parameter for $N$.
+What exactly is happening here?
+
+The value of $x$ is captured into $N$'s scope, it is essentially hard-coded into the program of $N$.
+If we tried to create $N$ outside the context of the machine $M_A$, we would not have access to the value of $x$, so it would not be well defined Turing Machine.
+
+We can do the same thing in python:
+```python
+x = 32
+N = f"""
+print({x})
+"""
+```
+
+If we evaluated the string `N` as a [python script](https://stackoverflow.com/questions/9383740/what-does-pythons-eval-do), then it would print `32` to the console.
+
+If we used the following script instead
+```python
+x = 16
+N = f"""
+print({x})
+"""
+x = 32
+```
+What would be printed to the console if we evaluated `N`?
+
+In our example, we take $x$ as an input parameter to $M_A$, so the this example would be
+```python
+x = input()
+N = f"""
+print({x})
+"""
+```
+
+$M_A$ in our example is essentially the following python script
+```python
+M = input()
+x = input()
+N = f"""
+    w = input()
+    if w != {x}:
+        return 0
+    else:
+        return eval({M} on {x})
+"""
+
+return not M_E(N)
+```
+:::
+
+Writing $\langle N \rangle$ is a computable function as $N$ is a well defined Turing Machine, $M_E$ is a decider, and inverting the output of $M_E$ is a computable function.
+Therefore $M_A$ is a decider.
+
+_Importantly_ while we write $N$ onto the tape, it never gets executed. 
+While $N$ can loop, it does not affect the execution of $M_A$ because it is never called.
+
+Let us try understand the behaviour of $N$ as well.
+$N$ is not a decider so it can loop, therefore we must cover every possible output case:
+
+\begin{align}
+  N(w) = 1 &\iff w = x \text{ and } M(x) = 1 \\
+  N(w) = 0 &\iff w \neq x \text{ or } M(x) = 0 \\
+  N(w) = \infty &\iff w = x \text{ and } M(x) = \infty
+\end{align}
+
+If the string $w$ is not $x$, then $N$ immediately rejects.
+If it is $x$, then $N$ _may_ accept but it could still loop or reject.
+Therefore, the language of $N$ is either just $\{ x \}$ if $M(x) = 1$ or $\emptyset$ if $M(x) \neq 1$.
+
+\begin{align*}
+  L(N) = \{ x \} &\iff M(x) = 1 \\
+  & \text{or} \\
+  L(N) = \emptyset &\iff M(x) \neq 1 \\
+\end{align*}
+
+\begin{align*}
+  M_A(\langle M, x \rangle) = 1 &\iff M_E(\langle N \rangle) = 0 \\
+  &\iff \langle N \rangle \notin \text{EMPTY} \\
+  &\iff L(N) \neq \emptyset \\
+  &\iff L(N) = \{ x \} \\
+  &\iff M(x) = 1 \\
+  &\iff \langle M, x \rangle \in \text{ACCEPT} \\
+\end{align*}
+hence, $M_A$ decides $\text{ACCEPT}$, but $\text{ACCEPT}$ is undecidable.
+
+Therefore, by contradiction, $\text{EMPTY}$ is undecidable.
+
+## Mapping Reductions
+
+In [the previous section](#textaccept-is-undecidable), we proved that $\text{ACCEPT}$ is undecidable with the following reduction:
+
+define $M_{SA}$ on input $\langle M \rangle$:
+
+::: {style="margin-left: 2em;"}
+  modify $\langle M \rangle$ into $\langle M, M \rangle$  
+  return $M_A(\langle M, M \rangle)$
+:::
+
+This is a special case of reductions where we have a computable function $f$ with a very specific property.
+$$ \langle M \rangle \in \text{SELF-ACCEPT} \iff f(\langle M \rangle) = \langle M, M \rangle \in \text{ACCEPT} $$
+
+Using this property, we can construct a new proof technique called a **mapping reduction**.
+
+A language $A$ mapping-reduces to $B$ ($A \leq_m B$) if there is a computable function $f$ such that $$ x \in A \iff f(x) \in B $$.
+
+Using this function $f$, we can show that any mapping reduction _from_ an undecidable language $A$ to a language $B$, proves that $B$ is undecidable.
+
+***
+
+**Theorem** (MR-Undecidability): $A \leq_m B \text{ and } A \text{ is undecidable } \implies B \text{ is undecidable}$
+
+$A \leq_m B$ therefore there exists a computable function $f$ such that $$ x \in A \iff f(x) \in B $$
+There is a Turing Machine $M_f$ that computes $f$.
+
+Assume that $B$ is decidable, then there is a Turing Machine $M_B$ that decides $B$.
+
+define $M_A$ on input $x$:
+
+::: {style="margin-left: 2em;"}
+  $y = M_f(x)$  
+  return $M_B(y)$
+:::
+
+$M_B$ is a decider, and $M_f$ computes $f$. Therefore $M_A$ is a decider.
+
+\begin{align*}
+  M_A(x) = 1 &\iff M_B(y) = 1 \\
+  & \iff y \in B \\
+  & \iff M_f(x) \in B \\
+  & \iff f(x) \in B \\
+  & \iff x \in A
+\end{align*}
+hence, $M_A$ decides $A$, but $A$ is undecidable.
+
+Therefore, by contradiction, $B$ is undecidable.
+
+***
+
+Using this theorem, we can prove a language is undecidable by showing that there is some $f$ with another undecidable language.
+
+### $\text{ACCEPT}$ is undecidable by mapping reduction
+
+Let $f(\langle M \rangle) = \langle M, M \rangle$. 
+
+$f$ is computable as it is a copy operation.
+
+By definition of $\text{SELF-ACCEPT}$
+$$ \langle M \rangle \in \text{SELF-ACCEPT} \iff M(\langle M \rangle) = 1 $$
+
+By definition of $\text{ACCEPT}$
+$$ \langle M, M \rangle \in \text{ACCEPT} \iff M(\langle M \rangle) = 1 $$
+
+Therefore
+\begin{align*}
+  \langle M \rangle \in \text{SELF-ACCEPT} 
+  & \iff M(\langle M \rangle) = 1  \\
+  & \iff \langle M, M \rangle \in \text{ACCEPT} \\
+  & \iff f(\langle M \rangle) \in \text{ACCEPT}
+\end{align*}
+
+Therefore $f$ is a computable function such that 
+$$ \langle M \rangle \in \text{SELF-ACCEPT} \iff f(\langle M \rangle) \in \text{ACCEPT} $$
+
+Hence, $\text{ACCEPT}$ is undecidable by MR-Undecidability theorem.
+
+:::{.callout-tip}
+While the above proof seems more verbose then the original reduction, if we don't go step by step, the entire proof can be condensed into the following:
+
+Let $f(\langle M \rangle) = \langle M, M \rangle$.
+$f$ is computable as it is a copy operation.
+
+\begin{align*}
+  \langle M \rangle \in \text{SELF-ACCEPT} 
+  & \iff M(\langle M \rangle) = 1  \\
+  & \iff \langle M, M \rangle \in \text{ACCEPT} \\
+  & \iff f(\langle M \rangle) \in \text{ACCEPT}
+\end{align*}
+
+Therefore, $\text{ACCEPT}$ is undecidable by MR-Undecidability theorem.
+:::

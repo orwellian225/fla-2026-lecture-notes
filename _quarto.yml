@@ -12,6 +12,7 @@ book:
         - lectures/lecture_3.qmd
         - lectures/lecture_4.qmd
         - lectures/lecture_6.qmd
+        - lectures/lecture_7.qmd
         # - lectures/lecture_5.qmd
         # - intro.qmd
         # - summary.qmd
