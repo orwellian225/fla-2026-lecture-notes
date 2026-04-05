@@ -17,6 +17,8 @@ book:
         # - intro.qmd
         # - summary.qmd
         # - references.qmd
+    appendices:
+        - appendix/undecidable_properties.qmd
 
 bibliography: references.bib
 

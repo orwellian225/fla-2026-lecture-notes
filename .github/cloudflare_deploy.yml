@@ -1,0 +1,24 @@
+name: Cloudflare Render & Deployment
+on: [ push ]
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check-out
+              uses: actions/checkout@v4
+
+            - name: Quarto Install
+              uses: quarto-dev/quarto-actions/setup@v2
+              with:
+                tinytex: true
+
+            - name: Quarto Render
+              uses: quarto-dev/quarto-actions/render@v2
+
+            - name: Cloudflare Pages Publish
+              uses: cloudflare/wrangler-action@v3
+              with:
+                apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+                accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+                command: pages deploy _book --project-name=fla-2026-lecture-notes
+                gitHubToken: ${{ secrets.GITHUB_TOKEN }}
