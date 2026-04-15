@@ -397,14 +397,12 @@ Let $v$ be an assignment such that $v \vDash P \rightarrow Q$
     &\iff v \vDash \neg P \lor ( P \land Q ) \\
     &\iff v \vDash (\neg P \lor P) \land (\neg P \lor Q) \\
     &\iff v \vDash \neg P \lor Q \\\\
-    
     &\text{Case I: Let } v \nvDash Q \\
     &\iff v \vDash \neg P \lor Q \text{ and } v \vDash \neg Q \\
     &\iff v \vDash (\neg P \lor Q) \land \neg Q \\
     &\iff v \vDash (\neg P \land \neg Q) \lor (Q \land \neg Q) \\
     &\iff v \vDash \neg P \land \neg Q \\
     &\iff v \vDash \neg Q \rightarrow \neg P \\\\
-    
     &\text{Case II: Let } v \vDash Q \\
     &\iff v \nvDash \neg Q \\
     &\iff v \vDash \neg Q \rightarrow \neg P \text{ vacously }
@@ -454,12 +452,10 @@ Let $\Lambda \vDash \varphi$
 \begin{align*}
     & \Lambda \vDash \varphi \\
     & \iff \text{ for any } v, \text{ if } v \vDash \bigwedge \Lambda \text{ then } v \vDash \varphi \\\\
-    
     & \text{Case I: Let } v \text{ be an assignment such that } v \vDash \bigwedge \Lambda \\
     & \implies v \vDash \varphi \\
     & \implies v \vDash \bigwedge \Lambda \text{ and } v \vDash \varphi \\
     & \implies v \vDash \bigwedge \Lambda \rightarrow \varphi \\\\
-    
     & \text{Case II: Let } v \text{ be an assignment such that } v \nvDash \bigwedge \Lambda \\
     & \implies v \vDash \bigwedge \Lambda \rightarrow \varphi \text{ vacously } \\
 \end{align*}
