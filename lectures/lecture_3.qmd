@@ -1,5 +1,7 @@
 # Turing Machines I
 
+Wordcount: {{wordcount}}
+
 ## A machine that computes
 
 Your intuition might be that a computer is a small box that sits on a desk, in a server rack, and even in your pocket.

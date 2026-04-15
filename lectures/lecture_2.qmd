@@ -1,5 +1,7 @@
 # Data, Representations, and Problems
 
+Wordcount: {{wordcount}}
+
 ## Data
 
 ### Primitive Data

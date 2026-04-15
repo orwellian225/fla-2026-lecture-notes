@@ -1,5 +1,7 @@
 # Undecidability by Diagonalisation
 
+Wordcount: {{wordcount}}
+
 ## Countable and Uncountable Infinity
 
 Up until this point, we have touched on the distinction between the countable infinity $\aleph_0$, and uncountable infinity $\mathfrak{c}$.

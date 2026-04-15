@@ -1,5 +1,7 @@
 # Turing Machines II
 
+Wordcount: {{wordcount}}
+
 ## Turing Machines and Abstraction
 
 Writing a Turing Machine can be a very complicated procedure.

@@ -1,4 +1,11 @@
+---
+filters:
+    - wordcount
+---
+
 # Undecidability by Reduction
+
+Wordcount: {{wordcount}}
 
 ## Definitions
 

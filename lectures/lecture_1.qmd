@@ -1,3 +1,5 @@
 # An Introduction to Theoretical Computer Science
 
+Wordcount: {{wordcount}}
+
 Maybe one day I will write something for this page...
