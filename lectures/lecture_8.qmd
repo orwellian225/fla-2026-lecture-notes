@@ -97,7 +97,7 @@ Our above definition is also called a grammar, but you may see it written more l
 <logic_and> ::= <formula> '∧' <formula>
 <logic_imply> ::= <formula> '→' <formula>
 <logic_equiv> ::= <formula> '↔' <formula>
-<formula> ::= <proposition> | <logic_or> | <logic_and> | <logic_imply> | <logic_equiv>
+<formula> ::= <proposition> | <logic_not> | <logic_or> | <logic_and> | <logic_imply> | <logic_equiv>
 ```
 
 This process of writing a grammar is the same way we define programming languages.
@@ -182,7 +182,7 @@ define $M_{PT}$ on $\langle v, \varphi \rangle$:
     $\quad$ if $\varphi = \phi_1 \rightarrow \phi_2$:  
         $\quad$ $\quad$ return $M_{PT}(\langle v, \neg \phi_1 \rangle) = 1$ or ($M_{PT}(\langle v, \phi_1 \rangle) = 1$ and $M_{PT}(\langle v, \phi_2 \rangle) = 1$)  
     $\quad$ if $\varphi = \phi_1 \leftrightarrow \phi_2$:  
-        $\quad$ $\quad$ return $M_{PT}(\langle v, \phi_1 \rightarrow \phi_2) = 1$ and $M_{PT}(\langle v, \phi_2 \rightarrow \phi_1 \rangle) = 1$
+        $\quad$ $\quad$ return $M_{PT}(\langle v, \phi_1 \rightarrow \phi_2 \rangle) = 1$ and $M_{PT}(\langle v, \phi_2 \rightarrow \phi_1 \rangle) = 1$
 :::
 
 The machine $M_{PT}$ makes a fairly big assumption.
@@ -308,7 +308,7 @@ The language of validity is $$ \text{PROP-VAL} := \{ \langle \varphi \rangle \mi
 We can construct the decider for $\text{PROP-VAL}$ in an almost identical manner to $\text{PROP-SAT}$.
 
 ::: {style="margin-left: 2em;"}
-define $M_{PS}$ on $\langle \varphi \rangle$:  
+define $M_{PV}$ on $\langle \varphi \rangle$:  
     $\quad$ for every $v$:  
     $\quad$ $\quad$ if $M_{PT}(\langle v, \varphi \rangle) = 0$ then  
     $\quad$ $\quad$ $\quad$ Reject  
@@ -321,7 +321,7 @@ As an example, we'll prove that the propositional statement for 'proof-by-contra
 ***
 **Theorem**: $(P \rightarrow Q) \leftrightarrow (\neg Q \rightarrow \neg P)$
 
-RTP: $(P \rightarrow Q) \rightarrow (\neg Q \rightarrow \neg P)$
+RTP: $(P \rightarrow Q) \leftrightarrow (\neg Q \rightarrow \neg P)$
 
 We can visualise our decision procedure using a truth table starting from $P$ and $Q$ moving right for each row.
 
