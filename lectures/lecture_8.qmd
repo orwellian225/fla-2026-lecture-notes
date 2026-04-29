@@ -242,11 +242,10 @@ $$
     \varphi \text{ is satisfiable} \iff \exists v, v \vDash \varphi
 $$
 
-**DO NOT DO THIS**. The exists symbol has a very specific meaning in logic and math.
-While the meaning _appears_ to collide here with the english sentence, the technical definition (that we learn in the next section) means that this is only a surface level comparison.
+The $\exists$ symbol has a specific definition in First Order Logic - for the purposes of this course we 
+want to avoid the overlap between a piece of _meta_ notation and a piece of _object_ notation.
 
-As we observed earlier for $\lor$ and _or_, mathematical logic may occasionally be a bit nebulous in the definition of symbols.
-As a rough heuristic, don't use a symbol outside of its strict definition. 
+When we reach the definition of $\exists$ we'll discuss the differences in more depth.
 :::
 
 Can we solve decide this property algorithmcally?
@@ -301,7 +300,7 @@ $$
 $$
 
 :::{.callout-note}
-For the same reasons as before, do not use the forall symbol $\forall$ here.
+For the same reasons as $\exists$ and satisfiability, we will avoid using the $\forall$ symbol here until a technical definition is given.
 :::
 
 The language of validity is $$ \text{PROP-VAL} := \{ \langle \varphi \rangle \mid \vDash \varphi \} $$
