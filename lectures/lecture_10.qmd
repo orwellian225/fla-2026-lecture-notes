@@ -1,0 +1,391 @@
+---
+filters:
+    - wordcount
+---
+
+# Undecidability of First Order Logic
+
+Last week, we established the three decision problems in First Order Logic:
+
+1. $\text{FO-SAT} = \{ \langle \varphi \rangle \mid \varphi \text{ is satisfiable } \}$
+2. $\text{FO-VAL} = \{ \langle \varphi \rangle \mid \:\vDash \varphi \}$
+3. $\text{FO-CONQ} = \{ \langle \Lambda, \varphi \rangle \mid \Lambda \vDash \varphi \}$
+
+Intuitively, we can identify these problems as undecidable for few reasons, but the most obvious is that First Order Semantics cannot be _generally_ evaluated on a Turing Machine.
+To determine the truth of a formula in FOL, we use the model $\mathfrak{M}$.
+There are an infinite number of models, and these models can be about infinite structures. 
+So we cannot brute force the algorithm like we can for propositional logic by trying every possible model.
+If we were to try, the algorithm would just end up stuck in a loop until it finds a solution (which may not even exist)
+
+<!--:::{.callout-warning}
+## Excercise
+
+There are at least a countably infinite number of first order models $\mathfrak{M}$.
+
+We can create a new model by changing the domain.
+So we can create a model with the domain $D = \{ 0 \}$, and then $D = \{ 1 \}$, $D = \{ 2 \}$ and so on.
+
+So we can make at least one model for every natural number, of which there are an infinite number.
+
+As an excercise, write this as a proof and then generalise the argument to why there are an uncountably infinite number of models.
+:::-->
+
+However, this doesn't actually stop us from algorithmically finding solutions to problems like validity.
+The restriction is that the obvious solution doesn't work.
+
+If we look at the following formula
+
+$$
+    \forall x P(x) \rightarrow \exists x P(x)
+$$
+
+we can all agree that this is an obviously valid formula.
+If some property is true for every object, then it is true for at least one object.
+The 'obviously' part is the bane of every students math education every where so it is important that we actually know how to prove this claim.
+
+Let's try understand both the proof and what is doing to see if we can convert it into an algorithmic process.
+
+Assume that $\forall x P(x) \rightarrow \exists x P(x)$ is invalid.
+
+Now we have the model $\mathfrak{M}$ such that 
+$$ \mathfrak{M} \nvDash \forall x P(x) \rightarrow \exists x P(x) \:[\alpha] $$
+
+We don't actually know what this model looks like. 
+How big is its domain? What do it's interpretation sets look like?
+This information does exist, but we don't need to describe it.
+
+Instead, we are going to pull out information from our formula that describes this model in a way that we can represent it on the Turing Machine's tape.
+
+\begin{align*}
+	&\mathfrak{M} \nvDash \forall x P(x) \rightarrow \exists x P(x) \:[\alpha] \\
+	&\implies \mathfrak{M} \vDash \forall x P(x) \:[\alpha] \text{ and } \mathfrak{M} \nvDash \exists x P(x) \: [\alpha] \\
+	&\implies I(P) = D \text{ and } I(P) \neq D
+\end{align*}
+
+At the end of this, we have two pieces of information: $I(P) = D$ and $I(P) \neq D$.
+We don't know what elements $D$ and $I(P)$ are composed of.
+$D$ could be the naturals $\mathbb{N}$, two ducks, a million people - absolutely anything.
+But we do know that $I(P)$ and $D$ are the same, and that $I(P)$ and $D$ are not the same.
+This gives us our contradiction, allowing us to complete the proof.
+
+We can represent contradictions using a finite string, so we can represent contradictions on a TM.
+Using this, we can build the rough algorithm to prove a formula is valid or not.
+
+1. Assume $\varphi$ is invalid
+2. Try every possible derivation from $\neg \varphi$
+3. If a derivation contradicts some prior derivation, the algorithm can accept
+4. If after every derivation, there is no contradiction, then we reject.
+
+What exactly is a derivation though?
+And more importantly, how many are there?
+
+Answering the first question is fairly simple.
+A derivation of $\varphi$ is some other formula $\psi$ that we can reach by applying our definitions of first order logic.
+
+How many are there?
+We can demonstrate this with an example:
+
+We will use a very basic formula, a predicate over some constant.
+$$
+    P(c) \text{ where } P \in PRED \text{ and } c \in CONS
+$$
+
+If we have some function $f$, by the definition of functions, we can apply them over domain elements to reach new domain elements.
+So if $P(c)$ is a formula, we can derive the new formula $$ P(f(c)) $$
+and then we can derive the new formula $P(f(f(c)))$, and then $P(f(f(f(c))))$, and so on.
+
+From just three elements in first order logic: a single constant, function and predicate there are an infinite number of derivations possible.
+So our search through ever possible derivation of a formula $\neg \varphi$ will run forever.
+
+Even when we are able overcome the representation issue of first order logic, it is still not enough to give us an algorithm for $\text{FO-VAL}$.
+
+## The relationship between First Order Logic and Turing Machines
+
+From our earlier example, we can see that validity is a good candidate for undecidability.
+
+Reductions make use of our prior knowledge of undecidable problems.
+Using this previous knowledge, all we need to do is establish some relationship between a known undecidable problem with the problem we believe is undecidable.
+
+All our prior undecidable problems (in FLA) are about Turing Machines directly, so this means that to prove $\text{FO-VAL}$ is undecidable, we need to establish a relationship between First Order Logic and Turing Machines.
+
+In this case, we are going to use $$ \text{HALT} = \{ \langle M, x \rangle \mid M(x) \neq \infty \} $$
+but we'll narrow it down even further.
+To avoid potential clutter in our descriptions, we want the logical formulas to be as simple as possible.
+The simplest possible string $x$ is of course, the empty string $\varepsilon$, so the problem we'll use in our reduction is
+
+$$
+    \text{HALT-EMPTY} := \{ \langle M \rangle \mid M(\varepsilon) \neq \infty \}
+$$
+
+So to prove that $\text{FO-VAL}$ is undecidable, we need the following relationship:
+
+Some formula $\varphi_M$ that describes the TM $M$ in some way, is valid if and only if the machine halts on the empty string.
+
+$$
+    \:\vDash \varphi_M \iff M(\varepsilon) \neq \infty
+$$
+
+## Reducing $\text{HALT-EMPTY}$ to $\text{FO-VAL}$
+
+To test we are heading in right direction, it is a good idea to check that this relationship actually gives us the undecidable result, before we attempt to prove that the relationship exists.
+
+:::{.callout-tip}
+This appears to be a bit backwards.
+Why are we trying to prove this works before we know what it even looks like?
+
+The reason is that we don't need the internals of $\varphi_M$ to test it works.
+Our assumed decider of $\text{FO-VAL}$ allows us gloss over this problem at an algorithmic level.
+$\varphi_M$ may be a horrendous formula that is several thousand predicates long to accurately describe $M$, or it may be very short.
+It doesn't matter because we can feed it into the decider $M_{FV}$ of $\text{FO-VAL}$ all the same.
+
+Before putting in the work to find out what $\varphi_M$ looks like, it is a good idea to make sure it does what we want it to.
+:::
+
+Or more formally,
+
+Given that $\:\vDash \varphi_M \iff M(\varepsilon) \neq \infty$ and that we can compute $\langle \varphi_M \rangle$, then $\text{HALT-EMPTY}$ reduces to $\text{FO-VAL}$.
+
+***
+
+RTP: 
+\begin{align*}
+    &\:\vDash \varphi_M \iff M(\varepsilon) \neq \infty \text{ and} \\ 
+    &f(\langle M \rangle) = \langle \varphi_M \rangle \text{ is computable} \\ 
+    & \implies \text{HALT-EMPTY} \text{ reduces to } \text{FO-VAL}
+\end{align*}
+
+Assume that $\text{FO-VAL}$ is decidable, then there exists $M_{FV}$ that decides it.
+
+define $M_H$ on $\langle M \rangle$:  
+
+::: {style="margin-left: 2em;"}
+$\langle \varphi_M \rangle = f(\langle M \rangle)$  
+return $M_{FV}(\langle \varphi_M \rangle)$
+:::
+
+The function $f(\langle M \rangle) = \langle \varphi_M \rangle$ is given as computable, and $M_{FV}$ is decidable from the assumption.
+Therefore, $M_H$ is a decider.
+
+\begin{align*}
+    M_H(\langle M \rangle) = 1 &\iff M_{FV}(\langle \varphi_M \rangle) = 1 \\
+    &\iff \:\vDash \varphi_M \\
+    &\iff M(\varepsilon) = \infty \\
+    &\iff \langle M \rangle \in \text{HALT-EMPTY}
+\end{align*}
+hence $M_H$ decides $\text{HALT-EMPTY}$, but $\text{HALT-EMPTY}$ is undecidable.
+
+Therefore, by contradiction, $\text{FO-VAL}$ is undecidable.
+
+***
+
+Great! 
+This relationship between validity and Turing Machines gives us our undecidable reduction.
+All we need to do know is establish what that $\varphi_M$ looks like.
+
+## A First Order description of Turing Machines
+
+Let us try understand what exactly we need $\varphi_M$ to be doing.
+
+The final relationship is $$ \:\vDash \varphi_M \iff M(x) \neq \infty $$ so we are trying to connect the validity to halting of the machine $M$.
+What exactly does it mean for $M(x) \neq \infty$?
+
+The original definition we gave was that 
+$$
+    M(x) \neq \infty \iff C(M,x) = c_0 \vdash c_1 \vdash ... \vdash c_n
+$$
+or in english, that our computation $C(M,x)$ is a finite sequence of TM configurations.
+
+We are trying to tie the validity of $\varphi_M$ to this finite sequence, which means that it needs to describe the following things about our Turing Machine:
+
+1. Configurations
+2. Transitions to yield between configs
+3. The sequence is finite
+4. The definition of a TM
+
+Starting at the beginning, we need to be able to describe configurations in First Order Logic.
+We need to be able to specify the state of the current config, what tape cell is being scanned, and what symbols are found on the tape.
+To do this, we'll introduce the following elements of the language:
+
+- A constant symbol $0$ as our starting position
+- A successor function $s$ to move through configs
+- A set of predicates $Q_k(t)$ that each mean 'in config $c_t$, the machine is in state $q_k$'
+- The predicate $H(t, x)$ that means 'in config $c_t$, the machine head is scanning cell $x$'
+- A set of predicates $S_k(t,x)$ that each mean 'in config $c_t$, at cell $x$, the symbol $s_k$ is on the tape'
+
+:::{.callout-note}
+Why don't we add a predecessor function as well?
+
+Theoretically, nothing is stopping us, and our Turing Machine can move its head by going left or right so it makes sense right?
+However, the additional function is unnecessary when we make one assumption:
+
+The TM $M$ is a one-way Turing Machine.
+
+Now, we have the cell $0$ on our tape that always has the end-of-tape marker $\triangleright$ that the machine head can never go past.
+
+With this assumption, both the 'infinities' of the tape size and config steps of our machine are 'going' in the same direction.
+
+This does however mean that our tape alphabet is now $\Delta = \{ \triangleright, \sqcup \} \cup \Gamma$
+:::
+
+To help simplify notation a little bit, we are also going to add the following requirements on our Turing Machine:
+
+1. The initial state $q_\text{init}$ is always $q_0$
+2. The accept state $q_\text{accept}$ is always $q_1$
+3. The reject state $q_\text{accept}$ is always $q_2$
+4. The end-of-tape symbol is always $s_0$
+5. The blank symbol is always $s_1$
+
+:::{.callout-tip}
+Do we lose any capability with these assumptions about $M$?
+
+No, we know that that one-way TM's and two-way TM's are equivalent in power, and these assumptions about state indices are just labels.
+They can be swapped without modifying the underlying behaviour of the machine in any way.
+:::
+
+Let us now try describe our initial config
+$$
+    c_0 = \triangleright q_0 \sqcup
+$$
+
+In first order logic, this becomes
+$$
+    \varphi_\varepsilon := Q_0(0) \land S_0(0,0) \land \forall x (\neg (x = 0) \rightarrow S_1(0,x)) \land H(0, s(0))
+$$
+
+and if we try convert this into english with the 'meaning' of our predicates?
+
+In config $c_0$, the machine is in state $q_0$, the symbol $s_0$ ($\triangleright$) is in the cell $0$, every other cell has the symbol $s_1$ ($\sqcup$), and the head is scanning cell $s(0)$.
+
+:::{.callout-tip}
+## Food for thought
+Why have I used the $s(0)$ instead of $1$?
+
+Firstly, we haven't defined the symbol $1$ as part of our language, and secondly, because there may be an infinite number of elements in our domain.
+We can't define a constant for every single element, the successor function allows us to reach any element we may want.
+
+However, this is a bit cumbersome to write.
+If we want the 5th element, we must write $$ s(s(s(s(s(0))))) $$
+
+So we define a piece of _syntactic sugar_. 
+It some piece of syntax that is not technically defined as part of the language, but it makes it _sweeter_ to work with.
+We can just convert this syntax into its correct representation when its not so annoying to work with.
+
+The symbol $n$ is defined as the as the application of the successor on $0$ $n$ times.
+$$
+    n := s^n(0)
+$$
+:::
+
+:::{.callout-warning}
+## Excercise
+
+Try to generalise the formula $\varphi_\varepsilon$ to one for any config $c_i$
+:::
+
+There are however some rules about the configurations of a Turing Machine.
+
+1. The machine can only ever be in one state per configuration
+2. The machine can only ever be scanning one cell of the tape
+3. Every cell on the tape can only ever hold one symbol
+
+One state per config:
+$$
+    \varphi_Q := \forall t \bigvee^{|Q| - 1}_{i = 0}\big( Q_i(t) \land \bigwedge_{j \neq i} \neg Q_j(t) \big)
+$$
+
+If we expand this formula out 
+\begin{align*}
+    &\forall t ( \\
+    &\quad ( Q_0(t) \land \neg Q_1(t) \land \neg Q_2(t) \land ... ) \\
+    &\quad \lor ( \neg Q_0(t) \land Q_1(t) \land \neg Q_2(t) \land ... ) \\
+    &\quad \lor ( \neg Q_0(t) \land \neg Q_1(t) \land Q_2(t) \land ... ) \\
+    &)
+\end{align*}
+
+For every config, the machine can be in any state, but only ever in that one state.
+
+Scanning one cell
+$$
+    \varphi_H := \forall t \exists x ( H(t, x) \land \forall y ( \neg(x = y) \rightarrow \neg H(t, y) ) )
+$$
+For every config, for some cell, the machine is scanning that cell, and it is not scanning every other cell.
+
+One symbol per cell
+$$
+    \varphi_\Delta := \forall t \forall x ( \bigvee^{|\Delta| - 1}_{i = 0} \big( S_i(t,x) \land \bigwedge_{j \neq i} \neg S_j(t,x) \big) )
+$$
+For every config and for every cell, there can be any symbol written, but only ever that one symbol.
+
+We can turn to the overall computation now that we have described the individual configurations and the machines behaviour for them.
+
+The first component of a computation is the transition between configs.
+There are two kinds of transitions, a left transition $q_i, s_n \rightarrow q_j, s_m, L$ and a right transition $q_i, s_n \rightarrow q_j, s_m, R$.
+
+The way to read these transitions is that, at any config, if we are in state $q_i$ and reading the symbol $s_n$ under the head (which can be anywhere), then we transition to state $q_j$, write $s_m$ and move the tape head in the specified direction.
+An implicit part of these transitions is also that we leave the rest of the tape unmodified, the only cell that changes is the one under the head.
+
+So representing this into logic: Starting with the right transition
+\begin{align*}
+    \varphi_R := &\forall t \forall x \big( \\
+    &\quad Q_i(t) \land H(t, x) \land S_n(t, x) \: \rightarrow \\ 
+    &\quad \big(  Q_j(s(t)) \land H(s(t), s(x)) \land S_m(s(t), x) \: \land \\
+    &\quad\quad \forall y ( \neg (x = y) \rightarrow ( \bigwedge_{a = 0}^{|\Delta| - 1} (S_a(t,y) \rightarrow S_a(s(t), y)) ) )  \\
+    &\big) \big)
+\end{align*}
+
+The left transition
+\begin{align*}
+    \varphi_L := &\forall t \forall x \big( \\
+    &\quad Q_i(t) \land H(t, s(x)) \land S_n(t, s(x)) \: \rightarrow \\ 
+    &\quad \big(  Q_j(s(t)) \land H(s(t), x) \land S_m(s(t), s(x)) \: \land \\
+    &\quad\quad \forall y ( \neg (s(x) = y) \rightarrow ( \bigwedge_{a = 0}^{|\Delta| - 1} (S_a(t,y) \rightarrow S_a(s(t), y)) ) )  \\
+    &\big) \big)
+\end{align*}
+
+The main difference between the left and right transition is where we apply $s(x)$.
+In the right transition, it is apart of the concequent because we move 'forward' after the instruction.
+In the left transition, it is apart of the antecedent as before the instruction we are in the 'forward' cell, and we want to move to the previous cell.
+
+:::{.callout-tip}
+What happens if we transition left from cell $0$?
+So, if $H(t, 0)$ and then we go left? what is the element $z$ such that $s(z) = 0$ or, plainly, what element is before $0$?
+
+This doesn't actually matter.
+The behaviour of our Turing Machine is that when it scans a cell with $\triangleright$ it immediatly moves right again.
+The only cell that has $\triangleright$ is cell $0$, so whenever we enter cell $0$ the machine will _always_ transition right.
+:::
+
+Now, we can apply the relevant transition formula for every instruction in our machine
+$$
+    \varphi_\delta := \bigwedge_{I \in \delta} \varphi_I
+$$
+
+The last component of the computation is then to determine if it enters a halting state.
+
+$$
+    \varphi_\text{halt} := \exists t ( Q_1(t) \lor Q_2(t) )
+$$
+In any config, the machine is in either $q_1$ or $q_2$.
+
+Putting everything together we get:
+
+$$
+    \varphi_M := (\varphi_Q \land \varphi_\Delta \varphi_H \land \varphi_\delta \land \varphi_\varepsilon) \rightarrow \varphi_\text{halt}
+$$
+
+If we follow all the behaviour of a TM, have all the instructions, and start in the initial configuration, then the TM will halt.
+
+At a glance, we should already be able to see how this $\varphi_M$ describes that earlier relationship 
+$$
+    \: \vDash \varphi_M \iff M(\varepsilon) \neq \infty
+$$
+
+Given that the formula is valid, we can show that this formula describes the computation, and thus if $\varphi_{halt}$ is true, means the computation must have entered a halting state.
+This description comes from the fact that our antecedent is designed to encode all the behaviour of the TM and comptuation.
+
+The other way around is significantly more complex.
+Given that the computation halts, we need to prove that the formula is valid.
+We need to use the computation to pull out information about our model using induction and the instructions.
+
+As a sketch, you start with an invalid assumption and work to a contradiction by proving that if the computation enters some config $c_i$ in state $q_k$, then $Q_k(i)$ is true in the model.
+As the computation halts, there is some config $c_n$ in either $q_1$ or $q_2$ thus either $Q_1(n)$ or $Q_2(n)$ must be true, which means that $\varphi_\text{halt}$ _must_ also be true.

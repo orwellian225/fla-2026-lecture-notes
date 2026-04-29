@@ -1,0 +1,8 @@
+---
+filters:
+    - wordcount
+---
+
+# $\:\vDash \varphi_M \iff M(\varepsilon) \neq \infty$
+
+Wordcount: {{wordcount}}

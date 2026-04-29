@@ -14,12 +14,11 @@ book:
         - lectures/lecture_6.qmd
         - lectures/lecture_7.qmd
         - lectures/lecture_8.qmd
-        # - lectures/lecture_5.qmd
-        # - intro.qmd
-        # - summary.qmd
-        # - references.qmd
+        - lectures/lecture_9.qmd
+        - lectures/lecture_10.qmd
     appendices:
         - appendix/undecidable_properties.qmd
+        - appendix/valid_phi_m.qmd
 
 bibliography: references.bib
 

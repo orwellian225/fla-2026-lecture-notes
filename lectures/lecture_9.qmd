@@ -1,0 +1,8 @@
+---
+filters:
+    - wordcount
+---
+
+# Logic II
+
+Wordcount: {{wordcount}}
