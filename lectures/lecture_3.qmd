@@ -1,3 +1,8 @@
+---
+filters:
+    - wordcount
+---
+
 # Turing Machines I
 
 Wordcount: {{wordcount}}

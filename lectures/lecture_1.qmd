@@ -1,3 +1,8 @@
+---
+filters:
+    - wordcount
+---
+
 # An Introduction to Theoretical Computer Science
 
 Wordcount: {{wordcount}}
