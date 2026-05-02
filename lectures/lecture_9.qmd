@@ -1,8 +1,170 @@
 ---
 filters:
-    - wordcount
+  - wordcount
 ---
 
 # Logic II
 
 Wordcount: {{wordcount}}
+
+Propositional Logic is a useful tool for understanding and changing the truth of true and false statements.
+However, working in just true / false statements is not how we reason in the real world.
+When we try to use logic in the real world, it is often on the a true / false question _about_ something.
+Propositional Logic cannot express these ideas.
+
+As an example:
+
+1. All people are mortal
+2. Socrates is a person
+3. Therefore, socrates is a mortal.
+
+If we try express these statements in Prop Logic, then we have the following:
+
+1. All people are mortal is a true statement: $A$
+2. Socrates is a person is a true statement: $B$
+3. Socrates is a mortal is also a true statement: $C$
+
+How do we infer the truth of $C$ from $A$ and $B$?
+
+We need to use a logic that can reason about objects and their properties.
+Then, from this logic we want to ask the same four questions we had in propositional logic:
+
+1. Truth
+2. Satisfiability
+3. Validity
+4. Consequence
+
+## An introduction to First Order Logic
+
+To begin, we need our objects.
+What are we reasoning over, what do they look like?
+
+More importantly, we reason over a collection of objects, not just single ones.
+These collections of objects are called **domains of discourse** $D$.
+A domain can be anything:
+
+- The students taking computer science
+- The computers in the labs
+- The trees around the building
+- The colours in the rainbow
+
+For mathematical reasoning, we might use our number systems:
+
+- The naturals $\mathbb{N}$
+- The reals $\mathbb{R}$
+
+The only caveat is that $D$ must be non-empty.
+We can't really reason about nothing.
+
+Now that we have our objects, how do we refer to them?
+The simplest way is to just give each object a name.
+
+We call these names **constants**, and we tie them to a unique and specific object in the domain.
+
+Using our earlier examples:
+
+- An actual name is the unique name for each student
+- A computer may be labelled by its IP address or a name like "PC-0"
+- In the naturals $\mathbb{N}$, we call the numbers $0$, $1$ and so on.
+
+Constants are typically an important element of our domain, for example $0$ and $1$ in the reals.
+So long as we have a finite number of objects, we can theoretically refer to all of them by a constant, but what if the domain is infinite?
+If we want a finite alphabet to write the logic down in, then we can't have an infinite number of constants.
+
+To get around this, we use a **variable** instead of a constant.
+Constants tie a symbol to a specific object, while variables tie a symbol to an interchangable object.
+It is a placeholder for the object, and allows us to make more generic statements.
+
+To use these placeholders, we need a way to define what the variable refers to.
+In prop logic, we used a propositional assignment to give the True / False placeholders (the propositions) a value.
+We can use a similar function for variables.
+
+A **variable assignment** is a function that maps a variable to an object in the domain:
+
+$$ \alpha: VARS \mapsto D $$
+
+:::{.callout-tip}
+
+## Notation
+
+A propositional assignment uses a _roman lowercase letter_.
+$$ v: PROP \mapsto \{ T, F \} $$
+
+A variable assignment uses a _greek lowercase letter_ instead.
+$$ \alpha: VARS \mapsto D $$
+:::
+
+Constants and variables give us a reference to domain elements.
+What if we wanted to manipulate them?
+For example:
+
+- What is the number _after_ this one?
+- What tree is in the north direction of this one?
+- What is the colour after mixing Red and Blue?
+
+We use **functions** to manipulate our domain elements, and importantly, we can manipulate groups of objects as well.
+Functions take in any amount of objects, but always the same amount. 
+The result is then just a single object from the domain.
+The number of objects given as an argument into the function is called its **arity**.
+
+$$
+    f: D^n \mapsto D
+$$
+
+:::{.callout-tip}
+## Arity Shorthand
+
+The full definition of $f$ makes use of a cartesian product to define the domain of $f$.
+
+$$
+    f: D \times D \times \cdots \times D \mapsto D
+$$
+but this is cumbersome to write, so we use the notation of $D^n$ to simplify the expression.
+:::
+
+If functions are a way to ask _what object is from these other objects_, then **predicates** are a way to ask yes and no questions about these objects.
+
+- Is this number even?
+- Is this tree a South-African native tree?
+- Is this student enjoying FLA?
+- Are these people married?
+
+Predicates also have an arity, and most importantly, they are the mechanism we use to get the 'truth' of something for our logic.
+
+$$
+  P: D^n \mapsto \{ T, F \}
+$$
+
+:::{.callout-note}
+## Equality
+
+Equality is a kind of yes-no question that asks if two objects are actually the same.
+Equality is in fact a fixed idea across all our possible domains.
+If we are talking about trees or students, the concept of equality is the same of 'Are these two tree's the same tree?' and 'Are these two students the same student?'
+
+As a result, we define equality as a special predicate for every domain $D$ with:
+
+$$ =: D^2 \mapsto \{ T, F \} $$
+
+This is a surprisingly useful predicate, and if we don't have it, then it is impossible to translate english sentences about uniqueness into first order logic.
+
+- If two students have green hair and yellow eyes, then they are the same student:
+    $$
+      \text{GreenHair}(x) \land \text{YellowEyes}(x) \land \text{GreenHair}(y) \land \text{YellowEyes}(y) \rightarrow x = y
+    $$
+
+Notationally, we write equality as an infix predicate $x = y$ rather then in prefix notation $=(x, y)$.
+:::
+
+Now, we can try rewrite the Socrates example in our new logic, and see if it works.
+
+1. All people are mortal: $$Person(x) \rightarrow Mortal(x)$$
+2. Socrates is a person: $$Person(\text{Socrates})$$
+3. Therefore, Socrates is mortal: $$\therefore Mortal(\text{Socrates})$$
+
+By using the structure of the variable $x$ in our predicate, we can use an assignment from $x$ to $\text{Socrates}$ to pull out the truth of Socrates's mortality.
+
+You may have noticed that the translation from 'All people are mortal' to $Person(x) \rightarrow Mortal(x)$ is missing the 'All' part of the sentence.
+The last part of first
+
+## Quantifiers of First Order Logic
