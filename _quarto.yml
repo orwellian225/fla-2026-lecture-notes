@@ -27,5 +27,20 @@ format:
         theme:
             - cosmo
             - brand
+        include-in-header:
+          text: |
+              <script>
+                MathJax = {
+                  tex: {
+                    macros: {
+                      llbracket: "[\\![",
+                      rrbracket: "]\\!]",
+                    }
+                  }
+                }
+              </script>
     pdf:
         documentclass: scrreprt
+        include-in-header:
+          text: |
+              \usepackage{stmaryrd}

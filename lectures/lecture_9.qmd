@@ -7,13 +7,6 @@ filters:
 
 Wordcount: {{wordcount}}
 
-:::{.hidden}
-$$
-\newcommand{\llbracket}{[\![}
-\newcommand{\rrbracket}{]\!]}
-$$
-:::
-
 Propositional Logic is a useful tool for understanding and changing the truth of true and false statements.
 However, working in just true / false statements is not how we reason in the real world.
 When we try to use logic in the real world, it is often on the a true / false question _about_ something.
