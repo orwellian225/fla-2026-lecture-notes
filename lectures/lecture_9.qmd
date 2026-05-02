@@ -7,6 +7,13 @@ filters:
 
 Wordcount: {{wordcount}}
 
+:::{.hidden}
+$$
+\newcommand{\llbracket}{[\![}
+\newcommand{\rrbracket}{]\!]}
+$$
+:::
+
 Propositional Logic is a useful tool for understanding and changing the truth of true and false statements.
 However, working in just true / false statements is not how we reason in the real world.
 When we try to use logic in the real world, it is often on the a true / false question _about_ something.
@@ -59,7 +66,7 @@ We can't really reason about nothing.
 Now that we have our objects, how do we refer to them?
 The simplest way is to just give each object a name.
 
-We call these names **constants**, and we tie them to a unique and specific object in the domain.
+We call these names **constants**, and we tie them to a specific object in the domain.
 
 Using our earlier examples:
 
@@ -165,6 +172,328 @@ Now, we can try rewrite the Socrates example in our new logic, and see if it wor
 By using the structure of the variable $x$ in our predicate, we can use an assignment from $x$ to $\text{Socrates}$ to pull out the truth of Socrates's mortality.
 
 You may have noticed that the translation from 'All people are mortal' to $Person(x) \rightarrow Mortal(x)$ is missing the 'All' part of the sentence.
-The last part of first
+The last component of first order logic is the **quantifier**, which allows us to generalise a formula.
 
 ## Quantifiers of First Order Logic
+
+We are going to use two types of quantifiers:
+
+- **universal**: $\forall$
+- **existential**: $\exists$
+
+The quantifiers allow us to generalise a logical statement across the entire domain.
+
+To use the assignment object we have defined before, the for all operator $\forall$ tells us that for any (and every) possible choice of $x$ by the assignment, the subsequent statement is true.
+
+For example, in our CS students domain the following statement is true:
+$$
+  \forall x\: \text{Student}(x)
+$$
+
+Every object in our domain is a student.
+
+The existential quantifier $\exists$ is used in a similar fashion.
+The word $\exists x$ tells us that for at least one possible choice of $x$ by an assignment, the subsequent statement is true.
+
+In our CS Students example there is at least one person who touches grass (I hope)
+$$
+  \exists x\: \text{TouchesGrass}(x)
+$$
+
+Quantifiers _must_ be defined for some variable.
+The reason for this is that they act as a sort of abstract specifier for the value of the variable.
+They don't give the variable any specific value, rather they provide a generalised statement we can apply to the domain elements.
+
+This distinction gives us two categories of variables:
+
+- A variable that is connected to some quantifier in the formula.
+- and a variable that is not connected to any quantifier.
+
+A **free variable** is a variable $x$ that is found in a logical statement, that does not have a quantifier connected to it.
+To evaluate the truth of these kinds of variables, we need an assignment of that variable to some domain element.
+
+A **bound variable** is the opposite of a free variable.
+When a variable is connected to a quantifier, it's value is determined (or _bound_) in some fashion:
+
+- $\exists x$ - $x$ is given some value from the domain.
+- $\forall x$ - $x$ is given every possible value from the domain.
+
+:::{.callout-tip}
+## Notation
+
+A formula $\varphi$ that has the free variable $x$ is written as $\varphi(x)$.
+This does not mean that $\varphi$ is a predicate with input $x$, but the variable $x$ can be found in the formula.
+
+For example:
+
+$$
+  \varphi(x) := \text{Person}(x) \rightarrow \text{Mortal}(x)
+$$
+has the free variable $x$ - no quantifier on $x$ is provided.
+
+$$
+  \varphi := \forall x \big( \text{Person}(x) \rightarrow \text{Mortal}(x) \big)
+$$
+has the bound variable $x$ - the forall quantifier is connected to $x$
+:::
+
+The ordering of quantifiers can also change how we read a formula.
+
+For example, the two sentences:
+
+- Every student has a lab computer
+- Every student has the same computer
+
+These are very clearly different sentences.
+The first means that every person in the class has access to a lab computer, and importantly, it is not necessarily the same computer.
+The second means that every person has the exact same computer.
+
+Translating these into logic:
+
+$$
+  \forall x \: \exists y \: \text{UsesComputer}(x, y)
+$$
+Every student $x$ uses at least one computer $y$.
+
+$$
+  \exists y \: \forall x \: \text{UsesComputer}(x, y)
+$$
+The one computer $y$ is used by every student $x$.
+
+Now we have everything we need to define First Order Logic formally.
+
+## The Syntax of First Order Logic $\mathcal{L}_{FO}$
+
+The formal language $\mathcal{L}_{FO}$  of First Order Logic (FOL) requires a finite alphabet if we want to be able to write it.
+Our alphabet consists of:
+
+- The finite **signature** $\Omega$ of our language:
+  - What constants $CONS = \{ 0, 1, ... \}$ are available?
+  - What functions $FUNC = \{ f, g, h, ... \}$?
+  - What predicates $PRED = \{ P, Q, R, ... \}$?
+  - $\Omega = ( CONS, FUNC, PRED )$
+- The variables $VARS = \{ x, y, z, ... \}$ we can use in a formula
+- Our first order logic specific symbols of $\{ \exists, \forall, = \}$
+- and lastly, all the logical connectives we had in propositional logic as well: $\{ \neg, \vee, \wedge, \rightarrow, \leftrightarrow \}$
+
+:::{.callout-note}
+Why are variables not included in the signature of language?
+
+The reason is two fold:
+
+1. We don't need variables to write simple formulas in FOL - constants, functions and predicates are all that is technically required: $P(f(c))$ is an acceptable statement.
+2. We use an assignment to evaluate variables. 
+   The assignment function $$ \alpha: VARS \mapsto D $$ is the evaluation step, but in the next section we'll see that the elements of the signature require a more complex object called an interpretation.
+:::
+
+In propositional logic, we only cared about the words that formed a _formula_.
+Some statement that could be evaluated out to True or False.
+
+First order logic has also given us objects that we can use.
+Now we need to be able to write these objects down as well.
+We say a word $w$ is a well-formed **term** if:
+
+1. $w = c \in CONS$
+2. $w = x \in VARS$
+3. $w = f(t_1, t_2, ..., t_n)$ if $f \in FUNC$, $t_i$ is a term, and $n$ is the arity of $f$
+
+:::{.callout-note}
+The decision problem for a term is
+$$
+  \text{IS-FO-TERM} := \{ w \mid w \text{ is a well-formed term } \}
+$$
+:::
+
+Now, with our objects neatly defined as terms, we can define the first order formulas.
+A word $w$ is a well-formed **formula** if:
+
+1. $w = t_1 = t_2$ if $t_1$ and $t_2$ are terms
+2. $w = P(t_1, t_2, ..., t_n)$ if $P \in PRED$, $t_i$ is a term, and $n$ is the arity of $P$
+3. $w = \neg \varphi$ if $\varphi$ is a formula
+4. $w = \varphi_1 \land \varphi_2$ if $\varphi_1$ and $\varphi_2$ are formulas
+5. $w = \varphi_1 \lor \varphi_2$ if $\varphi_1$ and $\varphi_2$ are formulas
+6. $w = \varphi_1 \rightarrow \varphi_2$ if $\varphi_1$ and $\varphi_2$ are formulas
+7. $w = \varphi_1 \leftrightarrow \varphi_2$ if $\varphi_1$ and $\varphi_2$ are formulas
+8. $w = \exists x \: \varphi$ if $\varphi$ is a formula and $x \in VARS$
+9. $w = \forall x \: \varphi$ if $\varphi$ is a formula and $x \in VARS$
+
+:::{.callout-note}
+The decision problem for a formula is
+$$
+  \text{IS-FO-FORMULA} := \{ w \mid w \text{ is a well-formed formula} \}
+$$
+:::
+
+The decision problem to determine if a word is well-formed in first order logic is then
+$$
+  \text{IS-FO-WELL-FORMED} := \text{IS-FO-TERM} \cup \text{IS-FO-FORMULA}
+$$
+
+## The Semantics of $\mathcal{L}_\text{FO}$
+
+In propositional logic, a truth assignment to every proposition was the only thing we needed to determine the _truth_ of a formula.
+In first order logic, with the domain of discourse, constants, functions, and predicates, we now require a significantly more complex object to evaluate it.
+
+This new object is called a **model** ($\mathfrak{M}$) of FOL.
+This model is composed of two elements:
+
+1. The **domain of discourse** $D$: a non-empty set of objects.
+2. An **interpretation function** $I$: a function that maps each element of our signature to some changeable meaning.
+
+$$
+  \mathfrak{M} := (D, I)
+$$
+
+Our interpretation function does something different for every component of our signature.
+It maps each constant $c \in CONS$ to a specific element in $D$, each function $f \in FUNC$ to a some function (of the same arity) over $D^n$, and each predicate $P \in PRED$ is mapped to a _subset_ of $D^n$.
+
+1. $I(c) \in D$ for each $c \in CONS$
+2. $I(f): D^n \mapsto D$ for each $f \in FUNC$
+3. $I(P) \subseteq D^n$ for each $P \in PRED$
+
+:::{.callout-tip}
+Why are interpreted predicates subsets instead of a function from $D^n$ to $\{ T, F \}$?
+
+The reason is that the set encodes the properties of the object as part the sets definition.
+Testing if an element has this property is then just a matter of testing if the element is in the subset.
+
+However, this is functionally equivalent to using a **characteristic function** 
+$$I(P): D^n \mapsto \{ T, F \}$$ 
+
+The reason to defer to sets over characteristic functions is then just historical convention.
+Model theory in First Order Logic developed out of set theory, so membership testing was already well understood, and useful concept.
+:::
+
+Using our model definition, we evaluate a term by mapping it to some value in the domain $D$.
+
+$$
+  \llbracket t \rrbracket^{\mathfrak{M}, \alpha}: TERM \mapsto D
+$$
+
+Now, evaluating terms under a model $\mathfrak{M}$ and assignment $\alpha$ is then:
+
+1. $\llbracket c \rrbracket^{\mathfrak{M}, \alpha} = I(c) \in D$
+2. $\llbracket x \rrbracket^{\mathfrak{M}, \alpha} = \alpha(x) \in D$
+3. $\llbracket f(t_1, t_2, ..., t_n) \rrbracket^{\mathfrak{M}, \alpha} = I(f)(\llbracket t_1 \rrbracket^{\mathfrak{M}, \alpha}, \llbracket t_2 \rrbracket^{\mathfrak{M}, \alpha}, ..., \llbracket t_n \rrbracket^{\mathfrak{M}, \alpha})$
+
+Formula evaluation instead relies on the familiar notation from propositional logic:
+
+$$ \mathfrak{M} \vDash \varphi \: [\alpha] $$
+
+The only additional component is that we specify the current variable assignment $\alpha$ in the evaluation.
+
+A model $\mathfrak{M}$ **satisfies** a formula $\varphi$ under an assignment $\alpha$ using the following rules:
+
+1. $\mathfrak{M} \vDash t_1 = t_2 \: [\alpha] \iff \llbracket t_1 \rrbracket^{\mathfrak{M}, \alpha}$ and $\llbracket t_2 \rrbracket^{\mathfrak{M}, \alpha}$ are the same element in the domain.
+2. $\mathfrak{M} \vDash P(t_1, t_2, ..., t_n) \:[\alpha] \iff$ $P \in PRED$, $n$ is the arity of $P$, and $\llbracket (t_1, t_2, ..., t_n) \rrbracket^{\mathfrak{M}, \alpha} \in I(P)$
+3. $\mathfrak{M} \vDash \neg \varphi \:[\alpha] \iff \mathfrak{M} \nvDash \varphi \:[\alpha]$
+4. $\mathfrak{M} \vDash \varphi_1 \land \varphi_2 \:[\alpha] \iff \mathfrak{M} \vDash \varphi_1 \:[\alpha] \text{ and } \mathfrak{M} \vDash \varphi_2 \:[\alpha]$
+5. $\mathfrak{M} \vDash \varphi_1 \lor \varphi_2 \:[\alpha] \iff \mathfrak{M} \vDash \varphi_1 \:[\alpha] \text{ or } \mathfrak{M} \vDash \varphi_2 \:[\alpha]$
+6. $\mathfrak{M} \vDash \varphi_1 \rightarrow \varphi_2 \:[\alpha] \iff \mathfrak{M} \nvDash \varphi_1 \:[\alpha] \text{ or } \mathfrak{M} \vDash \varphi_1 \land \varphi_2 \:[\alpha]$
+7. $\mathfrak{M} \vDash \varphi_1 \leftrightarrow \varphi_2 \:[\alpha] \iff \mathfrak{M} \vDash \varphi_1 \rightarrow \varphi_2 \:[\alpha] \text{ and } \mathfrak{M} \vDash \varphi_2 \rightarrow \varphi_1 \:[\alpha]$
+8. $\mathfrak{M} \vDash \forall x \; \varphi (x) \: [\alpha] \iff$ for every $\beta \overset{x}{=} \alpha$, $\mathfrak{M} \vDash \varphi(x) \:[\beta]$
+9. $\mathfrak{M} \vDash \exists x \; \varphi (x) \: [\alpha] \iff$ for at least one $\beta \overset{x}{=} \alpha$, $\mathfrak{M} \vDash \varphi(x) \:[\beta]$
+
+:::{.callout-tip}
+## Notation
+
+An assignment $\alpha$ is defined as a mapping from variables to domain elements.
+
+So an assignment might look something like this
+
+$$
+  \alpha(var) := \begin{cases}
+    d_1 & \text{if } var = x \\
+    d_2 & \text{if } var = y
+  \end{cases}
+$$
+where $d_1, d_2 \in D$ 
+
+The notation $\alpha \overset{x}{=} \beta$ means that $\alpha$ and $\beta$ are two assignments that are _mostly_ equal.
+They only differ on the value of the specified variable $x$.
+
+So in our example where $\alpha \overset{x}{=} \beta$, then 
+$$
+\beta(var) := \begin{cases}
+  d_3 & \text{if } var = x \\
+  d_2 & \text{if } var = y
+\end{cases}
+$$
+where $d_3 \in D$ 
+:::
+
+:::{.callout-note}
+
+The quantifier evalutations are a fairly opaque definition.
+It helps to try write the same thing but in english.
+
+$$
+  \mathfrak{M} \vDash\forall x \; \varphi(x) \:[\alpha] \iff \text{for every } \beta \overset{x}{=} \alpha, \mathfrak{M} \vDash \varphi(x) \:[\beta]
+$$
+becomes:
+
+The model $\mathfrak{M}$ satisfies $\forall x \; \varphi(x)$ under assignment $\alpha$ if for every choice of assignment $\beta$ for $x$ from $\alpha$, $\mathfrak{M}$ satisfies $\varphi(x)$.
+
+Similarly, $\exists x \; \varphi(x)$ is satisfied if there is at least one assignment $\beta$ for $x$ from $\alpha$, such that $\mathfrak{M}$ satisfies $\varphi(x)$ under $\beta$.
+
+An informal framing to help you think about it is that:
+
+The model $\mathfrak{M}$ satisfies $\forall x \; \varphi(x)$ under assignment $\alpha$ if we turn $x$ into a free variable by dropping the quantifier, and then $\mathfrak{M}$ satisfies $\varphi(x)$ for every assignment of that free variable.
+:::
+
+To help demonstrate, lets try the following examples:
+
+$$
+  \mathfrak{M} = ( \{ a, b \}, I ) \text{ where } I(P) = \{ a \} \text{ and } I(Q) = \{ b \}
+$$ 
+  
+***
+  
+Does $\mathfrak{M} \vDash \forall x \; P(x) \:[\alpha]$?
+\begin{align*}
+  \text{Let } \beta(x) = a
+  & \implies \llbracket x \rrbracket^{\mathfrak{M}, \beta} = a \\
+  & \implies \llbracket x \rrbracket^{\mathfrak{M}, \beta} \in I(P) \\
+  & \implies \mathfrak{M} \vDash P(x) \:[\beta] \\
+  &\\
+  \text{Let } \beta(x) = b 
+  &\implies \llbracket x \rrbracket^{\mathfrak{M}, \beta} = b \\
+  &\implies \llbracket x \rrbracket^{\mathfrak{M}, \beta} \notin I(P) \\
+  &\implies \mathfrak{M} \nvDash P(x) \:[\beta] \\
+  &\\
+  \therefore \mathfrak{M} \nvDash \forall x P(x) \: [\alpha] &\text{ as \textit{not} for every} \beta \overset{x}{=} \alpha, \mathfrak{M} \vDash P(x) \:[\beta] 
+\end{align*}
+
+***
+
+Does $\mathfrak{M} \vDash \forall x \; (P(x) \lor Q(x)) \:[\alpha]$?
+\begin{align*}
+  \text{Let } \beta(x) = a
+  & \implies \llbracket x \rrbracket^{\mathfrak{M}, \beta} = a \\
+  & \implies \llbracket x \rrbracket^{\mathfrak{M}, \beta} \in I(P) \\
+  & \implies \mathfrak{M} \vDash P(x) \:[\beta] \\
+  & \implies \mathfrak{M} \vDash P(x) \lor Q(x) \:[\beta] \\
+  &\\
+  \text{Let } \beta(x) = b 
+  &\implies \llbracket x \rrbracket^{\mathfrak{M}, \beta} = b \\
+  &\implies \llbracket x \rrbracket^{\mathfrak{M}, \beta} \in I(Q) \\
+  &\implies \mathfrak{M} \vDash Q(x) \:[\beta] \\
+  & \implies \mathfrak{M} \vDash P(x) \lor Q(x) \:[\beta] \\
+  &\\
+  \therefore \mathfrak{M} \vDash \forall x (P(x) \lor Q(x))  \: [\alpha] &\text{ as for every} \beta \overset{x}{=} \alpha, \mathfrak{M} \vDash P(x) \lor Q(x) \:[\beta] 
+\end{align*}
+
+***
+
+And as the last one:
+Does $\mathfrak{M} \vDash \exists x \; P(x) \:[\alpha]$?
+\begin{align*}
+  \text{Let } \beta(x) = a
+  & \implies \llbracket x \rrbracket^{\mathfrak{M}, \beta} = a \\
+  & \implies \llbracket x \rrbracket^{\mathfrak{M}, \beta} \in I(P) \\
+  & \implies \mathfrak{M} \vDash P(x) \:[\beta] \\
+  &\\
+  \therefore \mathfrak{M} \vDash \exists x \; P(x) \: [\alpha] &\text{ as for at least one } \beta \overset{x}{=} \alpha, \mathfrak{M} \vDash P(x) \:[\beta] 
+\end{align*}
+
+***

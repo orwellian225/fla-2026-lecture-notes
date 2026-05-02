@@ -5,6 +5,8 @@ filters:
 
 # Undecidability of First Order Logic
 
+Wordcount: {{wordcount}}
+
 Last week, we established the three decision problems in First Order Logic:
 
 1. $\text{FO-SAT} = \{ \langle \varphi \rangle \mid \varphi \text{ is satisfiable } \}$
