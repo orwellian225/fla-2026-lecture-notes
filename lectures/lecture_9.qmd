@@ -103,7 +103,7 @@ For example:
 - What is the colour after mixing Red and Blue?
 
 We use **functions** to manipulate our domain elements, and importantly, we can manipulate groups of objects as well.
-Functions take in any amount of objects, but always the same amount. 
+Functions take in any amount of objects, but always the same amount.
 The result is then just a single object from the domain.
 The number of objects given as an argument into the function is called its **arity**.
 
@@ -111,16 +111,7 @@ $$
     f: D^n \mapsto D
 $$
 
-:::{.callout-tip}
-## Arity Shorthand
-
-The full definition of $f$ makes use of a cartesian product to define the domain of $f$.
-
-$$
-    f: D \times D \times \cdots \times D \mapsto D
-$$
-but this is cumbersome to write, so we use the notation of $D^n$ to simplify the expression.
-:::
+The $D^n$ here refers to the cartesian product of $D$ with itself $n$ times.
 
 If functions are a way to ask _what object is from these other objects_, then **predicates** are a way to ask yes and no questions about these objects.
 
@@ -136,6 +127,7 @@ $$
 $$
 
 :::{.callout-note}
+
 ## Equality
 
 Equality is a kind of yes-no question that asks if two objects are actually the same.
@@ -149,9 +141,9 @@ $$ =: D^2 \mapsto \{ T, F \} $$
 This is a surprisingly useful predicate, and if we don't have it, then it is impossible to translate english sentences about uniqueness into first order logic.
 
 - If two students have green hair and yellow eyes, then they are the same student:
-    $$
-      \text{GreenHair}(x) \land \text{YellowEyes}(x) \land \text{GreenHair}(y) \land \text{YellowEyes}(y) \rightarrow x = y
-    $$
+  $$
+    \text{GreenHair}(x) \land \text{YellowEyes}(x) \land \text{GreenHair}(y) \land \text{YellowEyes}(y) \rightarrow x = y
+  $$
 
 Notationally, we write equality as an infix predicate $x = y$ rather then in prefix notation $=(x, y)$.
 :::
@@ -179,6 +171,7 @@ The quantifiers allow us to generalise a logical statement across the entire dom
 To use the assignment object we have defined before, the for all operator $\forall$ tells us that for any (and every) possible choice of $x$ by the assignment, the subsequent statement is true.
 
 For example, in our CS students domain the following statement is true:
+
 $$
   \forall x\: \text{Student}(x)
 $$
@@ -189,6 +182,7 @@ The existential quantifier $\exists$ is used in a similar fashion.
 The word $\exists x$ tells us that for at least one possible choice of $x$ by an assignment, the subsequent statement is true.
 
 In our CS Students example there is at least one person who touches grass (I hope)
+
 $$
   \exists x\: \text{TouchesGrass}(x)
 $$
@@ -212,6 +206,7 @@ When a variable is connected to a quantifier, it's value is determined (or _boun
 - $\forall x$ - $x$ is given every possible value from the domain.
 
 :::{.callout-tip}
+
 ## Notation
 
 A formula $\varphi$ that has the free variable $x$ is written as $\varphi(x)$.
@@ -222,11 +217,13 @@ For example:
 $$
   \varphi(x) := \text{Person}(x) \rightarrow \text{Mortal}(x)
 $$
+
 has the free variable $x$ - no quantifier on $x$ is provided.
 
 $$
   \varphi := \forall x \big( \text{Person}(x) \rightarrow \text{Mortal}(x) \big)
 $$
+
 has the bound variable $x$ - the forall quantifier is connected to $x$
 :::
 
@@ -246,18 +243,20 @@ Translating these into logic:
 $$
   \forall x \: \exists y \: \text{UsesComputer}(x, y)
 $$
+
 Every student $x$ uses at least one computer $y$.
 
 $$
   \exists y \: \forall x \: \text{UsesComputer}(x, y)
 $$
+
 The one computer $y$ is used by every student $x$.
 
 Now we have everything we need to define First Order Logic formally.
 
 ## The Syntax of First Order Logic $\mathcal{L}_{FO}$
 
-The formal language $\mathcal{L}_{FO}$  of First Order Logic (FOL) requires a finite alphabet if we want to be able to write it.
+The formal language $\mathcal{L}_{FO}$ of First Order Logic (FOL) requires a finite alphabet if we want to be able to write it.
 Our alphabet consists of:
 
 - The finite **signature** $\Omega$ of our language:
@@ -275,8 +274,9 @@ Why are variables not included in the signature of language?
 The reason is two fold:
 
 1. We don't need variables to write simple formulas in FOL - constants, functions and predicates are all that is technically required: $P(f(c))$ is an acceptable statement.
-2. We use an assignment to evaluate variables. 
+2. We use an assignment to evaluate variables.
    The assignment function $$ \alpha: VARS \mapsto D $$ is the evaluation step, but in the next section we'll see that the elements of the signature require a more complex object called an interpretation.
+
 :::
 
 In propositional logic, we only cared about the words that formed a _formula_.
@@ -292,9 +292,11 @@ We say a word $w$ is a well-formed **term** if:
 
 :::{.callout-note}
 The decision problem for a term is
+
 $$
   \text{IS-FO-TERM} := \{ w \mid w \text{ is a well-formed term } \}
 $$
+
 :::
 
 Now, with our objects neatly defined as terms, we can define the first order formulas.
@@ -312,12 +314,15 @@ A word $w$ is a well-formed **formula** if:
 
 :::{.callout-note}
 The decision problem for a formula is
+
 $$
   \text{IS-FO-FORMULA} := \{ w \mid w \text{ is a well-formed formula} \}
 $$
+
 :::
 
 The decision problem to determine if a word is well-formed in first order logic is then
+
 $$
   \text{IS-FO-WELL-FORMED} := \text{IS-FO-TERM} \cup \text{IS-FO-FORMULA}
 $$
@@ -350,8 +355,8 @@ Why are interpreted predicates subsets instead of a function from $D^n$ to $\{ T
 The reason is that the set encodes the properties of the object as part the sets definition.
 Testing if an element has this property is then just a matter of testing if the element is in the subset.
 
-However, this is functionally equivalent to using a **characteristic function** 
-$$I(P): D^n \mapsto \{ T, F \}$$ 
+However, this is functionally equivalent to using a **characteristic function**
+$$I(P): D^n \mapsto \{ T, F \}$$
 
 The reason to defer to sets over characteristic functions is then just historical convention.
 Model theory in First Order Logic developed out of set theory, so membership testing was already well understood, and useful concept.
@@ -388,6 +393,7 @@ A model $\mathfrak{M}$ **satisfies** a formula $\varphi$ under an assignment $\a
 9. $\mathfrak{M} \vDash \exists x \; \varphi (x) \: [\alpha] \iff$ for at least one $\beta \overset{x}{=} \alpha$, $\mathfrak{M} \vDash \varphi(x) \:[\beta]$
 
 :::{.callout-tip}
+
 ## Notation
 
 An assignment $\alpha$ is defined as a mapping from variables to domain elements.
@@ -400,19 +406,22 @@ $$
     d_2 & \text{if } var = y
   \end{cases}
 $$
-where $d_1, d_2 \in D$ 
+
+where $d_1, d_2 \in D$
 
 The notation $\alpha \overset{x}{=} \beta$ means that $\alpha$ and $\beta$ are two assignments that are _mostly_ equal.
 They only differ on the value of the specified variable $x$.
 
-So in our example where $\alpha \overset{x}{=} \beta$, then 
+So in our example where $\alpha \overset{x}{=} \beta$, then
+
 $$
 \beta(var) := \begin{cases}
   d_3 & \text{if } var = x \\
   d_2 & \text{if } var = y
 \end{cases}
 $$
-where $d_3 \in D$ 
+
+where $d_3 \in D$
 :::
 
 :::{.callout-note}
@@ -423,6 +432,7 @@ It helps to try write the same thing but in english.
 $$
   \mathfrak{M} \vDash\forall x \; \varphi(x) \:[\alpha] \iff \text{for every } \beta \overset{x}{=} \alpha, \mathfrak{M} \vDash \varphi(x) \:[\beta]
 $$
+
 becomes:
 
 The model $\mathfrak{M}$ satisfies $\forall x \; \varphi(x)$ under assignment $\alpha$ if for every choice of assignment $\beta$ for $x$ from $\alpha$, $\mathfrak{M}$ satisfies $\varphi(x)$.
@@ -438,55 +448,311 @@ To help demonstrate, lets try the following examples:
 
 $$
   \mathfrak{M} = ( \{ a, b \}, I ) \text{ where } I(P) = \{ a \} \text{ and } I(Q) = \{ b \}
-$$ 
-  
-***
-  
+$$
+
+---
+
 Does $\mathfrak{M} \vDash \forall x \; P(x) \:[\alpha]$?
 \begin{align*}
-  \text{Let } \beta(x) = a
-  & \implies \llbracket x \rrbracket^{\mathfrak{M}, \beta} = a \\
-  & \implies \llbracket x \rrbracket^{\mathfrak{M}, \beta} \in I(P) \\
-  & \implies \mathfrak{M} \vDash P(x) \:[\beta] \\
-  &\\
-  \text{Let } \beta(x) = b 
-  &\implies \llbracket x \rrbracket^{\mathfrak{M}, \beta} = b \\
-  &\implies \llbracket x \rrbracket^{\mathfrak{M}, \beta} \notin I(P) \\
-  &\implies \mathfrak{M} \nvDash P(x) \:[\beta] \\
-  &\\
-  \therefore \mathfrak{M} \nvDash \forall x P(x) \: [\alpha] &\text{ as \textit{not} for every} \beta \overset{x}{=} \alpha, \mathfrak{M} \vDash P(x) \:[\beta] 
+\text{Let } \beta(x) = a
+& \implies \llbracket x \rrbracket^{\mathfrak{M}, \beta} = a \\
+& \implies \llbracket x \rrbracket^{\mathfrak{M}, \beta} \in I(P) \\
+& \implies \mathfrak{M} \vDash P(x) \:[\beta] \\
+&\\
+\text{Let } \beta(x) = b
+&\implies \llbracket x \rrbracket^{\mathfrak{M}, \beta} = b \\
+&\implies \llbracket x \rrbracket^{\mathfrak{M}, \beta} \notin I(P) \\
+&\implies \mathfrak{M} \nvDash P(x) \:[\beta] \\
+&\\
+\therefore \mathfrak{M} \nvDash \forall x P(x) \: [\alpha] &\text{ as \textit{not} for every} \beta \overset{x}{=} \alpha, \mathfrak{M} \vDash P(x) \:[\beta]
 \end{align*}
 
-***
+---
 
 Does $\mathfrak{M} \vDash \forall x \; (P(x) \lor Q(x)) \:[\alpha]$?
 \begin{align*}
-  \text{Let } \beta(x) = a
-  & \implies \llbracket x \rrbracket^{\mathfrak{M}, \beta} = a \\
-  & \implies \llbracket x \rrbracket^{\mathfrak{M}, \beta} \in I(P) \\
-  & \implies \mathfrak{M} \vDash P(x) \:[\beta] \\
-  & \implies \mathfrak{M} \vDash P(x) \lor Q(x) \:[\beta] \\
-  &\\
-  \text{Let } \beta(x) = b 
-  &\implies \llbracket x \rrbracket^{\mathfrak{M}, \beta} = b \\
-  &\implies \llbracket x \rrbracket^{\mathfrak{M}, \beta} \in I(Q) \\
-  &\implies \mathfrak{M} \vDash Q(x) \:[\beta] \\
-  & \implies \mathfrak{M} \vDash P(x) \lor Q(x) \:[\beta] \\
-  &\\
-  \therefore \mathfrak{M} \vDash \forall x (P(x) \lor Q(x))  \: [\alpha] &\text{ as for every} \beta \overset{x}{=} \alpha, \mathfrak{M} \vDash P(x) \lor Q(x) \:[\beta] 
+\text{Let } \beta(x) = a
+& \implies \llbracket x \rrbracket^{\mathfrak{M}, \beta} = a \\
+& \implies \llbracket x \rrbracket^{\mathfrak{M}, \beta} \in I(P) \\
+& \implies \mathfrak{M} \vDash P(x) \:[\beta] \\
+& \implies \mathfrak{M} \vDash P(x) \lor Q(x) \:[\beta] \\
+&\\
+\text{Let } \beta(x) = b
+&\implies \llbracket x \rrbracket^{\mathfrak{M}, \beta} = b \\
+&\implies \llbracket x \rrbracket^{\mathfrak{M}, \beta} \in I(Q) \\
+&\implies \mathfrak{M} \vDash Q(x) \:[\beta] \\
+& \implies \mathfrak{M} \vDash P(x) \lor Q(x) \:[\beta] \\
+&\\
+\therefore \mathfrak{M} \vDash \forall x (P(x) \lor Q(x)) \: [\alpha] &\text{ as for every} \beta \overset{x}{=} \alpha, \mathfrak{M} \vDash P(x) \lor Q(x) \:[\beta]
 \end{align*}
 
-***
+---
 
 And as the last one:
 Does $\mathfrak{M} \vDash \exists x \; P(x) \:[\alpha]$?
 \begin{align*}
-  \text{Let } \beta(x) = a
-  & \implies \llbracket x \rrbracket^{\mathfrak{M}, \beta} = a \\
-  & \implies \llbracket x \rrbracket^{\mathfrak{M}, \beta} \in I(P) \\
-  & \implies \mathfrak{M} \vDash P(x) \:[\beta] \\
-  &\\
-  \therefore \mathfrak{M} \vDash \exists x \; P(x) \: [\alpha] &\text{ as for at least one } \beta \overset{x}{=} \alpha, \mathfrak{M} \vDash P(x) \:[\beta] 
+\text{Let } \beta(x) = a
+& \implies \llbracket x \rrbracket^{\mathfrak{M}, \beta} = a \\
+& \implies \llbracket x \rrbracket^{\mathfrak{M}, \beta} \in I(P) \\
+& \implies \mathfrak{M} \vDash P(x) \:[\beta] \\
+&\\
+\therefore \mathfrak{M} \vDash \exists x \; P(x) \: [\alpha] &\text{ as for at least one } \beta \overset{x}{=} \alpha, \mathfrak{M} \vDash P(x) \:[\beta]
 \end{align*}
 
-***
+---
+
+
+## Properties of $\mathcal{L}_{FO}$
+
+In propositional logic, we identified 4 'meta' properties of $\mathcal{L}_{P}$
+
+1. Does $v \vDash \varphi$? - Is $\varphi$ true? - $\text{PROP-TRUTH}$
+2. Is $\varphi$ satisfiable? - Can $\varphi$ be true? - $\text{PROP-SAT}$
+3. Is $\varphi$ valid? - Is $\varphi$ always true? - $\text{PROP-VAL}$
+4. Is $\varphi$ a consequence of $\Lambda$? - If $\Lambda$ is true, then is $\varphi$ true? - $\text{PROP-CONQ}$
+
+Now, we want to do the same for first order logic.
+However, to help simplify our work we are going to restrict our properties to specific types of formulas.
+
+A **sentence** is a formula that has _only_ bound variables.
+
+While it is possible to generalise the next sections of work to formulas with free variables, it requires a more technical effort to a handle the necessary nuances.
+For example, the formula $P(x)$ might be true in $\mathfrak{M}$ when $\alpha(x) = a$, but false when $\alpha(x) = b$.
+Our properties would need to handle every possible assignment as well.
+
+Working with just sentences means that we can simplify our work by avoiding variable assignments as much as possible.
+This also simplifies our notation.
+By using sentences, we can drop the continual references to assignments.
+
+The truth of a sentence $\varphi$ in a model $\mathfrak{M}$ is now
+$$
+  \mathfrak{M} \vDash \varphi
+$$
+
+### $\text{FO-TRUTH}$
+
+In the previous section, we saw a few worked examples of truth of a first order formula.
+
+As a rough set of steps, we broke the formula down until its smallest components, and then built our way back up.
+This is a very similar algorithm to the one we wrote for $\text{PROP-TRUTH}$.
+
+So, our language is:
+
+$$
+  \text{FO-TRUTH} := \{ \langle \mathfrak{M}, \varphi \rangle \mid \mathfrak{M} \vDash \varphi \}
+$$
+
+and now we can write the Turing Machine.
+
+Except, we first need to understand what $\langle \mathfrak{M} \rangle$ actually looks like.
+
+$$
+  \mathfrak{M} = (D, I) \implies \langle \mathfrak{M} \rangle = \langle D \rangle \# \langle I \rangle
+$$
+
+Next is $\langle D \rangle$.
+Here we encounter a problem.
+
+The domain of discourse is just defined as a non-empty set.
+This definition doesn't stop us from having an infinite domain like the natural numbers.
+How do we represent an _arbitrary_ infinite object as a finite string?
+
+The answer there is quite simple: we cannot.
+
+That means that our language $\text{FO-TRUTH}$ doesn't exist for an _arbritary_ domain.
+If we make the assumption that $D$ is finite however, then we can of course define a similar language.
+
+$$
+  \text{FINITE-FO-TRUTH} := \{ \langle \mathfrak{M}, \varphi \rangle \mid D \text{ of } \mathfrak{M} \text{ is finite and } \mathfrak{M} \vDash \varphi  \}
+$$
+
+For our purposes, we are interested in the finite and infinite domain case of first order logic, so we'll leave $\text{FINITE-FO-TRUTH}$ as an enrichment exercise.
+
+:::{.callout-warning}
+
+## Exercise
+  
+  1. Provide a string representation of finite models $\langle \mathfrak{M} \rangle$
+  2. Provide a TM that decides $\text{FINITE-FO-TRUTH}$
+  
+:::
+
+### $\text{FO-SAT}$
+
+Propositional satisfiability is defined as follows:
+
+$$
+  \varphi \in \mathcal{L}_P^* \text{ is satisfiable } \iff \text{there exists an assignment } v, v \vDash \varphi
+$$
+
+The definition for first order satisfiability is now generalising the propositional assignment, to first order model.
+
+$$
+  \varphi \in \mathcal{L}_{FO}^* \text{ is satisfiable } \iff \text{there exists a model } \mathfrak{M}, \mathfrak{M} \vDash \varphi
+$$
+
+Interestingly enough, the definition of 'exists a model' means that we can avoid mention of $\mathfrak{M}$ in the definition of the decision problem for first order satisfiability.
+
+$$
+  \text{FO-SAT} := \{ \langle \varphi \rangle \mid \varphi \text{ is satisfiable } \}
+$$
+
+This means that if we could develop some method to avoid using the model directly (or a full definition of it), we could still write an algorithm for this $\text{FO-SAT}$.
+
+Let's assume for a moment that we had some magical technique where we could write $\mathfrak{M}$ without needing to write any infinite string.
+Then, continuing the magic, we also had some way to enumerate all of these models.
+
+These assumptions mean that we could write the decider $M_{FT}$ for $\text{FO-TRUTH}$, and now $M_{FS}$ for $\text{FO-SAT}$.
+
+::: {style="margin-left: 2em;"}
+define $M_{FS}$ on $\langle \varphi \rangle$:  
+    $\quad$ for every $\langle \mathfrak{M} \rangle$:  
+    $\quad$ $\quad$ if $M_{FT}(\langle \mathfrak{M}, \varphi \rangle) = 1$ then  
+    $\quad$ $\quad$ $\quad$ Accept  
+    $\quad$ Reject  
+:::
+
+Amazing, we (maybe) have a Turing Machine for $\text{FO-SAT}$.
+All we need to is make sure that it is a decider.
+
+The only two components we need to worry about are of course the loops.
+So, how many different models $\mathfrak{M}$ are there?
+
+Let's start with the simplest possible model - a domain of numbers.
+
+Let $D = \{ 0 \}$, the number $0 \in \mathbb{N}$, then we have the model $\mathfrak{M}_0$.  
+Let $D = \{ 0,1 \} \implies \mathfrak{M}_1$.   
+And $D = \{ 0,1,2 \}\implies \mathfrak{M}_2$.
+
+It seems that we can define a new domain model for every next natural number $n$
+$$
+  \text{Let } D = { 0, 1, ..., n } \text{ where } n \in \mathbb{N} \implies \mathfrak{M}_n
+$$
+
+There are an infinite amount of natural numbers...
+
+:::{.callout-warning}
+## Excercise
+
+Try write a rigourous proof to show that there are _at least_ a countably infinite number of domains.
+
+**Optionally, and solely because you have too much free time**  
+As a foray into the craziness of infinite and the continuum, try find out how many models do actually exist.
+
+_As a hint, remember what we said about the size of powersets and the relationship between $\aleph_0$ and $\mathfrak{c}$._
+:::
+
+So if $\varphi$ is not satisfiable i.e no model exists to satisfy it, then our for loop is just going to get stuck in an infinite loop.
+
+Even with our magic representation of models, it still is not enough.
+
+### An interlude of Logical Notation
+
+In [Logic I](./lecture_8.qmd), I mentioned that we should avoid using the symbol $\exists$ in the definition of propositional satisfiability.
+
+The reason for this is because $\exists$ has a very specific meaning in first order logic of
+
+$$
+  \mathfrak{M} \vDash \exists x \; \varphi(x) \iff \text{for at least one } \beta \overset{x}{=} \alpha, \mathfrak{M} \vDash \varphi(x) \: [\beta]
+$$
+
+The quantifiers of first order logic are about variables and the assignment of these variables.
+Using this same notation to refer to different propositional assignments, and now even different first order models, can become confusing.
+
+To use this notation to reference models, we need the new concept of **meta notation**.
+Meta notations are mathematical symbols that don't feature as part of the formal language we are working in, but allow us to condense our descriptions and reasoning about this formal language.
+
+In fact, we have been using meta-notation prolifically throughout the last two sections.
+Both $\iff$ and $\implies$ are the meta-notation equivalents of $\leftrightarrow$ and $\rightarrow$ respectively.
+
+Why then do we use $\iff$ but not $\exists$ as pieces of meta notation?
+$\iff$ is a distinct (but similar) symbol from $\leftrightarrow$, and visually can be separated from each other.
+The quantifiers $\forall$ and $\exists$ have no 'similar' symbols to make the distinction.
+
+Instead a reader is required to identify the meaning from the context of its usage.
+Avoiding the usage of $\exists$ and $\forall$ is then just a choice I made to help clarify its meaning.
+
+For consistency, we'll define validity and consequence using the text descriptions instead of notation, but you may use it in your own notes if you would prefer.
+
+### $\text{FO-VAL}$
+
+Propositional validity is defined as
+$$
+  \: \vDash \varphi \in \mathcal{L}_P^* \iff \text{ for every assignment } v, v \vDash \varphi
+$$
+
+Again, to step up into first order logic, we use models instead.
+$$
+  \: \vDash \varphi \in \mathcal{L}_{FO}^* \iff \text{ for every model } \mathfrak{M}, \mathfrak{M} \vDash \varphi 
+$$
+
+This gives us the decision problem 
+$$
+  \text{FO-VAL} := \{ \langle \varphi \rangle \mid \: \vDash \varphi \}
+$$
+
+To repeat the argument, even if we had our magical representation of $\mathfrak{M}$, a brute force enumeration of every model will still give us an infinite loop.
+The main difference is that now it would get stuck when a formula _is_ valid, compared to the looping when the formula _wasn't_ satisfiable.
+
+The machine for $\text{FO-VAL}$ is:
+
+::: {style="margin-left: 2em;"}
+define $M_{FV}$ on $\langle \varphi \rangle$:  
+    $\quad$ for every $\langle \mathfrak{M} \rangle$:  
+    $\quad$ $\quad$ if $M_{FT}(\langle \mathfrak{M}, \varphi \rangle) = 0$ then  
+    $\quad$ $\quad$ $\quad$ Reject  
+    $\quad$ Accept
+:::
+
+### $\text{FO-CONQ}$
+
+Last, but certainly not least, we have consequence.
+
+Consequence was the tool we used to write 'proofs' in prop logic.
+If these formulas are true, then this formula is true.
+
+$$
+  \Lambda \vDash \varphi \in \mathcal{L}_P^* \iff \text{ if an assignment } v \vDash \bigwedge \Lambda \text{ then } v \vDash \varphi
+$$
+
+In first order logic, it serves the same purpose:
+$$
+  \Lambda \vDash \varphi \in \mathcal{L}_{FO}^* \iff \text{ for every model, if }\mathfrak{M} \vDash \bigwedge \Lambda \text{ then } \mathfrak{M} \vDash \varphi
+$$
+
+The decision problem is 
+$$
+  \text{FO-CONQ} := \{ \langle \Lambda , \varphi \rangle \mid \Lambda \vDash \varphi \}
+$$
+
+Most unfortunately, nothing has changed with the addition of $\Lambda$.
+
+::: {style="margin-left: 2em;"}
+define $M_{FC}$ on $\langle \Lambda, \varphi \rangle$:  
+    $\quad$ for every $\langle \mathfrak{M} \rangle$:  
+    $\quad$ $\quad$ if $M_{FT}(\langle \mathfrak{M}, \bigwedge \Lambda \rangle) = 1$ then  
+    $\quad$ $\quad$ $\quad$ if $M_{FT}(\langle \mathfrak{M}, \varphi \rangle) = 0$ then  
+    $\quad$ $\quad$ $\quad$ $\quad$ Reject  
+    $\quad$ Accept  
+:::
+
+## The relationship between $\text{FO-SAT}$, $\text{FO-VAL}$, and $\text{FO-CONQ}$
+
+In [Logic I](./lecture_8.qmd) and its tutorial, we established a few relationships between satisfiability, validity and consequence.
+
+The important idea being that we can reduce $\text{PROP-SAT}$, $\text{PROP-VAL}$, and $\text{PROP-CONQ}$ to each other.
+
+The question remains does stepping into first order logic maintain or lose these relationships?
+
+At a glance, this relationship seems to hold.
+The relationships in prop logic were proved by applying their definitions rather then manipulating the inner structure of the assignment.
+Therefore, even if first order models are more complex, we don't really need the internal description of the model.
+
+The last thing to do is to prove the following for use in the actual reductions of the First Order decision problems.
+We'll leave them as exercise: the proofs are essentially identical to their propositional equivalents - using the model instead of the prop assignment.
+
+For $\varphi \in \mathcal{L}_{FO}^*$:
+
+1. $\:\vDash \varphi \iff \neg \varphi \text{ is not satisfiable}$
+2. $\Lambda \vDash \varphi \iff \:\vDash \bigwedge \Lambda \rightarrow \varphi$
+3. $\emptyset \vDash \varphi \iff \:\vDash \varphi$

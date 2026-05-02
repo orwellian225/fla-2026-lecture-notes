@@ -60,7 +60,7 @@ To begin with, lets begin with the simplest form of logic: Propositional.
 
 A Proposition is either True or False.
 
-## The formal language of propositional logic
+## The formal language of propositional logic $\mathcal{L}_P$
 
 To run an algorithm, we first need to be able to actually put it onto the tape of a Turing Machine.
 So before we begin with our algorithm, lets make sure we can actually write 'logic' onto our machine's tape.
